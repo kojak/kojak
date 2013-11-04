@@ -1,140 +1,74 @@
-buildmetadata-maven-plugin
-==========================
+Kojak - "Koji in an box"
+========================
 
-The build metadata maven plugin creates a detailed report of the various build time parameters employed during a build.
-The information includes useful data that can be used to provide better transparency and accountability of the build
-process. Meta data includes build times and dates, user enviroment information and Java and Maven command line options.
-The reporting is configurable and extendible as well as being adaptable for single and multiple artifacts.
+Kojak is a Koji virtual appliance complete with Mead extensions and Maven tool chain for building and deploying Java
+applications.  It is part of a productization effort to encourage the adoption of the Kojak/Mead build system.  The 
+scripts included in this repository create a fully operational Koji/Mead virtual machine running on Fedora 18.  They 
+utilize the Libvirtd visualization API and a kickstart file, based on a vanilla Fedora installation, to provide an
+automated "out of the box" solution, which may be used for development and educational purposes.
 
-The meta data includes
+See the links below for a details about the tools shipped with Kojak
 
-SCM information
+1. Aprox - http://github.com/jdcasey/aprox
+2. Atlas - http://github.com/jdcasey/atlas
+3. Cartographer - http://github.com/jdcasey/cartographer
+4. Galley - http://github.com/jdcasey/galley
+5. Koji - http://fedoraproject.org/wiki/Koji
+6. maven-repository-builder - http://github.com/jboss-eap/maven-repository-builder
 
-1. revision number
-2. revision date
-3. locally modified files
-4. URL of SCM server
+Installation Prerequisites
+---------------------------
 
-System information
+This installation comprises of a virtual appliance server which is used to build and deploy the virtual appliance.
+Kojak has been successfully installed and tested on Fedora 18. 
 
-5. build time
-6. operating system
-7. name
-8. architecture
-9. version
+See http://fedoraproject.org/wiki/Getting_started_with_virtualization for more information
 
-Java runtime
+It is recommended that the system be updated before beginning the installation.  A fast internet connection and is also 
+required in order to facilitate the downloading of any package dependancies.
 
-10. vendor
-11. name
-12. version
-13. virtual machine
-14. compiler
-15. JAVA_OPTS
+Minimum System Requirements
+--------------------------- 
 
-Maven execution information
+The virtual appliance is configured with the following default specifications:
 
-16. Maven version
-17. active profiles
-18. environment properties
-19. command line and executed goals
+1. 4GB RAM
+2. 32 GB Disk Space
 
-MAVEN_OPTS
+The Virtual Appilance Server should be configured with the following minimum specifications:
 
-20. build user
-21. build host name
-22. Artifact and version
-        group ID
-        artifact ID
-        build version
-23. project info
-24. home page URL
-25. categories
-26. tags
-
-System Requirements
--------------------
-
-The following specifies the minimum requirements to run this Maven plugin:
-
-1.  Maven 2.0
-2.  JDK 1.5
+1. Fedora 18 with virtualization package group
+2. 8GB RAM
+3. 120 GB Disk Space 
 
 Installation Instructions
--------------------------
+------------------------
 
-Clone the repository to your workspace and build with maven:
+1.  Checkout the contents of the Kojak git repository to a suitable directory on the Virtual Appliance Server.
+2.  Check and modify the files under the kojak directroy to suit your particular environment.
+3.  Execute install.sh to create the Kojak virtual appliance.  The script requires root privileges to run.
+4.  Point your browser to 192.168.122.2 and check the states of the tasks.
 
-1. `git clone https://github.com/sbadakhc/buildmetadata-maven-plugin.git`
-2. `mvn install`
+Configuration Notes
+-------------------
 
-Goals
------
+The Kojak virtual appliance is configured with a set of default options.  These can be easily modified by editing the 
+variables in install.sh.  Installation directories, iso location and virtual machine resources allocations
+(Mem, CPU and Storage etc) can all be reconfigured as required.  The appliance is configured with with a static ipaddress 
+taken from the pool of ip addresses from the "default" network that is configured with libvirt.
 
-buildmetadata:build-point
-buildmetadata:buildmetadata-report
-buildmetadata:provide-buildmetadata
-                                              
-Usage
------
+You can access the appliance via ssh at 192.168.122.2 using the following credentials:
 
-    '<project>  
-      ...
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.redhat.rcm.maven.plugin</groupId>
-            <artifactId>buildmetadata-maven-plugin</artifactId
-            <version>1.0</version>
-            <executions>
-              <execution>
-                <phase>initialize</phase>
-                <goals>
-                  <goal>provide-buildmetadata</goal>
-                </goals>
-                <configuration>
-                  <createPropertiesReport>false</createPropertiesReport>
-                  <xmlOutputFile>${project.build.outputDirectory}/META-INF/buildmetadata.xml</xmlOutputFile>
-                  <hideCommandLineInfo>false</hideCommandLineInfo>
-                  <hideMavenOptsInfo>false</hideMavenOptsInfo>
-                  <hideJavaOptsInfo>false</hideJavaOptsInfo>
-                  <buildDatePattern>dd.MM.yyyy HH:mm:ss</buildDatePattern>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
-    ...
-    </project>
+1. username: root
+2. password: root
 
+Currently Kojak uses SSL certificates as the preferred method of authentication. To utilize the client certificate for
+browser based logins you will need to import the certificate. The certificate is can be accessed from /home/koji/.koji.
+Certificates are created for a default set of users which includes koji, kojiadmin, kojira and 3 kojibuilders.
 
-Runtime Example
--------
-
-Assuming the plugin configuration in pom matches the example provisded above the following command will create a
-buildmetadata.xml file in the generated jar file under the META-INF direcory of the archive.
-
-`mvn install`
-
-You can view the generated build.properties file in the archive without extracting it with the following command:
-
-`unzip -p example/HelloWorld/target/HelloWorld-1.0-SNAPSHOT.jar META-INF/buildmetadata.xml`
+The Maven tool chain is located in the koji users workspace directory along with example configurations. 
 
 Known Issues
 ------------
 
-With *NIX implementations of Maven the mvn shell wrapper script will need to explicitly declare the following varible 
-to capture Maven command line arguments:
-
-    export MAVEN_CMD_LINE_ARGS="$@"
-
-Red Hat/Fedora users should edit the /usr/bin/mvn wrapper file for /usr/share/maven/bin/mvn to include this declaration
-and prevent the changes being lost as a result of future packages upgrades.
-
-Notes
------
-
-For further infoprmation please visit the upstream providers web site at 
-http://www.smartics.eu/buildmetadata-maven-plugin/
-
+Access to http://download.devel.redhat.com/ is required for the current version of Maven that is used.
