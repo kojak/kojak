@@ -7,6 +7,9 @@ scripts included in this repository create a fully operational Koji/Mead virtual
 utilize the Libvirtd visualization API and a kickstart file, based on a vanilla Fedora installation, to provide an
 automated "out of the box" solution, which may be used for development and educational purposes.
 
+Kojak's tool chain allows developers to build, test, deploy, verfiy and replicate product builds and their associated
+repositories.
+
 See the links below for a details about the tools shipped with Kojak
 
 1. Aprox - http://github.com/jdcasey/aprox
@@ -15,6 +18,8 @@ See the links below for a details about the tools shipped with Kojak
 4. Galley - http://github.com/jdcasey/galley
 5. Koji - http://fedoraproject.org/wiki/Koji
 6. maven-repository-builder - http://github.com/jboss-eap/maven-repository-builder
+7. python-javatools - http://github.com/obriencj/python-javatools.git
+8. buildmetadata-maven-plugin - http://github.com/sbadakhc/buildmetadata-maven-plugin.git
 
 Installation Prerequisites
 ---------------------------
