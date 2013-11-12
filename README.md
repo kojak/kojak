@@ -17,7 +17,7 @@ See the links below for a details about the tools shipped with Kojak
 3. buildmetadata-maven-plugin - http://github.com/sbadakhc/buildmetadata-maven-plugin.git
 4. cartographer - http://github.com/jdcasey/cartographer
 5. galley - http://github.com/jdcasey/galley
-6. Koji - http://fedoraproject.org/wiki/Koji
+6. koji - http://fedoraproject.org/wiki/Koji
 7. maven-repository-builder - http://github.com/jboss-eap/maven-repository-builder
 8. python-javatools - http://github.com/obriencj/python-javatools.git
  
