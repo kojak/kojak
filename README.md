@@ -2,9 +2,9 @@ Kojak - "Koji in an box"
 ========================
 
 Kojak is a Koji virtual appliance complete with Mead extensions and Maven tool chain for building and deploying Java
-applications.  It is part of a productization effort to encourage the adoption of the Kojak/Mead build system.  The 
-scripts included in this repository create a fully operational Koji/Mead virtual machine running on Fedora 18.  They 
-utilize the Libvirtd visualization API and a kickstart file, based on a vanilla Fedora installation, to provide an
+applications.  It is part of a productization effort to encourage the adoption of the Koji/Mead build system.  The 
+scripts included in this repository create a fully operational Koji/Mead virtual machine running on Fedora 18 and above.
+They utilize the Libvirtd visualization API and a kickstart file, based on a vanilla Fedora installation, to provide an
 automated "out of the box" solution, which may be used for development and educational purposes.
 
 Kojak's tool chain allows developers to build, test, deploy, verfiy and replicate product builds and their associated
@@ -12,14 +12,15 @@ repositories.
 
 See the links below for a details about the tools shipped with Kojak
 
-1. Aprox - http://github.com/jdcasey/aprox
-2. Atlas - http://github.com/jdcasey/atlas
-3. Cartographer - http://github.com/jdcasey/cartographer
-4. Galley - http://github.com/jdcasey/galley
-5. Koji - http://fedoraproject.org/wiki/Koji
-6. maven-repository-builder - http://github.com/jboss-eap/maven-repository-builder
-7. python-javatools - http://github.com/obriencj/python-javatools.git
-8. buildmetadata-maven-plugin - http://github.com/sbadakhc/buildmetadata-maven-plugin.git
+1. aprox - http://github.com/jdcasey/aprox
+2. atlas - http://github.com/jdcasey/atlas
+3. buildmetadata-maven-plugin - http://github.com/sbadakhc/buildmetadata-maven-plugin.git
+4. cartographer - http://github.com/jdcasey/cartographer
+5. galley - http://github.com/jdcasey/galley
+6. Koji - http://fedoraproject.org/wiki/Koji
+7. maven-repository-builder - http://github.com/jboss-eap/maven-repository-builder
+8. python-javatools - http://github.com/obriencj/python-javatools.git
+ 
 
 Installation Prerequisites
 ---------------------------
