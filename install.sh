@@ -18,19 +18,24 @@
 #
 ########################################################################
 
-set -x
+# Uncomment to debug script
+#set -x
 
 ## Declare environment varibles
+#!/bin/bash
+
+while true
+do
 
 # Distro information
-VMNAME="Fedora-18-x86_64-DVD"
-VMHOME="/var/lib/libvirt/images"
-TMPDIR="/home/kojak"
-DIST="RedHat/Fedora/18/0/x86_64"
+VMNAME=${VMNAME:="Fedora-18-x86_64-DVD"}
+VMHOME=${VMHOME:="/var/lib/libvirt/images"}
+TMPDIR=${TMPDIR:="/tmp/kojak"}
+DIST=${DIST:="RedHat/Fedora/18/0/x86_64"}
 
 # Sources and configuration
-KSISO="Fedora-18-x86_64-DVD.iso"
-KSCFG="Fedora-18-x86_64.cfg"
+KSISO=${KSISO:="Fedora-18-x86_64-DVD.iso"}
+KSCFG=${KSCFG:="Fedora-18-x86_64.cfg"}
 
 # Working directories
 MNTDIR="${TMPDIR}/mnt/${DIST}"
@@ -41,46 +46,118 @@ ISODIR="${TMPDIR}/iso/${DIST}"
 VMDISK="32768M"
 VMMEM="4096"
 
-mkdir -p $MNTDIR $OPTDIR $CFGDIR $BLDDIR $ISODIR $IMGDIR
+VARS="VMNAME VMHOME TMPDIR DIST KSISO KSCFG MNTDIR CFGDIR ISODIR VMDISK VMMEM"
+VALS="$vmname $vmhome $tmpdir $dist $ksiso $kscfg $mntdir $cfgdir $isodir $vmdisk $vmmem"
+
+# Run Kojak configurator
+clear
+echo -e "\n################################################################################"
+echo -e "#                                                                              #"
+echo -e "#               !!! Welcom to the Kojak configuration menu !!!                 #"
+echo -e "#                                                                              #"
+echo -e "#           *** Press return to accept the default menu options ***            #\n"
+
+# Virtual machine name
+read -e -i "$vmname" -p "# VMNAME = $VMNAME : " vmname
+vmname="${vmname:=$VMNAME}"
+
+# Images directory
+read -e -i "$vmhome" -p "# VMHOME = $VMHOME : " vmhome
+vmhome="${vmhome:=$VMHOME}"
+
+# Temp directory
+read -e -i "$tmpdir" -p "# TMPDIR = $TMPDIR : " tmpdir
+tmpdir="${tmpdir:=$TMPDIR}"
+
+# Distribution directory
+read -e -i "$dist" -p "# DIST = $DIST: " dist
+dist="${dist:=$DIST}"
+
+# Kickstart iso file
+read -e -i "$ksiso" -p "# KSISO = $KSISO: " ksiso
+ksiso="${ksiso:=$KSISO}"
+
+# Kickstart configuration
+read -e -i "$kscfg" -p "# KSCFG is $KSCFG: " kscfg
+kscfg="${kscfg:=$KSCFG}"
+
+# Kojak diirectories
+read -e -i "$mntdir" -p "# MNTDIR is $MNTDIR: " mntdir
+mntdir="${tmpdir}/mnt/${dist}"
+read -e -i "$cfgdir" -p "# CFGDIR is $CFGDIR: " cfgdir
+cfgdir="${tmpdir}/cfg/${dist}"
+read -e -i "$isodir" -p "# ISODIR is $ISODIR: " isodir
+isodir="${tmpdir}/iso/${dist}"
+
+# Virtual machine specifications
+read -e -i "$vmdisk" -p "# VMDISK is $VMDISK: " vmdisk
+vmdisk="32768M"
+read -e -i "$vmmem" -p "# VMMEM is $VMMEM: " vmmem
+vmmem="4096"
 
 
-if [ -e "$ISODIR/Fedora-18-x86_64-DVD.iso" ]; then
+echo -e "\n##   Please check the configuration options and accept if they are correct   ##\n"
+echo -e "# VMNAME=$vmname"
+echo -e "# VMHOME=$vmhome"
+echo -e "# TMPDIR=$tmpdir"
+echo -e "# DIST=$dist"
+echo -e "# KSISO=$ksiso"
+echo -e "# KSCFG=$kscfg"
+echo -e "# MNTDIR=$mntdir"
+echo -e "# CFGDIR=$cfgdir"
+echo -e "# ISODIR=$isodir"
+echo -e "# VMDISK=$vmdisk"
+echo -e "# VMMEM=$vmmem"
+
+echo -e "\n"
+read -s -n1 -p "Are these options correct? Press y/n: " KEY
+case "$KEY" in
+ y ) echo -e "\n\nUsing supplied configuration options." && break;;
+ n ) echo -e "\n\nRestarting configurator."  && sleep 1;;
+ * ) echo -e "\n\nERROR: Incorrect user input...Please press y or n" && sleep 1;;
+esac
+done
+
+mkdir -p $mntdir $cfgdir $isodir 
+
+
+if [ -e "$isodir/Fedora-18-x86_64-DVD.iso" ]; then
     echo "DVD ISO Found"
 else
     echo "Downloading DVD ISO"
-    cd $ISODIR
+    cd $isodir
     wget http://download.fedoraproject.org/pub/fedora/linux/releases/18/Fedora/x86_64/iso/Fedora-18-x86_64-DVD.iso
     cd -
 fi
 
-cp kojak_ks.cfg $CFGDIR/
+cp kojak_ks.cfg $cfgdir/
 
-cd ${VMHOME}
+cd ${vmhome}
 
 # Remove any pre-existing vm with the same name
-virsh destroy ${VMNAME}
-virsh undefine ${VMNAME}
+virsh destroy ${vmname}
+virsh undefine ${vmname}
 
 # Remove any pre-existing vm image with the same name
-rm ${VMHOME}/${VMNAME}.img
+rm ${vmhome}/${vmname}.img
 
 # Allocate the diskspace for the vm
-fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
-chown qemu:qemu ${VMHOME}/${VMNAME}.img
+fallocate -l ${vmdisk} ${vmhome}/${vmname}.img
+chown qemu:qemu ${vmhome}/${vmname}.img
 
 # Create the vm with the following options
 virt-install \
--n ${VMNAME} \
--r ${VMMEM} \
+-n ${vmname} \
+-r ${vmmem} \
 --vcpus=2 \
 --os-type=linux \
 --os-variant=fedora18 \
 --accelerate \
 --mac=00:00:00:00:00:00 \
---disk=${VMHOME}/${VMNAME}.img \
---disk=${ISODIR}/${KSISO},device=cdrom \
---location ${ISODIR}/${KSISO} \
---initrd-inject=${CFGDIR}/kojak_ks.cfg \
+--disk=${vmhome}/${vmname}.img \
+--disk=${isodir}/${ksiso},device=cdrom \
+--location ${isodir}/${ksiso} \
+--initrd-inject=${cfgdir}/kojak_ks.cfg \
 --extra-args="ks=file:kojak_ks.cfg console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
 --nographics
 
