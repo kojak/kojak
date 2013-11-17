@@ -24,6 +24,7 @@
 ## Declare environment varibles
 #!/bin/bash
 
+# Execute menu configuration options
 while true
 do
 
