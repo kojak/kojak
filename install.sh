@@ -29,7 +29,7 @@ do
 # Distro information
 VMNAME=${VMNAME:="Fedora-18-x86_64-DVD"}
 VMHOME=${VMHOME:="/var/lib/libvirt/images"}
-TMPDIR=${TMPDIR:="/tmp/kojak"}
+TMPDIR=${TMPDIR:="/home/kojak"}
 DIST=${DIST:="RedHat/Fedora/18/0/x86_64"}
 
 # Sources and configuration
@@ -120,7 +120,7 @@ done
 mkdir -p $mntdir $cfgdir $isodir 
 
 
-if [ -e "$isodir/Fedora-18-x86_64-DVD.iso" ]; then
+if [ -f "$isodir/Fedora-18-x86_64-DVD.iso" ]; then
     echo "DVD ISO Found"
 else
     echo "Downloading DVD ISO"
