@@ -21,13 +21,11 @@
 # Uncomment to debug script
 #set -x
 
-## Declare environment varibles
-#!/bin/bash
-
 # Execute menu configuration options
 while true
 do
 
+## Declare environment varibles
 # Distro information
 VMNAME=${VMNAME:="Fedora-18-x86_64-DVD"}
 VMHOME=${VMHOME:="/var/lib/libvirt/images"}
