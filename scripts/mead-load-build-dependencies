@@ -1,0 +1,292 @@
+#!/usr/bin/python
+
+import os.path
+import urlgrabber
+import urlgrabber.progress
+import koji
+import re
+import shutil
+import sys
+import tempfile
+import optparse
+import traceback
+
+
+import urlgrabber.grabber
+grabber = urlgrabber.grabber.URLGrabber(ssl_verify_host=False, ssl_verify_peer=False)
+
+basedir = os.path.dirname(sys.argv[0])
+
+KOJI_HUB = 'http://192.168.122.2/kojihub'
+
+LINK_RE = re.compile(r'href="([^"]+)"', re.I)
+NORM_RE = re.compile(r'([^:])//+')
+METER = urlgrabber.progress.TextMeter()
+BAD_ARTIFACTS = ['pom.xml',
+                 'maven-metadata.xml',
+                 'maven-plugin-tools-2.0-javadoc.pom',
+                 'struts-1.2.8-el.pom',
+                 'maven-reporting-2.0-javadoc.pom',
+                 'maven-2.0-javadoc.pom',
+                 'connector-1.5.pom',
+                 'jbosscache-core-3.0.2.GA.pom',
+                 'jboss-vfs-2.0.0.CR1.pom',
+                 'milyn-smooks-javabean-1.1.pom',
+                 'milyn-commons-1.1.pom',
+                 'milyn-smooks-core-1.1.pom',
+                 'jbosscache-core-3.0.0.GA.pom',
+                 'jbosscache-core-3.2.1.GA.pom',
+                 'commons-lang-2.0.distribution-zip',
+                 '1.2.12:maven-metadata.xml']
+
+def run(cmd, fail=True):
+    print cmd
+    ret = os.system(cmd)
+    if ret != 0:
+        print 'Error running command'
+        if fail:
+            sys.exit(1)
+
+def check_and_append(opts, url_list, url):
+    tokens = url.split('/')
+    if len(tokens) < 3:
+        print >> sys.stderr, 'Skipping url %s, not enough tokens...' % url
+        return
+    if not url_list:
+        url_list.append(url)
+        return
+    last_tokens = url_list[-1].split('/')
+    if tokens[-3:] == last_tokens[-3:]:
+        # This url is the same as the previous url.  A repeat download, so the
+        # previous download must have failed.  Replace the previous URL with this one.
+        if url_list[-1] == url:
+            # exactly the same URL, so we don't need to do anything
+            pass
+        else:
+            if opts.debug:
+                print >> sys.stderr, 'Replacing: %s\n     with: %s' % (url_list[-1], url)
+            url_list[-1] = url
+    else:
+        # New url, append it to the list
+        url_list.append(url)
+
+parser = optparse.OptionParser(usage='%prog maven-build-log')
+parser.add_option('--urls', action='store_true',
+                  help='The file passed in is a list of urls, one per line, rather than an unprocessed log file')
+parser.add_option('--print-only', action='store_true',
+                  help='Print the list of urls and exit')
+parser.add_option('--print-missing', action='store_true',
+                  help='Print artifacts that are missing from Brew')
+parser.add_option('--check-tag',
+                  help='For artifacts that are in Brew, check that they are in the given tag')
+parser.add_option('--tag',
+                  help='Tag imports into this tag, as well as the default')
+parser.add_option('--exclude', action='append', default=[],
+                  help='groupId-artifactId prefixes to exclude from import, may be specified multiple times')
+parser.add_option('--skip', type='int', help='Skip to this number in the list of urls to process')
+parser.add_option('-d', '--debug', action='store_true', help='Print verbose error messages')
+
+opts, args = parser.parse_args()
+
+urls = []
+
+session = koji.ClientSession(KOJI_HUB)
+
+SUPPORTED_EXTS = []
+for archive_type in session.getArchiveTypes():
+    SUPPORTED_EXTS.extend(archive_type['extensions'].split())
+
+if len(args) < 1:
+    parser.error('you must specify a Maven build log')
+
+for log in args:
+    fobj = file(log)
+    for line in fobj:
+        if opts.urls:
+            check_and_append(opts, urls, line.strip())
+        else:
+            i = 0
+            tokens = line.split()
+            while i < len(tokens):
+                if tokens[i] == 'Downloading:':
+                    if (i + 1) < len(tokens):
+                        url = tokens[i + 1]
+                        baseurl = os.path.dirname(url)
+                        baseurl = NORM_RE.sub(r'\1/', baseurl)
+                        check_and_append(opts, urls, baseurl)
+                        i += 1
+                    else:
+                        print 'Downloading: is last token on the line: %s' % tokens
+                i += 1
+    fobj.close()
+
+urls = set(urls)
+
+if opts.print_only:
+    for url in urls:
+        print url
+    sys.exit(0)
+else:
+    print 'Processing %i urls...' % len(urls)
+
+if opts.check_tag:
+    taglist = set([opts.check_tag])
+    for tag in session.getFullInheritance(opts.check_tag):
+        taglist.add(tag['name'])
+
+i = 0
+for baseurl in urls:
+    i += 1
+    if opts.skip and i <= opts.skip:
+        continue
+    sys.stderr.write('Processing url %i...\r' % i)
+
+    try:
+        contents = grabber.urlread(baseurl)
+        # print 'Downloading from %s' % baseurl
+    except KeyboardInterrupt:
+        raise
+    except:
+        if opts.debug:
+            print '\nCould not read %s, continuing...' % baseurl
+            print '  error was: ' + str(sys.exc_info()[1])
+        continue
+
+    links = LINK_RE.findall(contents)
+    pom_found = False
+    download = False
+    for link in links:
+        if link in BAD_ARTIFACTS:
+            continue
+        if link.endswith('.pom'):
+            if pom_found:
+                print '\nIgnoring directory with multiple .pom files:', baseurl
+                print "  You'll probably need to download and import the proper version of the required artifact manually."
+                download = False
+                break
+            else:
+                pom_found = True
+            if '://' in link:
+                # absolute link
+                url = link
+            elif link.startswith('/'):
+                # absolute link on this host
+                pieces = baseurl.split('/')[:3]
+                url = '/'.join(pieces) + link
+            else:
+                # relative link
+                url = '%s/%s' % (baseurl, link)
+            try:
+                pom = grabber.urlread(url)
+            except:
+                print '\nError loading pom at: %s' % url
+                traceback.print_exc()
+                continue
+            try:
+                pom_info = koji.parse_pom(contents=pom)
+            except KeyboardInterrupt:
+                raise
+            except:
+                if opts.debug:
+                    print '\nError reading pom at: %s' % url
+                    print '  error was: ' + str(sys.exc_info()[1])
+                    # traceback.print_exc()
+                continue
+
+            maven_info = koji.pom_to_maven_info(pom_info)
+            maven_label = koji.mavenLabel(maven_info)
+            if '$' in maven_label:
+                print '\nBad GAV vector: %s at %s, skipping...' % (maven_label, baseurl)
+                continue
+            if [prefix for prefix in opts.exclude if maven_label.startswith(prefix)]:
+                print '\nSkipping excluded artifacts from %s...' % maven_label
+                continue
+            if 'SNAPSHOT' in maven_info['version']:
+                print '\nCannot handle snspshots from %s, download and import manually...' % maven_label
+                continue
+            maven_archives = session.listArchives(type='maven', typeInfo=maven_info, queryOpts={'order': 'id'})
+            # print 'Maven archives for %s:' % koji.mavenLabel(maven_info), maven_archives
+            if not maven_archives:
+                maven_info['baseurl'] = baseurl
+                print '\n%(group_id)s:%(artifact_id)s:%(version)s from %(baseurl)s has no versions in Brew, downloading and importing' % maven_info
+                download = True
+            else:
+                for link in links:
+                    link = os.path.basename(link)
+                    if link in BAD_ARTIFACTS:
+                        continue
+                    if [ext for ext in SUPPORTED_EXTS if link.endswith(ext)] and link not in [a['filename'] for a in maven_archives]:
+                        print koji.mavenLabel(maven_info), 'exists but %s is missing, importing...' % link
+                        download = True
+                if opts.check_tag:
+                    builds = set()
+                    for archive in maven_archives:
+                        builds.add(archive['build_id'])
+                    for build_id in builds:
+                        tags = set([t['name'] for t in session.listTags(build=build_id)])
+                        overlap = taglist.intersection(tags)
+                        if overlap:
+                            if opts.debug:
+                                build = session.getBuild(build_id)
+                                print '\n%s in available in %s (provides %s:%s:%s)' % (koji.buildLabel(build), ', '.join(overlap),
+                                                                                       maven_info['group_id'], maven_info['artifact_id'],
+                                                                                       maven_info['version'])
+                            break
+                    else:
+                        # just take the highest numbered build
+                        labels = []
+                        for build_id in sorted(builds):
+                            labels.append(koji.buildLabel(session.getBuild(build_id)))
+                        print '\n%s:%s:%s is missing from %s, is provided by: %s' % (maven_info['group_id'], maven_info['artifact_id'],
+                                                                                     maven_info['version'],
+                                                                                     opts.check_tag,
+                                                                                     ', '.join(labels))
+
+    if opts.print_missing:
+        continue
+
+    do_import = None
+    tmpdir = None
+    if download:
+        tmpdir = tempfile.mkdtemp()
+        for link in links:
+            if link.endswith('.md5') or link.endswith('.sha1') or link.endswith('.asc') or \
+                   link.endswith('/') or \
+                   link.startswith('?') or link.endswith('-zip') or link.endswith('-tgz') or \
+                   'Sonatype-content.css' in link or link.endswith('.audit.json') or \
+                   link in BAD_ARTIFACTS:
+                pass
+            elif [ext for ext in SUPPORTED_EXTS if link.endswith(ext)]:
+                if '://' in link:
+                    # absolute link
+                    url = link
+                elif link.startswith('/'):
+                    # absolute link on this host
+                    pieces = baseurl.split('/')[:3]
+                    url = '/'.join(pieces) + link
+                else:
+                    # relative link
+                    url = '%s/%s' % (baseurl, link)
+                grabber.urlgrab(url, filename=os.path.join(tmpdir, os.path.basename(link)),
+                                progress_obj=METER)
+                if do_import is None:
+                    do_import = True
+            else:
+                print '\nUnknown file type: %s' % link
+                # do_import = False
+    if do_import is True:
+        cmd = os.path.join(basedir, 'import-maven')
+        if opts.tag:
+            cmd += ' --tag ' + opts.tag
+        cmd += ' %s/*' % tmpdir
+        run(cmd)
+    elif do_import is None:
+        pass
+    else:
+        print '\nSkipping import of files from %s' % baseurl
+
+    if tmpdir:
+        shutil.rmtree(tmpdir)
+
+#done
+print
