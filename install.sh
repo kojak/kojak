@@ -45,9 +45,6 @@ ISODIR="${TMPDIR}/iso/${DIST}"
 VMDISK="32768M"
 VMMEM="4096"
 
-VARS="VMNAME VMHOME TMPDIR DIST KSISO KSCFG MNTDIR CFGDIR ISODIR VMDISK VMMEM"
-VALS="$vmname $vmhome $tmpdir $dist $ksiso $kscfg $mntdir $cfgdir $isodir $vmdisk $vmmem"
-
 # Run Kojak configurator
 clear
 echo -e "\n################################################################################"
