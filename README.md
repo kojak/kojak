@@ -51,10 +51,15 @@ Installation Instructions
 ------------------------
 
 1.  Checkout the contents of the Kojak git repository to a suitable directory on the Virtual Appliance Server.
-2.  Check and modify the files under the kojak directroy to suit your particular environment.
-3.  Execute install.sh to create the Kojak virtual appliance.  The script requires root privileges to run.
-4.  Point your browser to 192.168.122.2 and check the states of the tasks.
 
+2.  As root execute install.sh script.  You will be prompted to supply various configuration options or you may choose
+to accept the system default options by simply pressing return.  You will then be prompted to check the options.
+
+3.  Once the installation is complete you should confirm the state of all the tasks are closed.  From the command line,
+as the koji user, execute the following:  
+    
+    koji list-tasks
+   
 Configuration Notes
 -------------------
 
