@@ -56,11 +56,12 @@ to accept the system default options by simply pressing return.  You will then b
 3.  Once the installation is complete you should confirm the state of all the tasks are closed.  From the command line,
 as the koji user, execute the following:  
     
-    `[koji@localhost ~]$ koji list-tasks
-     ID    Pri  Owner        State    Arch       Name
-     1     10   kojiadmin    CLOSED   noarch     tagBuild [kojibuilder1.localdomain]
-     2     15   kojira       CLOSED   noarch     newRepo [kojibuilder1.localdomain]
-     3     14   kojira       CLOSED   noarch      +createrepo [kojibuilder1.localdomain]`
+    `[koji@localhost ~]$ koji list-tasks`
+
+ID    Pri  Owner        State    Arch       Name
+1     10   kojiadmin    CLOSED   noarch     tagBuild [kojibuilder1.localdomain]
+2     15   kojira       CLOSED   noarch     newRepo [kojibuilder1.localdomain]
+3     14   kojira       CLOSED   noarch      +createrepo [kojibuilder1.localdomain]
 
 Configuration Notes
 -------------------
