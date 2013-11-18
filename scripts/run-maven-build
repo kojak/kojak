@@ -1,28 +1,32 @@
 #!/bin/bash
 
-# Uncomment to enable debugging
-#set -x
+set -x
 
 if [ $# -lt 1 ]
 then
-        echo "Usage : $0 {git+https://github.com/<USER>/<REPOSITORY>.git#<checksum>}"
-	echo "Example: $0 git+https://github.com/sbadakhc/buildmetadata-maven-plugin.git#ce68bfc08000ada70a3aa04d92d7c88271ac5b5e"
+        echo "Usage : $0 {git+https://github.com/<user>/<repo>.git#<checksum>}"
+        echo "Usage : $0 git+https://github.com/sbadakhc/buildmetadata-maven-plugin.git#ce68bfc08000ada70a3aa04d92d7c88271ac5b5e"
         exit
 fi
 
+SRC="$1"
+
 build_src() {
-    koji maven-build -Dmaven.test.skip=true --scratch fedora-18-addons $1
+    koji maven-build -Dmaven.test.skip=true --scratch fedora-18-addons $SRC
 
 }
 
 resolve_deps() {
-	WORKSPACE="$HOME/workspace"
+	WORKSPACE="$HOME/workspace/scripts"
 	TMP="$WORKSPACE/tmp"
 	LOG="/mnt/koji/work/tasks/$TASK/$TASK/root.log"
 	ERRORS=('Failed to execute goal' 'Non-resolvable parent POM' 'Non-resolvable import POM');
-	FAULT="`for error in "${ERRORS[@]}"; do grep -e "$error" $LOG  | awk '{NF++;while(NF-->1)print $NF}' | grep "[0-9]$" | grep ':' ; done`"
- 	DEPS="`for dep in $(echo $FAULT | tr " " "\n"); do echo "$dep" ; done`"
-	REPOS="--repo http://repository.jboss.org/nexus/content/groups/public --repo https://repository.jboss.org/nexus/content/repositories/thirdparty-uploads --repo=http://repo.fusesource.com/nexus/content/repositories/jboss-fuse-6.1.x --repo=https://repository.jboss.org/nexus/content/repositories/ea"
+	FAULT="`for error in "${ERRORS[@]}"; do grep -e $error $LOG  | awk '{NF++;while(NF-->1)print $NF}' | grep "[0-9]$" | grep ':' ; done`"
+	DEPS="`for dep in $(echo $FAULT | tr " " "\n"); do echo "$dep" ; done`"
+	REPOS="--repo http://repository.jboss.org/nexus/content/groups/public \
+		--repo https://repository.jboss.org/nexus/content/repositories/thirdparty-uploads \
+		--repo=https://repository.jboss.org/nexus/service/local/staging/deploy/maven2 \
+		--repo=https://repository.jboss.org/nexus/content/repositories/snapshots"
 
 	COUNT=`echo "$DEPS" | wc -l`
 	while [ "$COUNT" -gt 0 ]; do
@@ -48,7 +52,7 @@ resolve_deps() {
 
 check_task() {
 	echo "Monitoring tasks"
-    while [[ true ]];do
+    	while [[ true ]];do
 		TASK="`koji list-tasks --quiet | tail -n1 | awk '{ print $1 }'`"
 			if [[ $TASK != [0-9]* ]]; then
 				TASK="`cd /mnt/koji/work/tasks/  && ls -l | tail -1 | awk ' { print ( $(NF-0) ) }'`"
@@ -81,6 +85,10 @@ check_task() {
 				 "tagBuild closed")
 					echo "Status: $STATUS"
 					build_src
+					;;
+				 "buildMaven free")
+					echo "Status: $STATUS"
+					wait
 					;;
 					# We can use this case to identify new cases.
 				*)  echo "unknown status: $STATUS"             
