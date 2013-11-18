@@ -58,10 +58,10 @@ as the koji user, execute the following:
     
     `[koji@localhost ~]$ koji list-tasks`
 
-ID    Pri  Owner        State    Arch       Name
-1     10   kojiadmin    CLOSED   noarch     tagBuild [kojibuilder1.localdomain]
-2     15   kojira       CLOSED   noarch     newRepo [kojibuilder1.localdomain]
-3     14   kojira       CLOSED   noarch      +createrepo [kojibuilder1.localdomain]
+    `ID    Pri  Owner        State    Arch       Name`
+    `1     10   kojiadmin    CLOSED   noarch     tagBuild [kojibuilder1.localdomain]`
+    `2     15   kojira       CLOSED   noarch     newRepo [kojibuilder1.localdomain]`
+    `3     14   kojira       CLOSED   noarch      +createrepo [kojibuilder1.localdomain]`
 
 Configuration Notes
 -------------------
