@@ -29,7 +29,7 @@ resolve_deps() {
 		--repo=https://repository.jboss.org/nexus/content/repositories/snapshots"
 
 	COUNT=`echo "$DEPS" | wc -l`
-	while [ "$COUNT" -gt 0 ]; do
+	until [ "$COUNT" -eq 0 ]; do
 		for dep in $DEPS; do
 			# Some house keeping.
 			if [ -d "$TMP" ]; then
