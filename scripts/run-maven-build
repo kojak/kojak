@@ -1,19 +1,17 @@
 #!/bin/bash
 
+# Enable debugging
 set -x
 
 if [ $# -lt 1 ]
 then
         echo "Usage : $0 {git+https://github.com/<user>/<repo>.git#<checksum>}"
-        echo "Usage : $0 git+https://github.com/sbadakhc/buildmetadata-maven-plugin.git#ce68bfc08000ada70a3aa04d92d7c88271ac5b5e"
+        echo "Example : $0 git+https://github.com/sbadakhc/buildmetadata-maven-plugin.git#ce68bfc08000ada70a3aa04d92d7c88271ac5b5e"
         exit
 fi
 
-SRC="$1"
-
 build_src() {
-    koji maven-build -Dmaven.test.skip=true --scratch fedora-18-addons $SRC
-
+    koji maven-build -Dmaven.test.skip=true --scratch fedora-18-addons $1
 }
 
 resolve_deps() {
@@ -74,6 +72,10 @@ check_task() {
 					echo "Status : $STATUS"
 					wait
 					;;
+                 "buildMaven free")
+                    echo "Status: $STATUS"
+                    wait
+                    ;;
 				 "createrepo open")
 					echo "Status : $STATUS"
 					wait
@@ -85,10 +87,6 @@ check_task() {
 				 "tagBuild closed")
 					echo "Status: $STATUS"
 					build_src
-					;;
-				 "buildMaven free")
-					echo "Status: $STATUS"
-					wait
 					;;
 					# We can use this case to identify new cases.
 				*)  echo "unknown status: $STATUS"             
