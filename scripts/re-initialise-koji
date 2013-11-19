@@ -1,0 +1,126 @@
+#!/bin/bash
+#
+# Simple script to re-initialise the koji database instance for vanilla builds
+
+echo -e "\n"
+read -s -n1 -p "!!! Warning Your koji instance will be re-initialised !!!  Press y/n : " KEY
+case "$KEY" in
+ y ) echo -e "\n\nRe-initialising koji instance." && break;;
+ n ) echo -e "\n\nExiting script."  && exit;;
+ * ) echo -e "\n\nERROR: Incorrect user input...Please press y or n" && sleep 1;;
+esac
+ 
+# Enable debugging
+set -x
+
+# Drop the koji database
+su -l koji -c  "dropdb 'koji'"
+systemctl stop  postgresql.service
+rm -rf /var/lib/pgsql/data
+
+# Remove old koji directories
+rm -rf /mnt/koji
+
+# Create koji build directories
+mkdir /mnt/koji
+cd /mnt/koji
+mkdir {packages,repos,work,scratch}
+chown apache.apache *
+cd -
+
+# Start the database
+postgresql-setup initdb
+systemctl enable postgresql.service
+systemctl start postgresql.service
+
+#/tmp/users.sql
+echo -e "insert into users (name, status, usertype) values ('koji', 0, 0);
+insert into user_perms (user_id, perm_id, creator_id) values (1, 1, 1);
+insert into users (name, status, usertype) values ('kojiadmin', 0, 0);
+insert into user_perms (user_id, perm_id, creator_id) values (2, 1, 1);
+\q" >> /tmp/users.sql
+
+# Create the database tables
+su -l postgres -c "createuser koji; createdb -O koji koji"
+su -l koji -c "psql koji koji < /usr/share/doc/koji-1.8.0/docs/schema.sql"
+su -l koji -c "psql koji koji < /tmp/users.sql"
+
+# Restart database services
+systemctl restart postgresql.service
+systemctl restart httpd.service
+
+# Begin Koji configuration
+su -l koji -c "
+
+# Add hosts and channels
+koji add-host kojibuilder1.localdomain x86_64
+koji add-host-to-channel kojibuilder1.localdomain appliance
+koji add-host-to-channel kojibuilder1.localdomain createrepo
+koji add-host-to-channel kojibuilder1.localdomain livecd
+koji add-host-to-channel kojibuilder1.localdomain maven
+koji add-host-to-channel kojibuilder1.localdomain vm
+
+# Add tags and tag inheritance
+koji add-tag fedora-18-base
+koji add-tag fedora-18-addons
+koji add-tag fedora-18-addons-testing --parent=fedora-18-addons
+koji add-tag fedora-18-addons-build --parent=fedora-18-addons --arches="x86_64"
+koji add-tag-inheritance --priority=1 fedora-18-addons-build fedora-18-base
+koji add-tag maven-build --maven-support --parent=fedora-18-addons --arches="x86_64"
+koji add-tag --include-all --maven-support maven-import
+
+# Add target
+koji add-target fedora-18-addons fedora-18-addons-build fedora-18-addons-testing
+
+# Add external repo
+koji add-external-repo -t fedora-18-base fedora-mirror http://mirrors.kernel.org/fedora/releases/18/Everything/x86_64/os/
+
+# Add groups
+#
+# build
+koji add-group fedora-18-addons-build build
+koji add-group-pkg fedora-18-addons-build build bash bzip2 cpio diffutils fedora-release findutils gawk gcc gcc-c++ info make redhat-rpm-config rpm-build sed shadow-utils unzip util-linux-ng which xz
+#
+# srpm-build
+koji add-group fedora-18-addons-build srpm-build
+koji add-group-pkg fedora-18-addons-build srpm-build bash curl cvs fedora-release fedpkg gnupg2 make redhat-rpm-config rpm-build shadow-utils
+#
+# appliance-build
+koji add-group fedora-18-addons-build appliance-build
+koji add-group-pkg fedora-18-addons-build appliance-build appliance-tools bash coreutils grub parted perl policycoreutils selinux-policy shadow-utils
+#
+# maven-build
+koji add-group fedora-18-addons-build maven-build
+koji add-group-pkg fedora-18-addons-build maven-build bash coreutils java-1.7.0-openjdk-devel maven3 subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
+#
+# livecd-build
+koji add-group fedora-18-addons-build livecd-build
+koji add-group-pkg fedora-18-addons-build livecd-build bash bzip2 coreutils cpio diffutils fedora-logos fedora-release findutils gawk gcc gcc-c++ grep gzip info livecd-tools make patch policycoreutils python-dbus redhat-rpm-config rpm-build sed selinux-policy-targeted shadow-utils squashfs-tools tar unzip util-linux which yum
+# Add required build packages
+koji add-pkg --owner=kojiadmin fedora-18-addons bash binutils"
+
+# Restart Koji services
+systemctl enable httpd.service
+systemctl restart httpd.service
+systemctl enable kojid.service
+systemctl restart kojid.service
+systemctl enable kojira.service
+systemctl restart kojira.service
+
+# Grant permissions
+su -l koji -c "koji grant-permission repo kojira"
+su -l koji -c "koji grant-permission build kojibuilder1.localdomain"
+
+# Maven installation
+cd /tmp
+wget http://download.devel.redhat.com/brewroot/packages/org.apache.maven-maven/3.0.3/4/src/maven3-3.0.3-4.src.rpm
+wget http://download.devel.redhat.com/brewroot/packages/org.apache.maven-maven/3.0.3/4/noarch/maven3-3.0.3-4.noarch.rpm
+su -l koji -c "koji import --create-build /tmp/maven3-3.0.3-4.src.rpm /tmp/maven3-3.0.3-4.noarch.rpm"
+su -l koji -c "koji add-pkg --owner=kojiadmin fedora-18-addons-build maven3"
+su -l koji -c "koji tag-pkg fedora-18-addons-build maven3-3.0.3-4"
+
+# Clean up files
+rm /tmp/*.rpm
+rm -rf /tmp/koji
+cd -
+
