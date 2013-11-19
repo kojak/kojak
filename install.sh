@@ -37,7 +37,6 @@ KSISO=${KSISO:="Fedora-18-x86_64-DVD.iso"}
 KSCFG=${KSCFG:="Fedora-18-x86_64.cfg"}
 
 # Working directories
-MNTDIR="${TMPDIR}/mnt/${DIST}"
 CFGDIR="${TMPDIR}/cfg/${DIST}"
 ISODIR="${TMPDIR}/iso/${DIST}"
 
@@ -78,8 +77,6 @@ read -e -i "$kscfg" -p "# KSCFG is $KSCFG: " kscfg
 kscfg="${kscfg:=$KSCFG}"
 
 # Kojak diirectories
-read -e -i "$mntdir" -p "# MNTDIR is $MNTDIR: " mntdir
-mntdir="${tmpdir}/mnt/${dist}"
 read -e -i "$cfgdir" -p "# CFGDIR is $CFGDIR: " cfgdir
 cfgdir="${tmpdir}/cfg/${dist}"
 read -e -i "$isodir" -p "# ISODIR is $ISODIR: " isodir
@@ -99,7 +96,6 @@ echo -e "# TMPDIR=$tmpdir"
 echo -e "# DIST=$dist"
 echo -e "# KSISO=$ksiso"
 echo -e "# KSCFG=$kscfg"
-echo -e "# MNTDIR=$mntdir"
 echo -e "# CFGDIR=$cfgdir"
 echo -e "# ISODIR=$isodir"
 echo -e "# VMDISK=$vmdisk"
@@ -114,7 +110,7 @@ case "$KEY" in
 esac
 done
 
-mkdir -p $mntdir $cfgdir $isodir 
+mkdir -p $cfgdir $isodir 
 
 
 if [ -f "$isodir/Fedora-18-x86_64-DVD.iso" ]; then
