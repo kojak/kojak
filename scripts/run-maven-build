@@ -10,8 +10,10 @@ then
         exit
 fi
 
+SRC="$1"
+
 build_src() {
-    koji maven-build -Dmaven.test.skip=true --scratch fedora-18-addons $1
+    koji maven-build -Dmaven.test.skip=true --scratch fedora-18-addons $SRC
 }
 
 resolve_deps() {
