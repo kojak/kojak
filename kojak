@@ -113,20 +113,29 @@ menu() {
 # Prompt user for configuration defaults
 
 if [ -f "kojak.cfg" ]; then
-	    echo -e "\n"
-        read -s -n1 -p "# Press [RETURN] or [SPACE] to accept the previous saved configuration...Press any other key to continue: " KEY
+    echo -e "\n"
+    read -s -n1 -p "# Press [RETURN] or [SPACE] to accept the previous saved configuration...Press any other key to continue: " KEY
         if [ ${#KEY} -eq "0" ]; then
             echo -e "\n\n# Using saved configuration options."
             source kojak.cfg
+	    else
+    	    echo -e "\n"
+    	    read -s -n1 -p "# Press [RETURN] or [SPACE] to accept the default options...Press any other key run the configurator: " KEY
+	    	    if [ ${#KEY} -eq "0" ]; then
+	                echo -e "\n\n# Using default configuration options."
+                else
+	                echo -e "\n\n# Running Kojak menu options configurator."
+	            menu
+                fi
+        fi
+else
+    echo -e "\n"
+    read -s -n1 -p "# Press [RETURN] or [SPACE] to accept the default options...Press any other key run the configurator: " KEY
+        if [ ${#KEY} -eq "0" ]; then
+            echo -e "\n\n# Using default configuration options."
         else
-            echo -e "\n"
-            read -s -n1 -p "# Press [RETURN] or [SPACE] to accept the default options...Press any other key run the configurator: " KEY
-            if [ ${#KEY} -eq "0" ]; then
-                echo -e "\n\n# Using default configuration options."
-            else
-                echo -e "\n\n# Running Kojak menu options configurator."
-                menu
-            fi
+            echo -e "\n\n# Running Kojak menu options configurator."
+            menu
         fi
 fi
 
