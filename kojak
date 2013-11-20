@@ -23,7 +23,7 @@
 
 # Check to see if user is root
 if [ "$USER" != "root" ]; then
-    echo "\n# This script requires root priviledges to run"
+    echo -e "\n# This script requires root priviledges to run"
     exit
 fi
 
