@@ -3,12 +3,12 @@
 # Copyright (C) 2013 Red Hat Inc.
 # Author: Salim Badakhchani <sal@redhat.com>
 #
-# This program is free software: you can redistribute it and/or modify
+# This program is free software: you can reDISTribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, either version 3 of the License, or
 # (at your option) any later version.
 #
-# This program is distributed in the hope that it will be useful,
+# This program is DISTributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
@@ -66,46 +66,38 @@ menu() {
     VMHOME="${VMHOME:=$VMHOME}"
 
     # Temp directory
-    read -e -i "$tmpdir" -p "# TMPDIR = $TMPDIR : " tmpdir
-    tmpdir="${tmpdir:=$TMPDIR}"
+    read -e -i "$TMPDIR" -p "# TMPDIR = $TMPDIR : " TMPDIR
+    TMPDIR="${TMPDIR:=$TMPDIR}"
 
     # Distribution directory
-    read -e -i "$dist" -p "# DIST = $DIST: " dist
-    dist="${dist:=$DIST}"
+    read -e -i "$DIST" -p "# DIST = $DIST: " DIST
+    DIST="${DIST:=$DIST}"
 
     # Kickstart iso file
     read -e -i "$KSISO" -p "# KSISO = $KSISO: " KSISO
     KSISO="${KSISO:=$KSISO}"
 
     # Kickstart configuration
-    read -e -i "$KSCFG" -p "# KSCFG is $KSCFG: " KSCFG
+    read -e -i "$KSCFG" -p "# KSCFG = $KSCFG: " KSCFG
     KSCFG="${KSCFG:=$KSCFG}"
 
     # Kojak diirectories
-    read -e -i "$CFGDIR" -p "# CFGDIR is $CFGDIR: " CFGDIR
-    CFGDIR="${tmpdir}/cfg/${dist}"
-    read -e -i "$ISODIR" -p "# ISODIR is $ISODIR: " ISODIR
-    ISODIR="${tmpdir}/iso/${dist}"
+    read -e -i "$CFGDIR" -p "# CFGDIR = $CFGDIR: " CFGDIR
+    CFGDIR="${TMPDIR}/cfg/${DIST}"
+    read -e -i "$ISODIR" -p "# ISODIR = $ISODIR: " ISODIR
+    ISODIR="${TMPDIR}/iso/${DIST}"
 
     # Virtual machine specifications
-    read -e -i "$VMDISK" -p "# VMDISK is $VMDISK: " VMDISK
+    read -e -i "$VMDISK" -p "# VMDISK = $VMDISK: " VMDISK
     VMDISK="32768M"
-    read -e -i "$VMMEM" -p "# VMMEM is $VMMEM: " VMMEM
+    read -e -i "$VMMEM" -p "# VMMEM = $VMMEM: " VMMEM
     VMMEM="4096"
 
 
     echo -e "\n##   Please check the configuration options and accept if they are correct   ##\n"
-    echo -e "# VMNAME=$VMNAME"
-    echo -e "# VMHOME=$VMHOME"
-    echo -e "# TMPDIR=$tmpdir"
-    echo -e "# DIST=$dist"
-    echo -e "# KSISO=$KSISO"
-    echo -e "# KSCFG=$KSCFG"
-    echo -e "# CFGDIR=$CFGDIR"
-    echo -e "# ISODIR=$ISODIR"
-    echo -e "# VMDISK=$VMDISK"
-    echo -e "# VMMEM=$VMMEM"
-
+    echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDIST=$DIST\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nISODIR=$ISODIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > kojak.cfg
+    echo -e "# Saved configuration to kojak.cfg"
+ 
     echo -e "\n"
     read -s -n1 -p "Press [RETURN] or [SPACE] to accept the configuration options or any other key to exit: " KEY
         if [ ${#KEY} -eq "0" ]; then
@@ -119,13 +111,23 @@ menu() {
 }
 
 # Prompt user for configuration defaults
-echo -e "\n"
-read -s -n1 -p "# Press [RETURN] or [SPACE] to accept the configuration options or any other key run the configurator: " KEY
-if [ ${#KEY} -eq "0" ]; then
-    echo -e "\n\n# Using default configuration options."
-else
-    echo -e "\n\n# Running Kojak menu options configurator."
-    menu
+
+if [ -f "kojak.cfg" ]; then
+	    echo -e "\n"
+        read -s -n1 -p "# Press [RETURN] or [SPACE] to accept the previous saved configuration...Press any other key to continue: " KEY
+        if [ ${#KEY} -eq "0" ]; then
+            echo -e "\n\n# Using saved configuration options."
+            source kojak.cfg
+        else
+            echo -e "\n"
+            read -s -n1 -p "# Press [RETURN] or [SPACE] to accept the default options...Press any other key run the configurator: " KEY
+            if [ ${#KEY} -eq "0" ]; then
+                echo -e "\n\n# Using default configuration options."
+            else
+                echo -e "\n\n# Running Kojak menu options configurator."
+                menu
+            fi
+        fi
 fi
 
 mkdir -p $CFGDIR $ISODIR 
