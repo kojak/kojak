@@ -25,6 +25,11 @@
 while true
 do
 
+if [ "$USER" != "root" ]; then
+    echo "This script requires root priviledges to run"
+    exit
+fi
+
 ## Declare environment varibles
 # Distro information
 VMNAME=${VMNAME:="Fedora-18-x86_64-DVD"}
