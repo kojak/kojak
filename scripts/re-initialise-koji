@@ -21,8 +21,6 @@ postgresql-setup initdb
 systemctl start postgresql.service
 su -l postgres -c "createuser koji; createdb -O koji koji"
 
-read
-
 # Start the database
 postgresql-setup initdb
 systemctl enable postgresql.service
@@ -92,11 +90,11 @@ koji add-group-pkg fedora-18-addons-build maven-build bash coreutils java-1.7.0-
 koji add-group fedora-18-addons-build livecd-build
 koji add-group-pkg fedora-18-addons-build livecd-build bash bzip2 coreutils cpio diffutils fedora-logos fedora-release findutils gawk gcc gcc-c++ grep gzip info livecd-tools make patch policycoreutils python-dbus redhat-rpm-config rpm-build sed selinux-policy-targeted shadow-utils squashfs-tools tar unzip util-linux which yum
 
-# Ramp up capacity
-koji edit-host --capacity 10.0 kojibuilder1.localdomain
-
 # Add required build packages
 koji add-pkg --owner=kojiadmin fedora-18-addons bash binutils
+
+# Ramp up capacity
+koji edit-host --capacity 10.0 kojibuilder1.localdomain
 "
 
 # Restart Koji services
@@ -107,8 +105,6 @@ systemctl restart kojira.service
 # Grant permissions
 su -l koji -c "koji grant-permission repo kojira"
 su -l koji -c "koji grant-permission build kojibuilder1.localdomain"
-
-read
 
 # Maven installation
 cd /tmp
