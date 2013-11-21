@@ -155,21 +155,29 @@ cp kojak_ks.cfg $CFGDIR/
 
 cd ${VMHOME}
 
-echo -e "# Removing any pre-existing vm with the same name"
+echo -e "# Removing any pre-existing Kojak vm"
 virsh destroy ${VMNAME}
 virsh undefine ${VMNAME}
 
-echo -e "# Removing any pre-existing vm image with the same name"
+echo -e "# Removing any pre-existing Kojak image"
 rm ${VMHOME}/${VMNAME}.img
 
 echo -e "# Restarting virtualization services"
 service libvirtd restart
 
-echo -e "# Allocating the diskspace for the vm"
+timer=5
+until [ "$timer" = 0 ]; do
+clear
+echo "$timer"
+timer=`expr $timer - 1`
+sleep 1
+done
+
+echo -e "# Allocating the diskspace"
 fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
 chown qemu:qemu ${VMHOME}/${VMNAME}.img
 
-echo -e "# Creating the vm with the following options"
+echo -e "# Starting Kojak"
 virt-install \
 -n ${VMNAME} \
 -r ${VMMEM} \
