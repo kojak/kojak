@@ -31,7 +31,8 @@ resolve_deps() {
     until [ "$COUNT" -eq 0 ]; do
         for dep in $DEPS; do
             if [ "$RES" == "$dep" ]; then
-                echo "Dependency already resolved"
+                echo "Dependency already imported"
+                exit
             else
                 # Some house keeping.
                 if [ -d "$TMP" ]; then
