@@ -26,7 +26,7 @@ Installation Prerequisites
 ---------------------------
 
 This installation comprises of a virtual appliance server which is used to build and deploy the virtual appliance.
-Kojak has been successfully installed and tested on Fedora 18. 
+Kojak has been successfully installed and tested on Fedora 19. 
 
 See http://fedoraproject.org/wiki/Getting_started_with_virtualization for more information
 
@@ -43,7 +43,7 @@ The virtual appliance is configured with the following default specifications:
 
 The Virtual Appilance Server should be configured with the following minimum specifications:
 
-1. Fedora 18 with virtualization package group
+1. Fedora 19 with virtualization package group
 2. 8GB RAM
 3. 120 GB Disk Space 
 
