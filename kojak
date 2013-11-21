@@ -29,14 +29,14 @@ fi
 
 ## Declare environment varibles
 # Distro information
-VMNAME=${VMNAME:="Fedora-18-x86_64-DVD"}
+VMNAME=${VMNAME:="Fedora-19-x86_64-DVD"}
 VMHOME=${VMHOME:="/var/lib/libvirt/images"}
 TMPDIR=${TMPDIR:="/home/kojak"}
-DIST=${DIST:="RedHat/Fedora/18/0/x86_64"}
+DIST=${DIST:="RedHat/Fedora/19/0/x86_64"}
 
 # Sources and configuration
-KSISO=${KSISO:="Fedora-18-x86_64-DVD.iso"}
-KSCFG=${KSCFG:="Fedora-18-x86_64.cfg"}
+KSISO=${KSISO:="Fedora-19-x86_64-DVD.iso"}
+KSCFG=${KSCFG:="Fedora-19-x86_64.cfg"}
 
 # Working directories
 CFGDIR="${TMPDIR}/cfg/${DIST}"
@@ -142,12 +142,12 @@ fi
 mkdir -p $CFGDIR $ISODIR 
 
 
-if [ -f "$ISODIR/Fedora-18-x86_64-DVD.iso" ]; then
+if [ -f "$ISODIR/Fedora-19-x86_64-DVD.iso" ]; then
     echo "# DVD ISO Found"
 else
     echo "# Downloading DVD ISO"
     cd $ISODIR
-    wget http://download.fedoraproject.org/pub/fedora/linux/releases/18/Fedora/x86_64/iso/Fedora-18-x86_64-DVD.iso
+    wget http://download.fedoraproject.org/pub/fedora/linux/releases/19/Fedora/x86_64/iso/Fedora-19-x86_64-DVD.iso
     cd -
 fi
 
@@ -175,7 +175,7 @@ virt-install \
 -r ${VMMEM} \
 --vcpus=2 \
 --os-type=linux \
---os-variant=fedora18 \
+--os-variant=fedora19 \
 --accelerate \
 --mac=00:00:00:00:00:00 \
 --disk=${VMHOME}/${VMNAME}.img \
