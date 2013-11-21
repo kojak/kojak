@@ -169,13 +169,6 @@ echo -e "# Allocating the diskspace\n"
 fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
 chown qemu:qemu ${VMHOME}/${VMNAME}.img
 
-timer=3
-until [ "$timer" = 0 ]; do
-echo "$timer"
-timer=`expr $timer - 1`
-sleep 1
-done
-
 echo -e "# Starting Kojak"
 virt-install \
 -n ${VMNAME} \
