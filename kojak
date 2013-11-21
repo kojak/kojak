@@ -95,7 +95,7 @@ menu() {
 
 
     echo -e "\n##   Please check the configuration options and accept if they are correct   ##\n"
-    echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDIST=$DIST\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nISODIR=$ISODIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > kojak.cfg
+    echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDIST=$DIST\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nISODIR=$ISODIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > $CFGDIR/kojak.cfg
     echo -e "# Saved configuration to kojak.cfg"
  
     echo -e "\n"
@@ -112,7 +112,7 @@ menu() {
 
 # Prompt user for configuration defaults
 
-if [ -f "kojak.cfg" ]; then
+if [ -f "$CFGDIR/kojak.cfg" ]; then
     echo -e "\n"
     read -s -n1 -p "# Press [RETURN] or [SPACE] to accept the previous saved configuration...Press any other key to continue: " KEY
         if [ ${#KEY} -eq "0" ]; then
