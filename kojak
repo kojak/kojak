@@ -162,6 +162,9 @@ virsh undefine ${VMNAME}
 echo -e "# Removing any pre-existing vm image with the same name"
 rm ${VMHOME}/${VMNAME}.img
 
+echo -e "# Restarting virtualization services"
+service libvirtd restart
+
 echo -e "# Allocating the diskspace for the vm"
 fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
 chown qemu:qemu ${VMHOME}/${VMNAME}.img
