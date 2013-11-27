@@ -66,46 +66,46 @@ check_task() {
 		TYPE="`koji taskinfo $TASK | grep  "Type:" | awk '{ print $NF }'`"
 		STATE="`koji taskinfo $TASK | grep  "State:" | awk '{ print $NF }'`"
 		STATUS="$TYPE $STATE"
-			case  $STATUS  in  
-				"buildMaven failed")    
-					echo "Status : $STATUS"
-					resolve_deps
-					build_src
-					;;
-				"buildMaven canceled")
-					echo "Status : $STATUS"
-					build_src
-					;;    
-				 "buildMaven open")
-					echo "Status : $STATUS"
-					wait
-					;;
-                 "buildMaven free")
+            case  $STATUS  in  
+                "buildMaven failed")    
+                    echo "Status : $STATUS"
+                    resolve_deps
+                    build_src
+                    ;;
+                "buildMaven canceled")
+                    echo "Status: $STATUS"
+                    build_src
+                    ;;    
+                "buildMaven open")
                     echo "Status: $STATUS"
                     wait
                     ;;
-				 "createrepo open")
-					echo "Status : $STATUS"
-					wait
-					;;
-				 "createrepo closed")
-					echo "Status: $STATUS"
-					build_src
-					;;
-				 "tagBuild open")
-					echo "Status: $STATUS"
-					wait
-					;;
-				 "tagBuild closed")
-					echo "Status: $STATUS"
-					build_src
-					;;
-					# We can use this case to identify new cases.
-				*)  echo "unknown status: $STATUS"             
-					exit
-					;;
-			  esac 
-		done
+                "buildMaven free")
+                    echo "Status: $STATUS"
+                    wait
+                    ;;
+                "createrepo open")
+                    echo "Status: $STATUS"
+                    wait
+                    ;;
+                "createrepo closed")
+                    echo "Status: $STATUS"
+                    build_src
+                    ;;
+                "tagBuild open")
+                    echo "Status: $STATUS"
+                    wait
+                    ;;
+                "tagBuild closed")
+                    echo "Status: $STATUS"
+                    build_src
+                    ;;
+# We can use this case to identify new cases.
+                *)  echo "unknown status: $STATUS"             
+                    exit
+                    ;;
+            esac 
+        done
 }
 
 check_task
