@@ -13,7 +13,7 @@ fi
 SRC="$1"
 
 build_src() {
-    koji maven-build -Dmaven.test.skip=true --scratch fedora-19-addons $SRC
+    koji maven-build -Dmaven.test.skip=true fedora-19-addons $SRC
 }
 
 resolve_deps() {
