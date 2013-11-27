@@ -92,6 +92,10 @@ check_task() {
 					echo "Status: $STATUS"
 					build_src
 					;;
+				 "tagBuild open")
+					echo "Status: $STATUS"
+					wait
+					;;
 				 "tagBuild closed")
 					echo "Status: $STATUS"
 					build_src
