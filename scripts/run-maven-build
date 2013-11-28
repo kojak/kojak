@@ -32,7 +32,7 @@ resolve_deps() {
         for dep in $DEPS; do
             if [ "$RES" == "$dep" ]; then
                 echo "Dependency already imported"
-                exit
+                break
             else
                 # Some house keeping.
                 if [ -d "$TMP" ]; then
