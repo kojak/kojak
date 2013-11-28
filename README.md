@@ -10,7 +10,7 @@ automated "out of the box" solution, which may be used for development and educa
 Kojak's tool chain allows developers to build, test, deploy, verfiy and replicate product builds and their associated
 repositories.
 
-See the links below for a details about the tools shipped with Kojak
+See the links below for the tools that are planned to be shipped with Kojak:
 
 1. aprox - http://github.com/jdcasey/aprox
 2. atlas - http://github.com/jdcasey/atlas
