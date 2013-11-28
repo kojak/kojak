@@ -45,7 +45,6 @@ resolve_deps() {
                 # Executes the modified version of these utility scripts specific to Kojak.
                 $WORKSPACE/get-maven-artifacts $REPOS $dep
                 $WORKSPACE/import-maven *
-                koji wait-repo --build $dep --target fedora-19-addons
                 cd $WORKSPACE
                 rm -rf $TMP
                 RES=$dep
