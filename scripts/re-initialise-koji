@@ -10,6 +10,9 @@ fi
 
 psql -U koji -f kojak_db
 
+service kojid stop
+service kojira stop
+
 # Create koji build directories
 rm -rf /mnt/koji
 mkdir /mnt/koji
@@ -21,8 +24,7 @@ cd -
 > /var/log/kojid.log
 > /var/log/kojira.log
 
-service kojid stop
-service kojira stop
 service postgresql restart
 service kojid start
 service kojira start
+
