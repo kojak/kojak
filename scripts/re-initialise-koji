@@ -9,3 +9,20 @@ if [ "$USER" != "root" ]; then
 fi
 
 psql -U koji -f kojak_db
+
+# Create koji build directories
+rm -rf /mnt/koji
+mkdir /mnt/koji
+cd /mnt/koji
+mkdir {packages,repos,work,scratch}
+chown apache.apache *
+cd -
+
+> /var/log/kojid.log
+> /var/log/kojira.log
+
+service kojid stop
+service kojira stop
+service postgresql restart
+service kojid stop
+service kojira start
