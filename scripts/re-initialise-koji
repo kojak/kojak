@@ -8,8 +8,6 @@ if [ "$USER" != "root" ]; then
     exit
 fi
 
-psql -U koji -f kojak_db
-
 service kojid stop
 service kojira stop
 
@@ -24,7 +22,8 @@ cd -
 > /var/log/kojid.log
 > /var/log/kojira.log
 
+psql -U koji -f kojak_db
+
 service postgresql restart
 service kojid start
 service kojira start
-
