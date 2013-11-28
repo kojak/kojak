@@ -53,44 +53,44 @@ menu() {
     clear
     echo -e "\n################################################################################"
     echo -e "#                                                                              #"
-    echo -e "#               !!! Welcom to the Kojak configuration menu !!!                 #"
+    echo -e "#               !!! Welcome to the Kojak configuration menu !!!                #"
     echo -e "#                                                                              #"
     echo -e "#           *** Press return to accept the default menu options ***            #\n"
 
     # Virtual machine name
-    read -e -i "$VMNAME" -p "# VMNAME = $VMNAME : " VMNAME
+    read -e -i "$VMNAME" -p ">> VMNAME = $VMNAME : " VMNAME
     VMNAME="${VMNAME:=$VMNAME}"
 
     # Images directory
-    read -e -i "$VMHOME" -p "# VMHOME = $VMHOME : " VMHOME
+    read -e -i "$VMHOME" -p ">> VMHOME = $VMHOME : " VMHOME
     VMHOME="${VMHOME:=$VMHOME}"
 
     # Temp directory
-    read -e -i "$TMPDIR" -p "# TMPDIR = $TMPDIR : " TMPDIR
+    read -e -i "$TMPDIR" -p ">> TMPDIR = $TMPDIR : " TMPDIR
     TMPDIR="${TMPDIR:=$TMPDIR}"
 
     # Distribution directory
-    read -e -i "$DIST" -p "# DIST = $DIST: " DIST
+    read -e -i "$DIST" -p ">> DIST = $DIST: " DIST
     DIST="${DIST:=$DIST}"
 
     # Kickstart iso file
-    read -e -i "$KSISO" -p "# KSISO = $KSISO: " KSISO
+    read -e -i "$KSISO" -p ">> KSISO = $KSISO: " KSISO
     KSISO="${KSISO:=$KSISO}"
 
     # Kickstart configuration
-    read -e -i "$KSCFG" -p "# KSCFG = $KSCFG: " KSCFG
+    read -e -i "$KSCFG" -p ">> KSCFG = $KSCFG: " KSCFG
     KSCFG="${KSCFG:=$KSCFG}"
 
     # Kojak diirectories
-    read -e -i "$CFGDIR" -p "# CFGDIR = $CFGDIR: " CFGDIR
+    read -e -i "$CFGDIR" -p ">> CFGDIR = $CFGDIR: " CFGDIR
     CFGDIR="${TMPDIR}/cfg/${DIST}"
-    read -e -i "$ISODIR" -p "# ISODIR = $ISODIR: " ISODIR
+    read -e -i "$ISODIR" -p ">> ISODIR = $ISODIR: " ISODIR
     ISODIR="${TMPDIR}/iso/${DIST}"
 
     # Virtual machine specifications
-    read -e -i "$VMDISK" -p "# VMDISK = $VMDISK: " VMDISK
+    read -e -i "$VMDISK" -p ">> VMDISK = $VMDISK: " VMDISK
     VMDISK="32768M"
-    read -e -i "$VMMEM" -p "# VMMEM = $VMMEM: " VMMEM
+    read -e -i "$VMMEM" -p ">> VMMEM = $VMMEM: " VMMEM
     VMMEM="4096"
 
 
@@ -98,8 +98,7 @@ menu() {
     echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDIST=$DIST\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nISODIR=$ISODIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > $CFGDIR/kojak.cfg
     echo -e "# Saved configuration to kojak.cfg"
  
-    echo -e "\n"
-    read -s -n1 -p "Press [RETURN] or [SPACE] to accept the configuration options or any other key to exit: " KEY
+    read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the configuration options: `echo $'\n>> '`Press [CTRL-C] to exit:" KEY
         if [ ${#KEY} -eq "0" ]; then
             echo -e "\n\nUsing supplied configuration options."
             break
@@ -113,24 +112,24 @@ menu() {
 # Prompt user for configuration defaults
 
 if [ -f "$CFGDIR/kojak.cfg" ]; then
-    echo -e "\n"
-    read -s -n1 -p "# Press [RETURN] or [SPACE] to accept the previous saved configuration...Press any other key to continue: " KEY
+    clear
+    read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the previous saved configuration: `echo $'\n>> '`Press any other key to continue: `echo $'\n>> '`Press [CTRL-C] to exit:" KEY
         if [ ${#KEY} -eq "0" ]; then
             echo -e "\n\n# Using saved configuration options."
             source kojak.cfg
 	    else
-    	    echo -e "\n"
-    	    read -s -n1 -p "# Press [RETURN] or [SPACE] to accept the default options...Press any other key run the configurator: " KEY
-	    	    if [ ${#KEY} -eq "0" ]; then
-	                echo -e "\n\n# Using default configuration options."
-                else
-	                echo -e "\n\n# Running Kojak menu options configurator."
-	            menu
-                fi
+            clear
+            read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the default options: `echo $'\n>> '`Press any other key run the configurator: `echo $'\n>> '`Press [CTRL-C] to exit:" KEY
+            if [ ${#KEY} -eq "0" ]; then
+                echo -e "\n\n# Using default configuration options."
+            else
+                echo -e "\n\n# Running Kojak menu options configurator."
+            menu
+            fi
         fi
 else
-    echo -e "\n"
-    read -s -n1 -p "# Press [RETURN] or [SPACE] to accept the default options...Press any other key run the configurator: " KEY
+    clear
+    read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the default options: `echo $'\n>> '`Press any other key run the configurator: `echo $'\n>> '`Press [CTRL-C] to exit: " KEY
         if [ ${#KEY} -eq "0" ]; then
             echo -e "\n\n# Using default configuration options."
         else
