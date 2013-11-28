@@ -24,5 +24,5 @@ cd -
 service kojid stop
 service kojira stop
 service postgresql restart
-service kojid stop
+service kojid start
 service kojira start
