@@ -51,7 +51,7 @@ Installation Instructions
 ------------------------
 
 1.  Checkout the contents of the Kojak git repository to a suitable directory on the Virtual Appliance Server.
-2.  As root execute install.sh script.  You will be prompted to supply various configuration options or you may choose
+2.  As root execute kojak script.  You will be prompted to supply various configuration options or you may choose
 to accept the system default options by simply pressing return.  You will then be prompted to check the options.
 3.  Once the installation is complete you should confirm the state of all the tasks are closed.  From the command line,
 as the koji user, execute the following:  
@@ -67,10 +67,10 @@ as the koji user, execute the following:
 Configuration Notes
 -------------------
 
-The Kojak virtual appliance is configured with a set of default options.  These can be easily modified by editing the 
-variables in install.sh.  Installation directories, iso location and virtual machine resources allocations
-(Mem, CPU and Storage etc) can all be reconfigured as required.  The appliance is configured with with a static ipaddress 
-taken from the pool of ip addresses from the "default" network that is configured with libvirt.
+The Kojak virtual appliance is configured with a set of default options.  Executing the kojak script will allow you to 
+modify and save these variables as required.  Installation directories, iso location and virtual machine resources
+allocations (Mem, CPU and Storage etc) can all be reconfigured as required.  The appliance is configured with with a static 
+address taken from the pool of ip addresses from the "default" network that is configured with libvirt.
 
 You can access the appliance via ssh at 192.168.122.2 using the following credentials:
 
