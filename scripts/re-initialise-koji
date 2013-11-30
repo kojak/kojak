@@ -11,16 +11,18 @@ fi
 service kojid stop
 service kojira stop
 
+> /var/log/kojid.log
+> /var/log/kojira.log
+
 # Create koji build directories
+cp -a /mnt/koji/repos/fedora-19-addons-build/1/x86_64 /tmp
 rm -rf /mnt/koji
 mkdir /mnt/koji
 cd /mnt/koji
 mkdir {packages,repos,work,scratch}
+mv /tmp/mnt/koji/repos/fedora-19-addons-build/1/x86_64 /mnt/koji/repos/fedora-19-addons-build/1/x86_64
 chown apache.apache *
 cd -
-
-> /var/log/kojid.log
-> /var/log/kojira.log
 
 psql -U koji -f kojak_db
 
@@ -36,4 +38,3 @@ service postgresql restart
 service kojid start
 service kojira start
 
-koji make-task --channel=createrepo --priority=15 newRepo fedora-19-addons-build
