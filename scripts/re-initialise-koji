@@ -36,3 +36,4 @@ service postgresql restart
 service kojid start
 service kojira start
 
+koji make-task --channel=createrepo --priority=15 newRepo fedora-19-addons-build
