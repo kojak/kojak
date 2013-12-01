@@ -116,7 +116,7 @@ if [ -f "$CFGDIR/kojak.cfg" ]; then
     read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the previous saved configuration: `echo $'\n>> '`Press any other key to continue: `echo $'\n>> '`Press [CTRL-C] to exit:" KEY
         if [ ${#KEY} -eq "0" ]; then
             echo -e "\n\n# Using saved configuration options."
-            source kojak.cfg
+            source $CFGDIR/kojak.cfg
 	    else
             clear
             read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the default options: `echo $'\n>> '`Press any other key run the configurator: `echo $'\n>> '`Press [CTRL-C] to exit:" KEY
@@ -150,7 +150,7 @@ else
     cd -
 fi
 
-cp kojak_ks.cfg $CFGDIR/
+cp kojak-ks.cfg $CFGDIR/
 
 cd ${VMHOME}
 
@@ -180,7 +180,7 @@ virt-install \
 --disk=${VMHOME}/${VMNAME}.img \
 --disk=${ISODIR}/${KSISO},device=cdrom \
 --location ${ISODIR}/${KSISO} \
---initrd-inject=${CFGDIR}/kojak_ks.cfg \
---extra-args="ks=file:kojak_ks.cfg console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
+--initrd-inject=${CFGDIR}/kojak-ks.cfg \
+--extra-args="ks=file:kojak-ks.cfg console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
 --nographics
 

@@ -27,13 +27,26 @@ cd -
 
 psql -U koji -f kojak_db
 
-wget http://download.devel.redhat.com/brewroot/packages/org.apache.maven-maven/3.0.3/5/src/maven3-3.0.3-5.src.rpm
-wget http://download.devel.redhat.com/brewroot/packages/org.apache.maven-maven/3.0.3/5/noarch/maven3-3.0.3-5.noarch.rpm
-mkdir -p /mnt/koji/packages/maven3/3.0.3/5/src
-mkdir -p /mnt/koji/packages/maven3/3.0.3/5/noarch
-cp maven3-3.0.3-5.src.rpm /mnt/koji/packages/maven3/3.0.3/5/src
-cp maven3-3.0.3-5.noarch.rpm /mnt/koji/packages/maven3/3.0.3/5/noarch
-rm -rf maven3-3.0.3-5.src.rpm maven3-3.0.3-5.noarch.rpm
+# Fedora network
+
+wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/x86_64/os/Packages/m/maven-3.0.5-3.fc19.src.rpm
+wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/source/SRPMS/m/maven-3.0.5-3.fc19.noarch.rpm
+mkdir -p /mnt/koji/packages/maven3/3.0.3/5/fc19/src/
+mkdir -p /mnt/koji/packages/maven3/3.0.3/5/fc19/noarch/
+cp maven-3.0.5-3.fc19.src.rpm /mnt/koji/packages/maven3/3.0.3/5/fc19/src/
+cp maven-3.0.5-3.fc19.noarch.rpm /mnt/koji/packages/maven3/3.0.3/5/fc19/noarch/
+rm -rf maven-3.0.5-3.fc19.src.rpm maven-3.0.5-3.fc19.noarch.rpm
+
+# Red Hat network
+
+#wget http://download.devel.redhat.com/brewroot/packages/org.apache.maven-maven/3.0.3/5/src/maven3-3.0.3-5.src.rpm
+#wget http://download.devel.redhat.com/brewroot/packages/org.apache.maven-maven/3.0.3/5/noarch/maven3-3.0.3-5.noarch.rpm
+#mkdir -p /mnt/koji/packages/maven3/3.0.3/5/src
+#mkdir -p /mnt/koji/packages/maven3/3.0.3/5/noarch
+#cp maven3-3.0.3-5.src.rpm /mnt/koji/packages/maven3/3.0.3/5/src
+#cp maven3-3.0.3-5.noarch.rpm /mnt/koji/packages/maven3/3.0.3/5/noarch
+#rm -rf maven3-3.0.3-5.src.rpm maven3-3.0.3-5.noarch.rpm
+
 
 service postgresql restart
 service kojid start
