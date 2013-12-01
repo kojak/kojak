@@ -83,6 +83,15 @@ check_task() {
                     echo "Status: $STATUS"
                     wait
                     ;;
+                "buildMaven closed")
+                    read -s -n1 -p "`echo Status: $STATUS $'\n>> '`Press [RETURN] or [SPACE] to resubmit the task: `echo $'\n>> '`Press [CTRL-C] to exit:" KEY
+                    if [ ${#KEY} -eq "0" ]; then
+                        build_src
+                    else
+                        echo -e "\n\nExiting build."
+                        exit
+                    fi
+                    ;;
                 "createrepo open")
                     echo "Status: $STATUS"
                     wait
