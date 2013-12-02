@@ -17,7 +17,7 @@ build_src() {
 }
 
 resolve_deps() {
-	WORKSPACE="$HOME/workspace/scripts"
+	WORKSPACE="$HOME/workspace/kojak/scripts"
 	TMP="$WORKSPACE/tmp"
 	LOG="/mnt/koji/work/tasks/$TASK/$TASK/root.log"
 	ERRORS=('Failed to execute goal' 'Non-resolvable parent POM' 'Non-resolvable import POM');
