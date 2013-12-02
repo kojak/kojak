@@ -85,7 +85,7 @@ check_task() {
                     ;;
                 "buildMaven closed")
                     PROC=`koji list-tasks --quiet | tail -n1 | grep "+"`
-                    if [ -z $PROC ]; then
+                    if [ -n "$PROC" ]; then
                         build_src
                     else
                         exit
@@ -105,7 +105,7 @@ check_task() {
                     ;;
                 "tagBuild closed")
                     PROC=`koji list-tasks --quiet | tail -n1 | grep "+"`
-                    if [ -z $PROC ]; then
+                    if [ -z "$PROC" ]; then
                         build_src
                     else
                         exit
