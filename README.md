@@ -86,4 +86,4 @@ The Maven tool chain is located in the koji users workspace directory along with
 Known Issues
 ------------
 
-Access to http://download.devel.redhat.com/ is required for the current version of Maven that is used.
+See http://github.com/sbadakhc/kojak/issues?state=open
