@@ -46,16 +46,19 @@ ISODIR="${TMPDIR}/iso/${DIST}"
 VMDISK="32768M"
 VMMEM="4096"
 
+screen() {
+    clear
+    echo -e "\n################################################################################"
+    echo -e "#                                                                              #"
+    echo -e "#                   !!! Welcome to Kojak...Koji in a box !!!                   #"
+    echo -e "#                                                                              #\n"
+}
+
 menu() {
     while true
     do
     # Execute menu configuration options
-    clear
-    echo -e "\n################################################################################"
-    echo -e "#                                                                              #"
-    echo -e "#               !!! Welcome to the Kojak configuration menu !!!                #"
-    echo -e "#                                                                              #"
-    echo -e "#           *** Press return to accept the default menu options ***            #\n"
+    screen
 
     # Virtual machine name
     read -e -i "$VMNAME" -p ">> VMNAME = $VMNAME : " VMNAME
@@ -112,13 +115,13 @@ menu() {
 # Prompt user for configuration defaults
 
 if [ -f "$CFGDIR/kojak.cfg" ]; then
-    clear
+    screen
     read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the previous saved configuration: `echo $'\n>> '`Press any other key to continue: `echo $'\n>> '`Press [CTRL-C] to exit:" KEY
         if [ ${#KEY} -eq "0" ]; then
             echo -e "\n\n# Using saved configuration options."
             source $CFGDIR/kojak.cfg
 	    else
-            clear
+            screen
             read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the default options: `echo $'\n>> '`Press any other key run the configurator: `echo $'\n>> '`Press [CTRL-C] to exit:" KEY
             if [ ${#KEY} -eq "0" ]; then
                 echo -e "\n\n# Using default configuration options."
@@ -128,7 +131,7 @@ if [ -f "$CFGDIR/kojak.cfg" ]; then
             fi
         fi
 else
-    clear
+    screen
     read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the default options: `echo $'\n>> '`Press any other key run the configurator: `echo $'\n>> '`Press [CTRL-C] to exit: " KEY
         if [ ${#KEY} -eq "0" ]; then
             echo -e "\n\n# Using default configuration options."

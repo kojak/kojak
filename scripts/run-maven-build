@@ -86,9 +86,9 @@ check_task() {
                 "buildMaven closed")
                     PROC=`koji list-tasks --quiet | tail -n1 | grep "+"`
                     if [ -n "$PROC" ]; then
-                        build_src
-                    else
                         exit
+                    else
+                        build_src
                     fi
                     ;;
                 "createrepo open")
@@ -106,9 +106,9 @@ check_task() {
                 "tagBuild closed")
                     PROC=`koji list-tasks --quiet | tail -n1 | grep "+"`
                     if [ -z "$PROC" ]; then
-                        build_src
-                    else
                         exit
+                    else
+                        build_src
                     fi
                     ;;
 # We can use this case to identify new cases.
