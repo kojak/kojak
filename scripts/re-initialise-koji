@@ -29,8 +29,8 @@ psql -U koji -f kojak_db
 
 # Fedora network
 
-wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/x86_64/os/Packages/m/maven-3.0.5-3.fc19.src.rpm
-wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/source/SRPMS/m/maven-3.0.5-3.fc19.noarch.rpm
+wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/x86_64/os/Packages/m/maven-3.0.5-3.fc19.noarch.rpm
+wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/source/SRPMS/m/maven-3.0.5-3.fc19.src.rpm
 mkdir -p /mnt/koji/packages/maven3/3.0.3/5/fc19/src/
 mkdir -p /mnt/koji/packages/maven3/3.0.3/5/fc19/noarch/
 cp maven-3.0.5-3.fc19.src.rpm /mnt/koji/packages/maven3/3.0.3/5/fc19/src/
