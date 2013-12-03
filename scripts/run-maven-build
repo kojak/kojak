@@ -84,7 +84,7 @@ check_task() {
                     wait
                     ;;
                 "buildMaven closed")
-                    PROC=`koji list-tasks --quiet | tail -n1 | grep "+"`
+                    PROC=`koji list-tasks --quiet | tail -n2 | grep "FAILED"`
                     if [ -n "$PROC" ]; then
                         exit
                     else
@@ -104,7 +104,7 @@ check_task() {
                     wait
                     ;;
                 "tagBuild closed")
-                    PROC=`koji list-tasks --quiet | tail -n1 | grep "+"`
+                    PROC=`koji list-tasks --quiet | tail -n2 | grep "FAILED"`
                     if [ -z "$PROC" ]; then
                         exit
                     else
