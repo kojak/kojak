@@ -1,0 +1,53 @@
+#!/bin/bash
+
+set -x
+
+# Check to see if user is root
+if [ "$USER" != "root" ]; then
+    echo -e "\n# This script requires root priviledges to run"
+    exit
+fi
+
+service kojid stop
+service kojira stop
+
+> /var/log/kojid.log
+> /var/log/kojira.log
+
+# Create koji build directories
+rm -rf /mnt/koji
+mkdir /mnt/koji
+cd /mnt/koji
+mkdir {packages,repos,work,scratch}
+mkdir -p /mnt/koji/repos/fedora-19-addons-build/1/
+cp -r ~/workspace/kojak/scripts/repo/* /mnt/koji/repos/fedora-19-addons-build/1/
+chown -R apache.apache *
+cd -
+
+psql -U koji -f kojak_db
+
+# Fedora network
+
+wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/x86_64/os/Packages/m/maven-3.0.5-3.fc19.noarch.rpm
+wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/source/SRPMS/m/maven-3.0.5-3.fc19.src.rpm
+mkdir -p /mnt/koji/packages/maven3/3.0.3/5/fc19/src/
+mkdir -p /mnt/koji/packages/maven3/3.0.3/5/fc19/noarch/
+cp maven-3.0.5-3.fc19.src.rpm /mnt/koji/packages/maven3/3.0.3/5/fc19/src/
+cp maven-3.0.5-3.fc19.noarch.rpm /mnt/koji/packages/maven3/3.0.3/5/fc19/noarch/
+rm -rf maven-3.0.5-3.fc19.src.rpm maven-3.0.5-3.fc19.noarch.rpm
+
+# Red Hat network
+
+#wget http://download.devel.redhat.com/brewroot/packages/org.apache.maven-maven/3.0.3/5/src/maven3-3.0.3-5.src.rpm
+#wget http://download.devel.redhat.com/brewroot/packages/org.apache.maven-maven/3.0.3/5/noarch/maven3-3.0.3-5.noarch.rpm
+#mkdir -p /mnt/koji/packages/maven3/3.0.3/5/src
+#mkdir -p /mnt/koji/packages/maven3/3.0.3/5/noarch
+#cp maven3-3.0.3-5.src.rpm /mnt/koji/packages/maven3/3.0.3/5/src
+#cp maven3-3.0.3-5.noarch.rpm /mnt/koji/packages/maven3/3.0.3/5/noarch
+#rm -rf maven3-3.0.3-5.src.rpm maven3-3.0.3-5.noarch.rpm
+
+
+service postgresql restart
+service kojid start
+service kojira start
+
