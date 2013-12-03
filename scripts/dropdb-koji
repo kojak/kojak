@@ -14,19 +14,20 @@ service kojira stop
 > /var/log/kojid.log
 > /var/log/kojira.log
 
+# Fedora network
+
 # Create koji build directories
+cp -a /mnt/koji/repos/fedora-19-addons-build/1/x86_64 /tmp
 rm -rf /mnt/koji
 mkdir /mnt/koji
 cd /mnt/koji
 mkdir {packages,repos,work,scratch}
 mkdir -p /mnt/koji/repos/fedora-19-addons-build/1/
-cp -r ~/workspace/kojak/scripts/repo/* /mnt/koji/repos/fedora-19-addons-build/1/
+mv /tmp/x86_64 /mnt/koji/repos/fedora-19-addons-build/1/
 chown -R apache.apache *
 cd -
 
 psql -U koji -f kojak_db
-
-# Fedora network
 
 wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/x86_64/os/Packages/m/maven-3.0.5-3.fc19.noarch.rpm
 wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/source/SRPMS/m/maven-3.0.5-3.fc19.src.rpm
@@ -37,6 +38,18 @@ cp maven-3.0.5-3.fc19.noarch.rpm /mnt/koji/packages/maven3/3.0.3/5/fc19/noarch/
 rm -rf maven-3.0.5-3.fc19.src.rpm maven-3.0.5-3.fc19.noarch.rpm
 
 # Red Hat network
+
+# Create koji build directories
+#rm -rf /mnt/koji
+#mkdir /mnt/koji
+#cd /mnt/koji
+#mkdir {packages,repos,work,scratch}
+#mkdir -p /mnt/koji/repos/fedora-19-addons-build/1/
+#cp -r ~/workspace/kojak/scripts/repo/* /mnt/koji/repos/fedora-19-addons-build/1/
+#chown -R apache.apache *
+#cd -
+
+#psql -U koji -f kojak_db
 
 #wget http://download.devel.redhat.com/brewroot/packages/org.apache.maven-maven/3.0.3/5/src/maven3-3.0.3-5.src.rpm
 #wget http://download.devel.redhat.com/brewroot/packages/org.apache.maven-maven/3.0.3/5/noarch/maven3-3.0.3-5.noarch.rpm
