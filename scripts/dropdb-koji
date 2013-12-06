@@ -139,8 +139,8 @@ su -l koji -c "koji grant-permission build kojibuilder1.localdomain"
 
 # Koji maven packages
 cd /tmp
-wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/x86_64/os/Packages/m/maven-3.0.5-3.fc19.noarch.rpm
 wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/source/SRPMS/m/maven-3.0.5-3.fc19.src.rpm
+wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/x86_64/os/Packages/m/maven-3.0.5-3.fc19.noarch.rpm
 su -l koji -c "koji import --create-build /tmp/maven-3.0.5-3.fc19.src.rpm /tmp/maven-3.0.5-3.fc19.noarch.rpm"
 su -l koji -c "koji add-pkg --owner=kojiadmin fedora-19-addons-build maven3"
 su -l koji -c "koji tag-pkg fedora-19-addons-build maven-3.0.5-3.fc19"
