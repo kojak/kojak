@@ -8,7 +8,7 @@ import koji
 import optparse
 
 
-KOJI_HUB = 'http://192.168.122.2/kojihub'
+KOJI_HUB = 'http://10.34.25.158/kojihub'
 
 MAVEN_BASE = 'http://repo1.maven.org/maven2'
 JBOSS_BASE = 'http://repository.jboss.org/nexus/content/groups/public-jboss'

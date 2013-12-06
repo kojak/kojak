@@ -1,5 +1,8 @@
 #!/bin/bash
+#
+# Simple script to re-initialise the koji database
 
+# Debugging
 set -x
 
 # Check to see if user is root
@@ -8,57 +11,147 @@ if [ "$USER" != "root" ]; then
     exit
 fi
 
+# Clear the koji directories
 service kojid stop
 service kojira stop
-
-> /var/log/kojid.log
-> /var/log/kojira.log
-
-# Fedora network
-
-# Create koji build directories
-cp -a /mnt/koji/repos/fedora-19-addons-build/1/x86_64 /tmp
 rm -rf /mnt/koji
 mkdir /mnt/koji
 cd /mnt/koji
 mkdir {packages,repos,work,scratch}
-mkdir -p /mnt/koji/repos/fedora-19-addons-build/1/
-mv /tmp/x86_64 /mnt/koji/repos/fedora-19-addons-build/1/
 chown -R apache.apache *
-cd -
+> /var/log/kojid.log
+> /var/log/kojira.log
 
-psql -U koji -f kojak_db
+# Re-install database
+yum -y remove postgresql-server
+rm -rf /var/lib/pgsql
+yum -y install postgresql-server 
+postgresql-setup initdb
+systemctl enable postgresql.service
+systemctl start postgresql.service
 
+# /tmp/users.sql
+echo -e "insert into users (name, status, usertype) values ('koji', 0, 0);
+insert into user_perms (user_id, perm_id, creator_id) values (1, 1, 1);
+insert into users (name, status, usertype) values ('kojiadmin', 0, 0);
+insert into user_perms (user_id, perm_id, creator_id) values (2, 1, 1);
+\q" >> /tmp/users.sql
+
+# /var/lib/pgsql/data/postgresql.conf
+cp -p /var/lib/pgsql/data/postgresql.conf /var/lib/pgsql/data/postgresql.conf.orig
+sed -i -e "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /var/lib/pgsql/data/postgresql.conf
+
+# /var/lib/pgsql/data/pg_hba.conf
+cp /var/lib/pgsql/data/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf.orig
+
+echo -e "
+# Koji
+local   koji        koji                                         trust
+local   koji        apache                                       trust
+host    koji        koji                127.0.0.1/32             trust
+host    koji        apache              127.0.0.1/32             trust
+host    koji        koji                ::1/128                  trust
+host    koji        apache              ::1/128                  trust
+host    koji        koji                192.168.122.89/32        trust
+host    koji        apache              192.168.122.89/32        trust" >> /var/lib/pgsql/data/pg_hba.conf
+
+sed -i -e "s/local   all             all                                     peer/local   all             all                                     trust/g" /var/lib/pgsql/data/pg_hba.conf
+chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf.orig
+
+# Create the database tables
+su -l postgres -c "createuser koji; createdb -O koji koji"
+su -l koji -c "psql koji koji < /usr/share/doc/koji-1.8.0/docs/schema.sql"
+su -l koji -c "psql koji koji < /tmp/users.sql"
+
+# Restart database services
+systemctl restart postgresql.service
+systemctl restart httpd.service
+
+# Begin Koji configuration
+su -l koji -c "
+
+# Add hosts and channels
+koji add-host kojibuilder1.localdomain x86_64
+koji add-host-to-channel kojibuilder1.localdomain appliance
+koji add-host-to-channel kojibuilder1.localdomain createrepo
+koji add-host-to-channel kojibuilder1.localdomain livecd
+koji add-host-to-channel kojibuilder1.localdomain maven
+koji add-host-to-channel kojibuilder1.localdomain vm
+
+# Add tags
+koji add-tag fedora-19-base
+koji add-tag fedora-19-addons --maven-support --include-all --arches="x86_64"
+koji add-tag fedora-19-addons-testing --maven-support --include-all --parent=fedora-19-addons --arches="x86_64"
+koji add-tag fedora-19-addons-build --maven-support --include-all --parent=fedora-19-addons --arches="x86_64"
+koji add-tag maven-build --maven-support --include-all --parent=fedora-19-addons --arches="x86_64"
+koji add-tag maven-import --maven-support --include-all --parent=maven-build
+
+# Add tag inheritance
+koji add-tag-inheritance fedora-19-addons-build fedora-19-base --priority 1
+koji add-tag-inheritance fedora-19-addons-build maven-import --priority 10
+
+# Add target
+koji add-target fedora-19-addons fedora-19-addons-build fedora-19-addons-testing
+
+# Add external repo
+koji add-external-repo -t fedora-19-base fedora-mirror http://mirrors.kernel.org/fedora/releases/19/Everything/x86_64/os/
+
+# Add groups
+#
+# build
+koji add-group fedora-19-addons-build build
+koji add-group-pkg fedora-19-addons-build build bash bzip2 cpio diffutils fedora-release findutils gawk gcc gcc-c++ info make redhat-rpm-config rpm-build sed shadow-utils unzip util-linux-ng which xz
+#
+# srpm-build
+koji add-group fedora-19-addons-build srpm-build
+koji add-group-pkg fedora-19-addons-build srpm-build bash curl cvs fedora-release fedpkg gnupg2 make redhat-rpm-config rpm-build shadow-utils
+#
+# appliance-build
+koji add-group fedora-19-addons-build appliance-build
+koji add-group-pkg fedora-19-addons-build appliance-build appliance-tools bash coreutils grub parted perl policycoreutils selinux-policy shadow-utils
+#
+# maven-build
+koji add-group fedora-19-addons-build maven-build
+koji add-group-pkg fedora-19-addons-build maven-build bash coreutils java-1.7.0-openjdk-devel maven3 subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
+#
+# livecd-build
+koji add-group fedora-19-addons-build livecd-build
+koji add-group-pkg fedora-19-addons-build livecd-build bash bzip2 coreutils cpio diffutils fedora-logos fedora-release findutils gawk gcc gcc-c++ grep gzip info livecd-tools make patch policycoreutils python-dbus redhat-rpm-config rpm-build sed selinux-policy-targeted shadow-utils squashfs-tools tar unzip util-linux which yum
+
+# Ramp up capacity
+koji edit-host --capacity 10.0 kojibuilder1.localdomain
+
+# Add required build packages
+koji add-pkg --owner=kojiadmin fedora-19-addons bash binutils
+"
+
+# Restart Koji services
+systemctl enable httpd.service
+systemctl restart httpd.service
+systemctl enable kojid.service
+systemctl restart kojid.service
+systemctl enable kojira.service
+systemctl restart kojira.service
+
+# Grant permissions
+su -l koji -c "koji grant-permission repo kojira"
+su -l koji -c "koji grant-permission build kojibuilder1.localdomain"
+
+# Koji maven packages
+cd /tmp
 wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/x86_64/os/Packages/m/maven-3.0.5-3.fc19.noarch.rpm
 wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/source/SRPMS/m/maven-3.0.5-3.fc19.src.rpm
-mkdir -p /mnt/koji/packages/maven3/3.0.3/5/fc19/src/
-mkdir -p /mnt/koji/packages/maven3/3.0.3/5/fc19/noarch/
-cp maven-3.0.5-3.fc19.src.rpm /mnt/koji/packages/maven3/3.0.3/5/fc19/src/
-cp maven-3.0.5-3.fc19.noarch.rpm /mnt/koji/packages/maven3/3.0.3/5/fc19/noarch/
-rm -rf maven-3.0.5-3.fc19.src.rpm maven-3.0.5-3.fc19.noarch.rpm
+su -l koji -c "koji import --create-build /tmp/maven-3.0.5-3.fc19.src.rpm /tmp/maven-3.0.5-3.fc19.noarch.rpm"
+su -l koji -c "koji add-pkg --owner=kojiadmin fedora-19-addons-build maven3"
+su -l koji -c "koji tag-pkg fedora-19-addons-build maven3-3.0.3-5"
 
-# Red Hat network
-
-# Create koji build directories
-#rm -rf /mnt/koji
-#mkdir /mnt/koji
-#cd /mnt/koji
-#mkdir {packages,repos,work,scratch}
-#mkdir -p /mnt/koji/repos/fedora-19-addons-build/1/
-#cp -r ~/workspace/kojak/scripts/repo/* /mnt/koji/repos/fedora-19-addons-build/1/
-#chown -R apache.apache *
-#cd -
-
-#psql -U koji -f kojak_db
-
+# Brew maven packages
+#cd /tmp
 #wget http://download.devel.redhat.com/brewroot/packages/org.apache.maven-maven/3.0.3/5/src/maven3-3.0.3-5.src.rpm
 #wget http://download.devel.redhat.com/brewroot/packages/org.apache.maven-maven/3.0.3/5/noarch/maven3-3.0.3-5.noarch.rpm
-#mkdir -p /mnt/koji/packages/maven3/3.0.3/5/src
-#mkdir -p /mnt/koji/packages/maven3/3.0.3/5/noarch
-#cp maven3-3.0.3-5.src.rpm /mnt/koji/packages/maven3/3.0.3/5/src
-#cp maven3-3.0.3-5.noarch.rpm /mnt/koji/packages/maven3/3.0.3/5/noarch
-#rm -rf maven3-3.0.3-5.src.rpm maven3-3.0.3-5.noarch.rpm
-
+#su -l koji -c "koji import --create-build /tmp/maven3-3.0.3-5.src.rpm /tmp/maven3-3.0.3-5.noarch.rpm"
+#su -l koji -c "koji add-pkg --owner=kojiadmin fedora-19-addons-build maven3"
+#su -l koji -c "koji tag-pkg fedora-19-addons-build maven3-3.0.3-5"
 
 service postgresql restart
 service kojid start
