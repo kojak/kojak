@@ -91,18 +91,9 @@ koji add-host-to-channel kojibuilder1.localdomain vm
 
 # Add tags
 koji add-tag fedora-19 --maven-support --include-all --arches="x86_64"
-koji add-tag fedora-19-candidate --maven-support --include-all --parent=fedora-19 --arches="x86_64"
-koji add-tag fedora-19-override --maven-support --include-all --parent=fedora-19 --arches="x86_64"
-koji add-tag fedora-19-build --maven-support --include-all --parent=fedora-19 --arches="x86_64"
-koji add-tag fedora-19-todo --maven-support --include-all --parent=fedora-19 --arches="x86_64"
-koji add-tag maven-build --maven-support --include-all --parent=fedora-19 --arches="x86_64"
-koji add-tag maven-import --maven-support --include-all --parent=maven-build
-
-# Add tag inheritance
-koji add-tag-inheritance fedora-19-override fedora-19-candidate --priority 0
-koji add-tag-inheritance fedora-19-build fedora-19-override --priority 0
-koji add-tag-inheritance fedora-19-build fedora-19-todo --priority 10
-koji add-tag-inheritance fedora-19-build maven-import --priority 10
+koji add-tag fedora-19-candidate --maven-support --include-all --arches="x86_64"
+koji add-tag fedora-19-build --maven-support --include-all --arches="x86_64"
+koji add-tag maven-import --maven-support --include-all --parent=fedora-19
 
 # Add target
 koji add-target fedora-19-candidate fedora-19-build fedora-19-candidate
@@ -125,7 +116,7 @@ koji add-group fedora-19-build appliance-build
 koji add-group-pkg fedora-19-build appliance-build appliance-tools bash coreutils grub parted perl policycoreutils selinux-policy shadow-utils
 #
 # maven-build
-koji add-group fedora-19-build maven-build
+koji add-group fedora-19-build 
 # Fedora Package group
 koji add-group-pkg fedora-19-build maven-build bash coreutils java-1.7.0-openjdk-devel maven subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
 # Red Hat packages group
