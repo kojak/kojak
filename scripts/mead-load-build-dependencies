@@ -17,7 +17,7 @@ grabber = urlgrabber.grabber.URLGrabber(ssl_verify_host=False, ssl_verify_peer=F
 
 basedir = os.path.dirname(sys.argv[0])
 
-KOJI_HUB = 'http://10.34.25.158/kojihub'
+KOJI_HUB = 'http://192.168.122.2/kojihub'
 
 LINK_RE = re.compile(r'href="([^"]+)"', re.I)
 NORM_RE = re.compile(r'([^:])//+')
