@@ -89,6 +89,7 @@ check_task() {
                     if [ ${#KEY} -eq "0" ]; then
                         PROC=`koji list-tasks --quiet | tail -n1 | grep "+"`
                         if [ -z $PROC ]; then
+                            echo -e "\n\nExiting build."
                             exit
                         else
                             build_src
