@@ -84,14 +84,14 @@ check_task() {
                     wait
                     ;;
                 "buildMaven closed")
+                    echo "Status: $STATUS"
                     read -s -n1 -p "`echo Status: $STATUS $'\n>> '`Press [RETURN] or [SPACE] to resubmit the task: `echo $'\n>> '`Press [CTRL-C] to exit:" KEY
                     if [ ${#KEY} -eq "0" ]; then
                         PROC=`koji list-tasks --quiet | tail -n1 | grep "+"`
                         if [ -z $PROC ]; then
-                            build_src
-                        else
-                            echo -e "\n\nExiting build."
                             exit
+                        else
+                            build_src
                         fi
                     fi
                     ;;
