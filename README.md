@@ -37,7 +37,7 @@ Minimum System Requirements
 The virtual appliance is configured with the following default specifications:
 
 1. 4GB RAM
-2. 32 GB Disk Space
+2. 32GB Disk Space
 
 The Virtual Appilance Server should be configured with the following minimum specifications:
 
