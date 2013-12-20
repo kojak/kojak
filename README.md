@@ -6,7 +6,7 @@ Kojak is a collection of scripts that can be used to automate the installation a
 Tool Chain
 ----------
 
-Future implementations of Kojak's will ship with a standardised tool chain designed to allow developers to build, test, deploy, verfiy and replicate product builds and their associated repositories in a consistent way.  The long term goal is to provide a development/staging platform to allow users to familerise themselves with the build system and allow them access to Koji outside of prodcution environments.   
+Future implementations of Kojak will ship with a standardised tool chain designed to allow developers to build, test, deploy, verfiy and replicate product builds and their associated repositories in a consistent way.  The long term goal is to provide a development/staging platform to allow users to familerise themselves with the build system and allow them access to Koji outside of prodcution environments.   
 
 See the links below for the tools that are planned to be shipped with Kojak:
 
