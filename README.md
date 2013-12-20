@@ -4,7 +4,7 @@ Kojak - "Koji in an box"
 Kojak is a collection of scripts that can be used to automate the installation and configuration the Koji build system. It is part of a productization effort to encourage the adoption of Koji, for use in development, testing and staging environments.  The scripts included in this repository can be used to create a fully operational Koji instance on the local machine or optionally as virtual machine utilizing the Libvirt visualization API and a kickstart file.  The virtual machine is based on a stock vanilla Fedora installation, to provide an automated "out of the box" solution, which may be used for development, testing and educational purposes.
 
 Tool Chain
-==========
+----------
 
 Future implementations of Kojak's will ship with a standardised tool chain designed to allow developers to build, test, deploy, verfiy and replicate product builds and their associated repositories in a consistent way.  The long term goal is to provide a development/staging platform to allow users to familerise themselves with the build system and allow them access to Koji outside of prodcution environments.   
 
