@@ -18,10 +18,10 @@ menu() {
         read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] for a virtual installation. `echo $'\n>> '`Press any other key for a local installation. `echo $'\n>> '`Press [CTRL-C] to exit." KEY
         if [ ${#KEY} -eq "0" ]; then
             echo -e "\n\n# Conducting a virtual installation."
-            virtual-install.sh
+            ./scripts/virtual-install
         else
             echo -e "\n\n# Conducting a local installation"
-            local-install.sh
+            ./scripts/local-install
         fi
     done
 }
