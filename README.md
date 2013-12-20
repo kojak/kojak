@@ -1,7 +1,7 @@
 Kojak - "Koji in an box"
 ========================
 
-Kojak is a collection of scripts that can be used to automate the installation and configuration the Koji build system. It is part of a productization effort to encourage the adoption of Koji, for use in development, testing and staging environments.  The scripts included in this repository can be used to create a fully operational Koji instance on the local machine or optionally as virtual machine utilizing the Libvirt visualization API and a kickstart file.  The virtual machine is based on a stock vanilla Fedora installation, to provide an automated "out of the box" solution, which may be used for development, testing and educational purposes.
+Kojak is a collection of scripts that can be used to automate the installation and configuration of the Koji build system. It is part of a productization effort to encourage the adoption of Koji, for use in development, testing and staging environments.  The scripts included in this repository can be used to create a fully operational Koji instance on the local system or optionally as virtual machine utilizing the Libvirt visualization API and a kickstart file.  The virtual machine is based on a stock vanilla Fedora installation, to provide an automated "out of the box" solution, which may be used for development, testing and educational purposes.
 
 Tool Chain
 ----------
@@ -24,7 +24,7 @@ Installation Prerequisites
 ---------------------------
 
 This installation comprises of a virtual appliance server which is used to build and deploy the virtual appliance.
-Kojak has been successfully installed and tested on Fedora 19. 
+Kojak has been successfully installed and tested on Fedora 18 and above. 
 
 See http://fedoraproject.org/wiki/Getting_started_with_virtualization for more information
 
@@ -49,10 +49,10 @@ Installation Instructions
 ------------------------
 
 1.  Checkout the contents of the Kojak git repository to a suitable directory on the Virtual Appliance Server.
-2.  As root execute kojak script.  You will be prompted to supply various configuration options or you may choose
-to accept the system default options by simply pressing return.  You will then be prompted to check the options.
+2.  As root execute kojak script.  You will be prompted about the type of installtion you want to conduct.
+    If you choose to install Koji as a virtual machine you will be further prompted to supply some configuration            options or simply accept the default options. 
 3.  Once the installation is complete you should confirm the state of all the tasks are closed.  From the command line,
-as the koji user, execute the following:  
+    as the koji user, execute the following:  
 
 ```
     [koji@localhost ~]$ koji list-tasks
