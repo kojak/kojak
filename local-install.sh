@@ -865,4 +865,5 @@ EOF
 chmod +x /etc/init.d/99_cfg
 systemctl enable 99_cfg.service
 
-%end
+reboot
+
