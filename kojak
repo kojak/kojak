@@ -46,9 +46,11 @@ menu() {
         if [ ${#KEY} -eq "0" ]; then
             echo -e "\n\n# Conducting a virtual installation."
             $SCRIPTS/virtual-install
+            exit
         else
             echo -e "\n\n# Conducting a local installation"
             $SCRIPTS/local-install
+            exit
         fi
     done
 }
