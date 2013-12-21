@@ -1,7 +1,7 @@
 Kojak - "Koji in an box"
 ========================
 
-Kojak is a collection of scripts that can be used to automate the installation and configuration of the Koji build system. It is part of a productization effort to encourage the adoption of Koji, for use in development, testing and staging environments.  The scripts included in this repository can be used to create a fully operational Koji instance on the local system or optionally as virtual machine utilizing the Libvirt visualization API and a kickstart file.  The virtual machine is based on a stock vanilla Fedora installation, to provide an automated "out of the box" solution, which may be used for development, testing and educational purposes.
+Kojak is a collection of scripts that can be used to automate the installation and configuration of the Koji build system. It is part of a productization effort to encourage the adoption of Koji for use in development, testing and staging environments.  The scripts included in this repository can be used to create a fully operational Koji instance on the local system or optionally as virtual machine utilizing the Libvirt visualization API and a kickstart file.  The virtual machine is based on a stock vanilla Fedora installation, to provide an automated "out of the box" solution, which may be used for development, testing and educational purposes.
 
 Tool Chain
 ----------
@@ -23,8 +23,7 @@ See the links below for the tools that are planned to be shipped with Kojak:
 Installation Prerequisites
 ---------------------------
 
-This installation comprises of a virtual appliance server which is used to build and deploy the virtual appliance.
-Kojak has been successfully installed and tested on Fedora 18 and above. 
+If you opt for the virtual installation option the scripts will build a virtual machine which will be accessible from your localhost.  Alternatively you can install directly on the localhost if, for example, you have a dedicated server.  Kojak has been successfully installed and tested on Fedora 18 and above. 
 
 See http://fedoraproject.org/wiki/Getting_started_with_virtualization for more information
 
@@ -34,21 +33,21 @@ required in order to facilitate the downloading of any package dependancies.
 Minimum System Requirements
 --------------------------- 
 
-The virtual appliance is configured with the following default specifications:
+The virtual machine is configured with the following default specifications:
 
 1. 4GB RAM
 2. 32GB Disk Space
 
-The Virtual Appilance Server should be configured with the following minimum specifications:
+The you localhost should be configured with the following minimum specifications:
 
-1. Fedora 19 with virtualization package group
+1. Fedora 18+ with virtualization package group
 2. 8GB RAM
 3. 120 GB Disk Space 
 
 Installation Instructions
 ------------------------
 
-1.  Checkout the contents of the Kojak git repository to a suitable directory on the Virtual Appliance Server.
+1.  Checkout the contents of the Kojak git repository to a suitable directory on your localhost .
 2.  As root execute kojak script.  You will be prompted about the type of installtion you want to conduct.
     If you choose to install Koji as a virtual machine you will be further prompted to supply some configuration            options or simply accept the default options. 
 3.  Once the installation is complete you should confirm the state of all the tasks are closed.  From the command line,
@@ -65,12 +64,11 @@ Installation Instructions
 Configuration Notes
 -------------------
 
-The Kojak virtual appliance is configured with a set of default options.  Executing the kojak script will allow you to 
+The Kojak virtual machine is configured with a set of default options.  Executing the kojak script will allow you to 
 modify and save these variables as required.  Installation directories, iso location and virtual machine resources
-allocations (Mem, CPU and Storage etc) can all be reconfigured as required.  The appliance is configured with with a static 
-address taken from the pool of ip addresses from the "default" network that is configured with libvirt.
+allocations (Mem, CPU and Storage etc) can all be reconfigured as required.  The appliance is configured with with a static address taken from the pool of ip addresses from the "default" network that is configured with libvirt.
 
-You can access the appliance via ssh at 192.168.122.2 using the following credentials:
+You can access the virtual machine via ssh at 192.168.122.2 using the following credentials:
 
 1. username: root
 2. password: root
@@ -79,7 +77,6 @@ Currently Kojak uses SSL certificates as the preferred method of authentication.
 browser based logins you will need to import the certificate. The certificate is can be accessed from /home/koji/.koji.
 Certificates are created for a default set of users which includes koji, kojiadmin, kojira and 3 kojibuilders.
 
-The Maven tool chain is located in the koji users workspace directory along with example configurations. 
 
 Known Issues
 ------------
