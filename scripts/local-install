@@ -794,7 +794,7 @@ koji add-tag-inheritance fedora-19-build maven-import --priority 10
 koji add-target fedora-19-candidate fedora-19-build fedora-19-candidate
 
 # Add external repo
-koji add-external-repo -t fedora-19 fedora-mirror http://kojipkgs.fedoraproject.org/repos/f19-build/latest/x86_64/
+koji add-external-repo -t fedora-19 fedora-mirror http://mirrors.kernel.org/fedora/releases/19/Everything/x86_64/os/
 
 # Add groups
 #
