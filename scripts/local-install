@@ -45,7 +45,6 @@ yum -y install jenkins
 systemctl enable jenkins.service
 
 # Install Koji from latest sources
-wget http://download.devel.redhat.com/rel-eng/brew/fedora/19/brew.repo -P /etc/yum.repos.d
 cd /tmp
 git clone git://git.fedorahosted.org/koji
 cd koji/
