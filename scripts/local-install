@@ -79,7 +79,7 @@ cat > /etc/profile.d/custom.sh << 'EOF'
 if [ `whoami` != "root" ]; then
     export PS1='\[\e[0;32m\][\u@\h \W]\$ '
 else
-    export PS1='\[\e[0;31m\][\u@\h \W]\$ '
+    export PS1='\[\e[0;30m\][\u@\h \W]\$ '
 fi
 
 # Aliases

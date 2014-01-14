@@ -179,7 +179,12 @@ echo -e "# Restarting virtualization services\n"
 service libvirtd restart
 
 echo -e "# Allocating the diskspace\n"
-fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
+if [ -f "/bin/fallocate" ]; then
+    fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
+else
+    dd if=/dev/zero of=${VMHOME}/${VMNAME}.img bs=2M count=32G
+fi
+
 chown qemu:qemu ${VMHOME}/${VMNAME}.img
 
 echo -e "# Starting Kojak"
