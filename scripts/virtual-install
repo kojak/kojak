@@ -168,17 +168,17 @@ cp kojak-ks.cfg $CFGDIR/
 
 cd ${VMHOME}
 
-echo -e "# Removing any pre-existing Kojak vm\n"
+echo -e "# Removing any pre-existing Kojak vm"
 virsh destroy ${VMNAME}
 virsh undefine ${VMNAME}
 
-echo -e "# Removing any pre-existing Kojak image\n"
+echo -e "# Removing any pre-existing Kojak image"
 rm ${VMHOME}/${VMNAME}.img
 
-echo -e "# Restarting virtualization services\n"
-service libvirtd restart
+echo -e "# Restarting virtualization services"
+systemctl restart  libvirtd.service
 
-echo -e "# Allocating the diskspace\n"
+echo -e "# Allocating the diskspace"
 if [ -f "/bin/fallocate" ]; then
     fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
 else
