@@ -42,7 +42,7 @@ menu() {
     do
     # Determin installation type
     heading
-        read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] for a virtual installation. `echo $'\n>> '`Press any other key for a local installation. `echo $'\n>> '`Press [CTRL-C] to exit." KEY
+        read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] for a virtual installation. `echo $'\n>> '`Press any other key for a local installation. `echo $'\n\n>> '`Press [CTRL-C] to exit:" KEY
         if [ ${#KEY} -eq "0" ]; then
             echo -e "\n\n# Conducting a virtual installation."
             $SCRIPTS/virtual-install

@@ -112,7 +112,7 @@ menu() {
     echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDIST=$DIST\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nISODIR=$ISODIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > $CFGDIR/kojak.cfg
     echo -e "# Saved configuration to kojak.cfg."
  
-    read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the configuration options: `echo $'\n>> '`Press [CTRL-C] to exit:" KEY
+    read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the configuration options: `echo $'\n\n>> '`Press [CTRL-C] to exit:" KEY
         if [ ${#KEY} -eq "0" ]; then
             echo -e "\n\nUsing supplied configuration options."
             break
@@ -127,13 +127,13 @@ menu() {
 
 if [ -f "$CFGDIR/kojak.cfg" ]; then
     heading
-    read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the previous saved configuration. `echo $'\n>> '`Press any other key to continue. `echo $'\n>> '`Press [CTRL-C] to exit." KEY
+    read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the previous saved configuration. `echo $'\n>> '`Press any other key to continue. `echo $'\n\n>> '`Press [CTRL-C] to exit:" KEY
         if [ ${#KEY} -eq "0" ]; then
             echo -e "\n\n# Using saved configuration options."
             source $CFGDIR/kojak.cfg
 	    else
             heading
-            read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the default options. `echo $'\n>> '`Press any other key run the configurator. `echo $'\n>> '`Press [CTRL-C] to exit:" KEY
+            read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the default options. `echo $'\n>> '`Press any other key run the configurator. `echo $'\n\n>> '`Press [CTRL-C] to exit:" KEY
             if [ ${#KEY} -eq "0" ]; then
                 echo -e "\n\n# Using default configuration options."
             else
@@ -143,7 +143,7 @@ if [ -f "$CFGDIR/kojak.cfg" ]; then
         fi
 else
     heading
-    read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the default options. `echo $'\n>> '`Press any other key run the configurator. `echo $'\n>> '`Press [CTRL-C] to exit. " KEY
+    read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] to accept the default options. `echo $'\n>> '`Press any other key run the configurator. `echo $'\n\n>> '`Press [CTRL-C] to exit:" KEY
         if [ ${#KEY} -eq "0" ]; then
             echo -e "\n\n# Using default configuration options."
         else
@@ -198,6 +198,7 @@ chown qemu:qemu ${VMHOME}/${VMNAME}.img
 
 echo -e "# Starting Kojak"
 virt-install \
+--debug \
 -n ${VMNAME} \
 -r ${VMMEM} \
 --vcpus=2 \
