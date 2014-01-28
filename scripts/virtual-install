@@ -168,12 +168,21 @@ cp kojak-ks.cfg $CFGDIR/
 
 cd ${VMHOME}
 
-echo -e "# Removing any pre-existing Kojak vm"
-virsh destroy ${VMNAME}
-virsh undefine ${VMNAME}
+VMDOMAIN=`virsh list --all | grep ${VMNAME}`
+if [ ! "$VMDOMAIN" ]; then
+    echo -e "# No pre-existing Kojak vm"
+else 
+    echo -e "# Removing any pre-existing Kojak vm"
+    virsh destroy ${VMNAME}
+    virsh undefine ${VMNAME}
+fi
 
-echo -e "# Removing any pre-existing Kojak image"
-rm ${VMHOME}/${VMNAME}.img
+if [ ! "${VMHOME}/${VMNAME}.img" ]; then
+    echo -e "# No pre-existing Kojak image"
+else
+    echo -e "# Removing pre-existing Kojak image"
+    rm ${VMHOME}/${VMNAME}.img
+fi
 
 echo -e "# Restarting virtualization services"
 systemctl restart  libvirtd.service
