@@ -52,15 +52,15 @@ host    koji        koji                127.0.0.1/32             trust
 host    koji        apache              127.0.0.1/32             trust
 host    koji        koji                ::1/128                  trust
 host    koji        apache              ::1/128                  trust
-host    koji        koji                192.168.122.89/32        trust
-host    koji        apache              192.168.122.89/32        trust" >> /var/lib/pgsql/data/pg_hba.conf
+host    koji        koji                192.168.122.2/32        trust
+host    koji        apache              192.168.122.2/32        trust" >> /var/lib/pgsql/data/pg_hba.conf
 
 sed -i -e "s/local   all             all                                     peer/local   all             all                                     trust/g" /var/lib/pgsql/data/pg_hba.conf
 chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf.orig
 
 # Create the database tables
 su -l postgres -c "createuser koji; createdb -O koji koji"
-su -l koji -c "psql koji koji < /usr/share/doc/koji-1.8.0/docs/schema.sql"
+su -l koji -c "psql koji koji < /usr/share/doc/koji/docs/schema.sql"
 su -l koji -c "psql koji koji < /tmp/users.sql"
 
 # Restart database services
@@ -79,51 +79,51 @@ koji add-host-to-channel kojibuilder1.localdomain maven
 koji add-host-to-channel kojibuilder1.localdomain vm
 
 # Add tags
-koji add-tag fedora-19 --maven-support --include-all --arches="x86_64"
-koji add-tag fedora-19-candidate --maven-support --include-all --parent=fedora-19 --arches="x86_64"
-koji add-tag fedora-19-build --maven-support --include-all --parent=fedora-19 --arches="x86_64"
-koji add-tag maven-build --maven-support --include-all --parent=fedora-19 --arches="x86_64"
+koji add-tag fedora-20 --maven-support --include-all --arches="x86_64"
+koji add-tag fedora-20-candidate --maven-support --include-all --parent=fedora-20 --arches="x86_64"
+koji add-tag fedora-20-build --maven-support --include-all --parent=fedora-20 --arches="x86_64"
+koji add-tag maven-build --maven-support --include-all --parent=fedora-20 --arches="x86_64"
 koji add-tag maven-import --maven-support --include-all --parent=maven-build
 
 # Add tag inheritance
-koji add-tag-inheritance fedora-19-build maven-import --priority 10
+koji add-tag-inheritance fedora-20-build maven-import --priority 10
 
 # Add target
-koji add-target fedora-19-candidate fedora-19-build fedora-19-candidate
+koji add-target fedora-20-candidate fedora-20-build fedora-20-candidate
 
 # Add external repo
-koji add-external-repo -t fedora-19 fedora-mirror http://mirrors.kernel.org/fedora/releases/19/Everything/x86_64/os/
+koji add-external-repo -t fedora-20 fedora-mirror http://mirrors.kernel.org/fedora/releases/20/Everything/x86_64/os/
 
 # Add groups
 #
 # build
-koji add-group fedora-19-build build
-koji add-group-pkg fedora-19-build build bash bzip2 cpio diffutils fedora-release findutils gawk gcc gcc-c++ info make redhat-rpm-config rpm-build sed shadow-utils unzip util-linux-ng which xz
+koji add-group fedora-20-build build
+koji add-group-pkg fedora-20-build build bash bzip2 cpio diffutils fedora-release findutils gawk gcc gcc-c++ info make redhat-rpm-config rpm-build sed shadow-utils unzip util-linux-ng which xz
 #
 # srpm-build
-koji add-group fedora-19-build srpm-build
-koji add-group-pkg fedora-19-build srpm-build bash curl cvs fedora-release fedpkg gnupg2 make redhat-rpm-config rpm-build shadow-utils
+koji add-group fedora-20-build srpm-build
+koji add-group-pkg fedora-20-build srpm-build bash curl cvs fedora-release fedpkg gnupg2 make redhat-rpm-config rpm-build shadow-utils
 #
 # appliance-build
-koji add-group fedora-19-build appliance-build
-koji add-group-pkg fedora-19-build appliance-build appliance-tools bash coreutils grub parted perl policycoreutils selinux-policy shadow-utils
+koji add-group fedora-20-build appliance-build
+koji add-group-pkg fedora-20-build appliance-build appliance-tools bash coreutils grub parted perl policycoreutils selinux-policy shadow-utils
 #
 # maven-build
-koji add-group fedora-19-build maven-build
+koji add-group fedora-20-build maven-build
 # Fedora Package group
-koji add-group-pkg fedora-19-build maven-build bash coreutils java-1.7.0-openjdk-devel maven subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
+koji add-group-pkg fedora-20-build maven-build bash coreutils java-1.7.0-openjdk-devel maven subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
 # Red Hat packages group
-#koji add-group-pkg fedora-19-build maven-build bash coreutils java-1.7.0-openjdk-devel maven3 subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
+#koji add-group-pkg fedora-20-build maven-build bash coreutils java-1.7.0-openjdk-devel maven3 subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
 #
 # livecd-build
-koji add-group fedora-19-build livecd-build
-koji add-group-pkg fedora-19-build livecd-build bash bzip2 coreutils cpio diffutils fedora-logos fedora-release findutils gawk gcc gcc-c++ grep gzip info livecd-tools make patch policycoreutils python-dbus redhat-rpm-config rpm-build sed selinux-policy-targeted shadow-utils squashfs-tools tar unzip util-linux which yum
+koji add-group fedora-20-build livecd-build
+koji add-group-pkg fedora-20-build livecd-build bash bzip2 coreutils cpio diffutils fedora-logos fedora-release findutils gawk gcc gcc-c++ grep gzip info livecd-tools make patch policycoreutils python-dbus redhat-rpm-config rpm-build sed selinux-policy-targeted shadow-utils squashfs-tools tar unzip util-linux which yum
 
 # Ramp up capacity
 koji edit-host --capacity 10.0 kojibuilder1.localdomain
 
 # Add required build packages
-koji add-pkg --owner=kojiadmin fedora-19 bash binutils
+koji add-pkg --owner=kojiadmin fedora-20 bash binutils
 "
 
 # Restart Koji services
@@ -140,9 +140,11 @@ su -l koji -c "koji grant-permission build kojibuilder1.localdomain"
 
 # Maven installation
 cd /tmp
-wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/source/SRPMS/m/maven-3.0.5-3.fc19.src.rpm
-wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/19/Everything/x86_64/os/Packages/m/maven-3.0.5-3.fc19.noarch.rpm
-su -l koji -c "koji import --create-build /tmp/maven-3.0.5-3.fc19.src.rpm /tmp/maven-3.0.5-3.fc19.noarch.rpm"
-su -l koji -c "koji add-pkg --owner=kojiadmin fedora-19-build maven"
-su -l koji -c "koji tag-pkg fedora-19-build maven-3.0.5-3.fc19"
+wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/20/Everything/source/SRPMS/m/maven-3.1.1-13.fc20.src.rpm
+wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/20/Everything/x86_64/os/Packages/m/maven-3.1.1-13.fc20.noarch.rpm
+su -l koji -c "koji import --create-build /tmp/maven-3.1.1-13.fc20.src.rpm /tmp/maven-3.1.1-13.fc20.noarch.rpm"
+su -l koji -c "koji add-pkg --owner=kojiadmin fedora-20-build maven"
+su -l koji -c "koji tag-pkg fedora-20-build maven-3.1.1-13.fc20"
+rm -rf maven*
 cd -
+
