@@ -79,7 +79,7 @@ cat > /etc/profile.d/custom.sh << 'EOF'
 if [ `whoami` != "root" ]; then
     export PS1='\[\e[0;32m\][\u@\h \W]\$ '
 else
-    export PS1='\[\e[0;31m\][\u@\h \W]\$ '
+    export PS1='\[\e[0;30m\][\u@\h \W]\$ '
 fi
 
 # Aliases
@@ -119,7 +119,7 @@ cp -p /etc/hosts /etc/hosts.orig
 cat > /etc/hosts << 'EOF'
 27.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-192.168.122.2	koji koji.localdomain
+0.0.0.0 	koji koji.localdomain
 EOF
 
 # /etc/vimrc
@@ -611,30 +611,6 @@ gpgcheck=1
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$basearch
 EOF
 
-# /etc/sysconfig/network-scripts/ifcfg-eth0
-cp -p /etc/sysconfig/network-scripts/ifcfg-eth0 /etc/sysconfig/network-scripts/ifcfg-eth0.orig
-cat >  /etc/sysconfig/network-scripts/ifcfg-eth0 << 'EOF'
-HWADDR=52:54:00:12:34:56
-TYPE=Ethernet
-BOOTPROTO=static
-IPADDR=192.168.122.2
-NETMASK=255.255.255.0
-GATEWAY=192.168.122.1
-DEFROUTE=yes
-PEERDNS=yes
-PEERROUTES=yes
-IPV4_FAILURE_FATAL=no
-IPV6INIT=yes
-IPV6_AUTOCONF=yes
-IPV6_DEFROUTE=yes
-IPV6_PEERDNS=yes
-IPV6_PEERROUTES=yes
-IPV6_FAILURE_FATAL=no
-NAME=eth0
-UUID=bd95e2b3-707c-497a-8eb4-a828fad84bc0
-ONBOOT=yes
-EOF
-
 # /tmp/init.d/99_cfg
 cat > /etc/init.d/99_cfg << 'EOF'
 #!/bin/bash
@@ -753,8 +729,8 @@ host    koji        koji                127.0.0.1/32             trust
 host    koji        apache              127.0.0.1/32             trust
 host    koji        koji                ::1/128                  trust
 host    koji        apache              ::1/128                  trust
-host    koji        koji                192.168.122.89/32        trust
-host    koji        apache              192.168.122.89/32        trust" >> /var/lib/pgsql/data/pg_hba.conf
+host    koji        koji                0.0.0.0/32        trust
+host    koji        apache              0.0.0.0/32        trust" >> /var/lib/pgsql/data/pg_hba.conf
 
 sed -i -e "s/local   all             all                                     peer/local   all             all                                     trust/g" /var/lib/pgsql/data/pg_hba.conf
 chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf.orig
