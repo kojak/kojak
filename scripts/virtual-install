@@ -125,6 +125,7 @@ virt-install \
 --vcpus=2 \
 --os-type=linux \
 --os-variant=fedora20 \
+--console pty \
 --accelerate \
 --mac=00:00:00:00:00:00 \
 --disk=${VMHOME}/${VMNAME}.img \
