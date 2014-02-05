@@ -37,22 +37,36 @@ heading() {
     echo -e "#                                                                              #\n"
 }
 
-menu() {
-    while true
-    do
-    # Determin installation type
-    heading
-        read -s -n1 -p "`echo $'\n>> '`Press [RETURN] or [SPACE] for a virtual installation. `echo $'\n>> '`Press any other key for a local installation. `echo $'\n\n>> '`Press [CTRL-C] to exit:" KEY
-        if [ ${#KEY} -eq "0" ]; then
-            echo -e "\n\n# Conducting a virtual installation."
-            $SCRIPTS/virtual-install
-            exit
-        else
-            echo -e "\n\n# Conducting a local installation"
-            $SCRIPTS/local-install
-            exit
-        fi
-    done
+description() {
+    echo -e ">> Select the type of installation form the menu options below.                \n"
 }
 
+menu () {
+PS3='Please Select installation type: '
+echo
+options=("Virtual Installation" "Local Installation" "Quit")
+select opt in "${options[@]}"
+do
+    case $opt in
+        "Virtual Installation")
+            echo "Virtual Installation Selected "
+            $SCRIPTS/virtual-install
+            exit
+            ;;
+        "Local Installation")
+            echo "Local Installation Selected "
+            $SCRIPTS/local-install
+            exit
+            ;;
+        "Quit")
+            break
+            ;;
+        *) echo invalid option
+            ;;
+    esac
+done
+}
+
+heading
+description
 menu
