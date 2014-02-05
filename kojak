@@ -65,6 +65,7 @@ do
             ;;
     esac
 done
+reset
 }
 
 heading

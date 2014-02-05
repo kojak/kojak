@@ -56,7 +56,7 @@ heading() {
 }
 
 description() {
-    echo -e ">> Select which configuartion option you would want to use.                    \n"
+    echo -e ">> Select which configuration options you would want to use.                   \n"
 }
 
 execute () {
@@ -117,7 +117,7 @@ fi
 
 chown qemu:qemu ${VMHOME}/${VMNAME}.img
 
-echo -e "# Starting Kojak"
+echo -e "# Initialising installation\n"
 virt-install \
 --debug \
 -n ${VMNAME} \
@@ -188,11 +188,8 @@ config() {
     read -e -i "$VMMEM" -p "VMMEM = "VMMEM
     VMMEM="4096"
 
-
-    echo -e "\n# You can check and modify your saved configuration options in the file: "
-    echo -e "# $CFGDIR/kojak.cfg."
     echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDIST=$DIST\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nISODIR=$ISODIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > $CFGDIR/kojak.cfg
-    echo -e "# Saved configuration to kojak.cfg.\n"
+    echo -e "# Saved config to $CFGDIR/kojak.cfg.\n"
 
     read -n1 -p ">> Do you want to continue with the configuration options supplied? [Y/n]" OPTS 
     echo
@@ -207,27 +204,29 @@ config() {
 }
 
 menu () {
-PS3='Please select a menu option: '
+PS3='Please Select installation type: '
 echo
-options=("Accept Default Options" "Specify New Configuration" "Quit")
+options=("Accept Defaults" "Custom Options" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
-        "Accept Default Options")
-            echo "Executing Saved Configuration "
+        "Accept Defaults")
+            echo "Accept Defaults "
             execute
             ;;
-        "Specify New Configuration")
-            echo "Specify New Configuration "
+        "Custom Options")
+            echo "Custom Options "
             config
-            ;;
-        "Quit")
             exit
             ;;
-        *) echo "Invalid Option"
+        "Quit")
+            break
+            ;;
+        *) echo invalid option
             ;;
     esac
 done
+reset
 }
 
 clear
