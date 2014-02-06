@@ -33,15 +33,15 @@ fi
 VMNAME=${VMNAME:="Fedora-20-x86_64-DVD"}
 VMHOME=${VMHOME:="/var/lib/libvirt/images"}
 TMPDIR=${TMPDIR:="/home/kojak"}
-DIST=${DIST:="RedHat/Fedora/20/0/x86_64"}
+DISTDIR=${DISTDIR:="RedHat/Fedora/20/0/x86_64"}
 
 # Sources and configuration
 KSISO=${KSISO:="Fedora-20-x86_64-DVD.iso"}
 KSCFG=${KSCFG:="Fedora-20-x86_64.cfg"}
 
 # Working directories
-CFGDIR="${TMPDIR}/cfg/${DIST}"
-ISODIR="${TMPDIR}/iso/${DIST}"
+CFGDIR="${TMPDIR}/cfg/${DISTDIR}"
+ISODIR="${TMPDIR}/iso/${DISTDIR}"
 
 # Virtual machine specifications
 VMDISK="32768M"
@@ -145,7 +145,7 @@ config() {
 
     # Virtual machine name
     echo -e "\n>> Please specify a name for the virtual machine."
-    read -e -i "$VMNAME" -p "VMNAME = "VMNAME
+    read -e -i "$VMNAME" -p "VMNAME = " VMNAME
     VMNAME="${VMNAME:=$VMNAME}"
 
     # Images directory
@@ -158,10 +158,10 @@ config() {
     read -e -i "$TMPDIR" -p "TMPDIR = " TMPDIR
     TMPDIR="${TMPDIR:=$TMPDIR}"
 
-    # Distribution
-    echo -e "\n>> Please specify your OS distribution."
-    read -e -i "$DIST" -p "DIST = " DIST
-    DIST="${DIST:=$DIST}"
+    # Distribution directory
+    echo -e "\n>> Please specify your OS distribution directory."
+    read -e -i "$DISTDIR" -p "DISTDIR = " DISTDIR
+    DISTDIR="${DISTDIR:=$DISTDIR}"
 
     # Kickstart iso file
     echo -e "\n>> Please specify the location of your distribution ISO file."
@@ -176,10 +176,10 @@ config() {
     # Kojak directories
     echo -e "\n>> Please specify the location of the Kojak configuration directory."
     read -e -i "$CFGDIR" -p "CFGDIR = " CFGDIR
-    CFGDIR="${TMPDIR}/cfg/${DIST}"
+    CFGDIR="${TMPDIR}/cfg/${DISTDIR}"
     echo -e "\n>> Please specify the location of the ISO image directory."
     read -e -i "$ISODIR" -p "ISODIR = " ISODIR
-    ISODIR="${TMPDIR}/iso/${DIST}"
+    ISODIR="${TMPDIR}/iso/${DISTDIR}"
 
     # Virtual machine specifications
     echo -e "\n>>Please specify your vm disk space allocation."
@@ -189,7 +189,7 @@ config() {
     read -e -i "$VMMEM" -p "VMMEM = "VMMEM
     VMMEM="4096"
 
-    echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDIST=$DIST\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nISODIR=$ISODIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > $CFGDIR/kojak.cfg
+    echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDISTDIR=$DISTDIR\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nISODIR=$ISODIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > $CFGDIR/kojak.cfg
     echo -e "# Saved config to $CFGDIR/kojak.cfg.\n"
 
     read -n1 -p ">> Do you want to continue with the configuration options supplied? [Y/n]" OPTS 
