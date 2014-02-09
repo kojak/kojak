@@ -36,12 +36,9 @@ TMPDIR=${TMPDIR:="/home/kojak"}
 DISTDIR=${DISTDIR:="RedHat/Fedora/20/0/x86_64"}
 
 # Sources and configuration
-KSISO=${KSISO:="Fedora-20-x86_64-DVD.iso"}
 KSCFG=${KSCFG:="Fedora-20-x86_64.cfg"}
-
-# Working directories
-CFGDIR="${TMPDIR}/cfg/${DISTDIR}"
-ISODIR="${TMPDIR}/iso/${DISTDIR}"
+CFGDIR=${CFGDIR:="${TMPDIR}/cfg/${DISTDIR}"}
+SRCLOC="${SRCLOC:="http://download.fedoraproject.org/pub/fedora/linux/releases/20/Fedora/x86_64/os/"}"
 
 # Virtual machine specifications
 VMDISK="32768M"
@@ -74,16 +71,7 @@ else
     echo "# Using default configuration options"
 fi
 
-mkdir -p $CFGDIR $ISODIR 
-
-if [ -f "$ISODIR/Fedora-20-x86_64-DVD.iso" ]; then
-    echo "# DVD ISO Found"
-else
-    echo "# Downloading DVD ISO"
-    cd $ISODIR
-    wget http://download.fedoraproject.org/pub/fedora/linux/releases/20/Fedora/x86_64/iso/Fedora-20-x86_64-DVD.iso
-    cd -
-fi
+mkdir -p $CFGDIR 
 
 cp kojak-ks.cfg $CFGDIR/
 
@@ -122,17 +110,15 @@ virt-install \
 --debug \
 -n ${VMNAME} \
 -r ${VMMEM} \
+--accelerate \
 --vcpus=2 \
 --os-type=linux \
---os-variant=fedora20 \
---console pty \
---accelerate \
---mac=00:00:00:00:00:00 \
---disk=${VMHOME}/${VMNAME}.img \
---disk=${ISODIR}/${KSISO},device=cdrom \
---location ${ISODIR}/${KSISO} \
+--os-variant=Fedora20 \
+--disk ${VMHOME}/${VMNAME}.img \
 --initrd-inject=${CFGDIR}/kojak-ks.cfg \
+--location ${SRCLOC} \
 --extra-args="ks=file:kojak-ks.cfg console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
+--console pty \
 --nographics
 exit
 }
@@ -164,9 +150,9 @@ config() {
     DISTDIR="${DISTDIR:=$DISTDIR}"
 
     # Kickstart iso file
-    echo -e "\n>> Please specify the location of your distribution ISO file."
-    read -e -i "$KSISO" -p "KSISO = " KSISO
-    KSISO="${KSISO:=$KSISO}"
+    echo -e "\n>> Please specify the location of your distribution sources."
+    read -e -i "$SRCLOC" -p "SRCLOC = " SRCLOC
+    KSISO="${SRCLOC:=$SRCLOC}"
 
     # Kickstart configuration
     echo -e "\n>> Please specify the location of your kickstart configuration file."
@@ -177,9 +163,6 @@ config() {
     echo -e "\n>> Please specify the location of the Kojak configuration directory."
     read -e -i "$CFGDIR" -p "CFGDIR = " CFGDIR
     CFGDIR="${TMPDIR}/cfg/${DISTDIR}"
-    echo -e "\n>> Please specify the location of the ISO image directory."
-    read -e -i "$ISODIR" -p "ISODIR = " ISODIR
-    ISODIR="${TMPDIR}/iso/${DISTDIR}"
 
     # Virtual machine specifications
     echo -e "\n>>Please specify your vm disk space allocation."
