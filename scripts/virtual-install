@@ -43,6 +43,7 @@ SRCLOC="${SRCLOC:="http://download.fedoraproject.org/pub/fedora/linux/releases/2
 # Virtual machine specifications
 VMDISK="32768M"
 VMMEM="4096"
+OS_VARIANT="Fedora20"
 
 heading() {
     clear
@@ -110,9 +111,6 @@ fi
 
 chown qemu:qemu ${VMHOME}/${VMNAME}.img
 
-OS_VARIANT="Fedora20"
-grep CentOS /etc/redhat-release && OS_VARIANT="Fedora16"
-
 echo -e "# Initialising installation\n"
 virt-install \
 --debug \
@@ -179,9 +177,14 @@ config() {
     echo -e "\n>>Please specify your vm memory allocation."
     read -e -i "$VMMEM" -p "VMMEM = "VMMEM
     VMMEM="4096"
+    echo -e "\n>>Please specify your OS variant."
+    read -e -i "$OS_VARIANT" -p "OS_VARIANT = " OS_VARIANT
+    OS_VARIANT="Fedora20"
+
 
     echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDISTDIR=$DISTDIR\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nISODIR=$ISODIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > $CFGDIR/kojak.cfg
     echo -e "# Saved config to $CFGDIR/kojak.cfg.\n"
+
 
     read -n1 -p ">> Do you want to continue with the configuration options supplied? [Y/n]" OPTS 
     echo
