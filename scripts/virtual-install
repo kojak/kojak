@@ -101,7 +101,7 @@ systemctl restart  libvirtd.service || service libvirtd restart
 echo -e "# Allocating the diskspace"
 fallocate=$(which fallocate)
 if [ -n $fallocate -a -f $fallocate ]; then
-    echo "$f{allocate} -l ${VMDISK} ${VMHOME}/${VMNAME}.img"
+    echo "${fallocate} -l ${VMDISK} ${VMHOME}/${VMNAME}.img"
     ${fallocate} -l ${VMDISK} ${VMHOME}/${VMNAME}.img
 else
     echo "dd if=/dev/zero of=${VMHOME}/${VMNAME}.img bs=2M count=32G"
