@@ -101,14 +101,9 @@ systemctl restart  libvirtd.service || service libvirtd restart
 
 echo -e "# Allocating the diskspace"
 fallocate=$(which fallocate)
-if [ -n $fallocate -a -f $fallocate ]; then
-    echo "${fallocate} -l ${VMDISK} ${VMHOME}/${VMNAME}.img"
-    ${fallocate} -l ${VMDISK} ${VMHOME}/${VMNAME}.img
-else
-    echo "dd if=/dev/zero of=${VMHOME}/${VMNAME}.img bs=2M count=16K"
-    dd if=/dev/zero of=${VMHOME}/${VMNAME}.img bs=2M count=16K
-fi
+${fallocate} -l ${VMDISK} ${VMHOME}/${VMNAME}.img
 
+echo -e "# Setting permissions for ${VMHOME}/${VMNAME}.img"
 chown qemu:qemu ${VMHOME}/${VMNAME}.img
 
 echo -e "# Initialising installation\n"
