@@ -94,16 +94,24 @@ else
 fi
 
 echo -e "# Restarting virtualization services"
-systemctl restart  libvirtd.service
+
+# cover our bases in case one or the other doesn't exist...
+systemctl restart  libvirtd.service || service libvirtd restart
 
 echo -e "# Allocating the diskspace"
-if [ -f "/bin/fallocate" ]; then
-    fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
+fallocate=$(which fallocate)
+if [ -n $fallocate -a -f $fallocate ]; then
+    echo "${fallocate} -l ${VMDISK} ${VMHOME}/${VMNAME}.img"
+    ${fallocate} -l ${VMDISK} ${VMHOME}/${VMNAME}.img
 else
-    dd if=/dev/zero of=${VMHOME}/${VMNAME}.img bs=2M count=32G
+    echo "dd if=/dev/zero of=${VMHOME}/${VMNAME}.img bs=2M count=16K"
+    dd if=/dev/zero of=${VMHOME}/${VMNAME}.img bs=2M count=16K
 fi
 
 chown qemu:qemu ${VMHOME}/${VMNAME}.img
+
+OS_VARIANT="Fedora20"
+grep CentOS /etc/redhat-release && OS_VARIANT="Fedora16"
 
 echo -e "# Initialising installation\n"
 virt-install \
@@ -113,7 +121,7 @@ virt-install \
 --accelerate \
 --vcpus=2 \
 --os-type=linux \
---os-variant=Fedora20 \
+--os-variant=${OS_VARIANT} \
 --disk ${VMHOME}/${VMNAME}.img \
 --initrd-inject=${CFGDIR}/kojak-ks.cfg \
 --location ${SRCLOC} \
