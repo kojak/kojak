@@ -27,8 +27,8 @@ yum -y remove postgresql-server
 rm -rf /var/lib/pgsql
 yum -y install postgresql-server 
 postgresql-setup initdb
-systemctl enable postgresql.service
-systemctl start postgresql.service
+systemctl enable postgresql.service || chkconfig postgresql on
+systemctl start postgresql.service || service postgresql start
 
 # /tmp/users.sql
 echo -e "insert into users (name, status, usertype) values ('koji', 0, 0);
@@ -64,8 +64,8 @@ su -l koji -c "psql koji koji < /usr/share/doc/koji/docs/schema.sql"
 su -l koji -c "psql koji koji < /tmp/users.sql"
 
 # Restart database services
-systemctl restart postgresql.service
-systemctl restart httpd.service
+systemctl restart postgresql.service || service postgresql restart
+systemctl restart httpd.service  || service httpd restart
 
 # Begin Koji configuration
 su -l koji -c "
@@ -127,12 +127,12 @@ koji add-pkg --owner=kojiadmin fedora-20 bash binutils
 "
 
 # Restart Koji services
-systemctl enable httpd.service
-systemctl restart httpd.service
-systemctl enable kojid.service
-systemctl restart kojid.service
-systemctl enable kojira.service
-systemctl restart kojira.service
+systemctl enable httpd.service  || chkconfig httpd on
+systemctl restart httpd.service || service httpd restart
+systemctl enable kojid.service || chkconfig kojid on
+systemctl restart kojid.service service kojid restart
+systemctl enable kojira.service || chkconfig kojira on
+systemctl restart kojira.service || service kojira restart
 
 # Grant permissions
 su -l koji -c "koji grant-permission repo kojira"
