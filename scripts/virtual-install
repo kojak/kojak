@@ -95,8 +95,6 @@ else
 fi
 
 echo -e "# Restarting virtualization services"
-
-# cover our bases in case one or the other doesn't exist...
 systemctl restart  libvirtd.service || service libvirtd restart
 
 echo -e "# Allocating the diskspace"

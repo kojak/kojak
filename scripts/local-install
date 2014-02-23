@@ -42,7 +42,7 @@ alternatives --install /usr/bin/java java /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.
 wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
 rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
 yum -y install jenkins
-systemctl enable jenkins.service
+systemctl enable jenkins.service || chkconfig jenkins on
 
 # Install Koji from latest sources
 cd /tmp
@@ -119,7 +119,7 @@ cp -p /etc/hosts /etc/hosts.orig
 cat > /etc/hosts << 'EOF'
 27.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-0.0.0.0 	koji koji.localdomain
+0.0.0.0     koji koji.localdomain
 EOF
 
 # /etc/vimrc
@@ -197,7 +197,7 @@ cat > /etc/security/limits.conf << 'EOF'
 #@faculty        hard    nproc           50
 #ftp             hard    nproc           0
 #@student        -       maxlogins       4
-koji			 hard	 priority		-5
+koji             hard    priority       -5
 
 # End of file
 EOF
@@ -621,13 +621,13 @@ cat > /etc/init.d/99_cfg << 'EOF'
 # description: Configuration script.
 
 # Disable firewall
-systemctl stop firewalld.service
-systemctl disable firewalld.service
+systemctl stop firewalld.service || service firewalld stop
+systemctl disable firewalld.service || chkconfig firewalld off
 
 # Start the database
 postgresql-setup initdb
-systemctl enable postgresql.service
-systemctl start postgresql.service
+systemctl enable postgresql.service || chkconfig postgresql on
+systemctl start postgresql.service || service postgresql start
 
 #/tmp/users.sql
 echo -e "insert into users (name, status, usertype) values ('koji', 0, 0);
@@ -741,8 +741,8 @@ su -l koji -c "psql koji koji < /usr/share/doc/koji-1.8.0/docs/schema.sql"
 su -l koji -c "psql koji koji < /tmp/users.sql"
 
 # Restart database services
-systemctl restart postgresql.service
-systemctl restart httpd.service
+systemctl restart postgresql.service || service postgresql restart
+systemctl restart httpd.service || service httpd restart
 
 # Begin Koji configuration
 su -l koji -c "
@@ -804,12 +804,12 @@ koji add-pkg --owner=kojiadmin fedora-20 bash binutils
 "
 
 # Restart Koji services
-systemctl enable httpd.service
-systemctl restart httpd.service
-systemctl enable kojid.service
-systemctl restart kojid.service
-systemctl enable kojira.service
-systemctl restart kojira.service
+systemctl enable httpd.service || chkconfig httpd on
+systemctl restart httpd.service || service httpd restart
+systemctl enable kojid.service || chkconfig kojid on  
+systemctl restart kojid.service || service kojid restart
+systemctl enable kojira.service || chkconfig kojira on
+systemctl restart kojira.service || service kojira start
 
 # Grant permissions
 su -l koji -c "koji grant-permission repo kojira"
@@ -839,7 +839,7 @@ yum -y update
 EOF
 
 chmod +x /etc/init.d/99_cfg
-systemctl enable 99_cfg.service
+systemctl enable 99_cfg.service || chkconfig 99_cfg.service on
 
 reboot
 
