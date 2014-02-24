@@ -36,9 +36,9 @@ TMPDIR=${TMPDIR:="/home/kojak"}
 DISTDIR=${DISTDIR:="RedHat/Fedora/20/0/x86_64"}
 
 # Sources and configuration
-KSCFG=${KSCFG:="Fedora-20-x86_64.cfg"}
 CFGDIR=${CFGDIR:="${TMPDIR}/cfg/${DISTDIR}"}
-SRCLOC="${SRCLOC:="http://download.fedoraproject.org/pub/fedora/linux/releases/20/Fedora/x86_64/os/"}"
+KSCFG=${KSCFG:="kojak-ks.cfg"}
+SRCLOC="${SRCLOC:="http://download.fedoraproject.org/pub/fedora/linux/releases/20/Fedora/x86_64/os"}"
 
 # Virtual machine specifications
 VMDISK="32768M"
@@ -74,7 +74,7 @@ fi
 
 mkdir -p $CFGDIR 
 
-cp kojak-ks.cfg $CFGDIR/
+cp $KSCFG $CFGDIR/
 
 cd ${VMHOME}
 
@@ -114,9 +114,9 @@ virt-install \
 --os-type=linux \
 --os-variant=${OS_VARIANT} \
 --disk ${VMHOME}/${VMNAME}.img \
---initrd-inject=${CFGDIR}/kojak-ks.cfg \
+--initrd-inject=${CFGDIR}/${KSCFG} \
 --location ${SRCLOC} \
---extra-args="ks=file:kojak-ks.cfg console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
+--extra-args="ks=file:${CFGDIR}/${KSCFG} console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
 --console pty \
 --nographics
 exit
@@ -148,20 +148,20 @@ config() {
     read -e -i "$DISTDIR" -p "DISTDIR = " DISTDIR
     DISTDIR="${DISTDIR:=$DISTDIR}"
 
-    # Kickstart iso file
+    # Download source location
     echo -e "\n>> Please specify the location of your distribution sources."
     read -e -i "$SRCLOC" -p "SRCLOC = " SRCLOC
     KSISO="${SRCLOC:=$SRCLOC}"
-
-    # Kickstart configuration
-    echo -e "\n>> Please specify the location of your kickstart configuration file."
-    read -e -i "$KSCFG" -p "KSCFG = " KSCFG
-    KSCFG="${KSCFG:=$KSCFG}"
 
     # Kojak directories
     echo -e "\n>> Please specify the location of the Kojak configuration directory."
     read -e -i "$CFGDIR" -p "CFGDIR = " CFGDIR
     CFGDIR="${TMPDIR}/cfg/${DISTDIR}"
+
+    # Kickstart configuration
+    echo -e "\n>> Please specify the location of your kickstart configuration file."
+    read -e -i "$KSCFG" -p "KSCFG = " KSCFG
+    KSCFG="${KSCFG:=$KSCFG}"
 
     # Virtual machine specifications
     echo -e "\n>>Please specify your vm disk space allocation."
@@ -175,7 +175,7 @@ config() {
     OS_VARIANT="Fedora20"
 
 
-    echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDISTDIR=$DISTDIR\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nISODIR=$ISODIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > $CFGDIR/kojak.cfg
+    echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDISTDIR=$DISTDIR\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > $CFGDIR/kojak.cfg
     echo -e "# Saved config to $CFGDIR/kojak.cfg.\n"
 
 
