@@ -43,7 +43,7 @@ SRCLOC="${SRCLOC:="http://download.fedoraproject.org/pub/fedora/linux/releases/2
 # Virtual machine specifications
 VMDISK="32768M"
 VMMEM="4096"
-OS_VARIANT="Fedora 20"
+OS_VARIANT="Fedora20"
 
 heading() {
     clear
@@ -172,7 +172,7 @@ config() {
     VMMEM="4096"
     echo -e "\n>>Please specify your OS variant."
     read -e -i "$OS_VARIANT" -p "OS_VARIANT = " OS_VARIANT
-    OS_VARIANT="Fedora 20"
+    OS_VARIANT="Fedora20"
 
 
     echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDISTDIR=$DISTDIR\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nISODIR=$ISODIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > $CFGDIR/kojak.cfg
