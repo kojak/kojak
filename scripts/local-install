@@ -28,7 +28,7 @@ if [ "$USER" != "root" ]; then
 fi
 
 # Install Koji dependencies & platform binaries
-yum -y install httpd mod_ssl openssl postgresql-server mod_wsgi yum-utils mock \
+yum -y install httpd mod_ssl openssl postgresql-server mod_wsgi yum-utils \
 rpm-build createrepo git pyOpenSSL python-krbV python-cheetah cvs svn \
 postgresql-python python-qpid libvirt-python qemu-img \
 mod_auth_kerb wget htop iftop screen vim tree links dos2unix maven mlocate \
@@ -43,6 +43,15 @@ wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.r
 rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
 yum -y install jenkins
 systemctl enable jenkins.service || chkconfig jenkins on
+
+# Install Mock from latest sources
+cd /tmp
+git clone git://git.fedorahosted.org/mock
+cd mock/
+./configure
+make rpm
+rpm -Uvh --force --nodeps noarch/*
+cd -
 
 # Install Koji from latest sources
 cd /tmp
@@ -77,16 +86,20 @@ cd -
 cat > /etc/profile.d/custom.sh << 'EOF'
 # Prompt colors
 if [ `whoami` != "root" ]; then
-    export PS1='\[\e[0;32m\][\u@\h \W]\$ '
+    export PS1="\[$(tput setaf 0)\][\u@\h \W]\$ "
 else
-    export PS1='\[\e[0;30m\][\u@\h \W]\$ '
+    export PS1="\[$(tput setaf 1)\][\u@\h \W]\$ "
 fi
 
 # Aliases
-alias m='less /var/log/messages'
+alias d='dmesg -H'
 alias h='history'
-alias vi='vim'
-alias tasks='koji list-tasks'
+alias m='less /var/log/messages'
+alias v='vim'
+alias l='ls -lash'
+alias n='netstat -vatlpn | grep'
+alias p='ps -A | grep'
+
 
 # Configure bash history 
 HISTSIZE='1000000'
