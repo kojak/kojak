@@ -1,0 +1,44 @@
+#!/bin/bash
+#
+# Simple script to re-initialise the koji database
+
+# Debugging
+set -x
+
+# Check to see if user is root
+if [ "$USER" != "root" ]; then
+    echo -e "\n# This script requires root priviledges to run"
+    exit
+fi
+
+#  Stop all the servies
+systemctl stop kojid || service kojid stop
+systemctl stop kojira || service kojira stop
+
+# Remove the packages
+yum -y remove postgresql-server postgresql-libs postgresql koji mock httpd
+
+# Revert previous configuration files
+cat /etc/hosts.orig > /etc/hosts && rm /etc/hosts.orig
+cat /etc/sudoers.orig > /etc/sudoers && rm /etc/sudoers.orig
+cat /etc/vimrc.orig > /etc/vimrc && rm /etc/vimrc.orig
+cat /etc/httpd/conf.d/ssl.conf.orig > /etc/httpd/conf.d/ssl.conf && rm /etc/httpd/conf.d/ssl.conf.orig
+cat /etc/security/limits.conf.orig > /etc/security/limits.conf && rm /etc/security/limits.conf.orig
+
+# Remove files koji related configuration files
+rm -rf /mnt/koji
+rm /var/log/kojid.log
+rm /var/log/kojira.log
+rm -rf /etc/httpd/conf.d/koji*
+rm -rf /etc/koji*
+rm -rf /etc/httpd
+rm -rf /etc/pki/koji
+rm -rf /var/lib/pgsql
+
+# Remove user koji user
+userdel -r koji
+
+# Update mlocate database
+updatedb
+locate *.orig
+
