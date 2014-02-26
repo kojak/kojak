@@ -35,13 +35,13 @@ cat > /etc/yum.repos.d/rhel6-koji.repo << 'EOF'
 name=Koji Buildsystem for RHEL6 - $basearch
 baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/$basearch
 enabled=1
-gpgcheck=1
+gpgcheck=0
 
 [koji-noarch]
 name=Koji Buildsystem for RHEL6 - noarch 
 baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/noarch
 enabled=1
-gpgcheck=1
+gpgcheck=0
 EOF
 
 yum -y update
