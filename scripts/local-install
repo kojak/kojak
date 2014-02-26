@@ -27,33 +27,34 @@ if [ "$USER" != "root" ]; then
     exit
 fi
 
+# /etc/yum.repos.d/rhel6-koji.repo
+cat > /etc/yum.repos.d/rhel6-koji.repo << 'EOF'
+#Internal koji packages
+
+[koji]
+name=Koji Buildsystem for RHEL6 - $basearch
+baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/$basearch
+enabled=1
+gpgcheck=1
+
+[koji-noarch]
+name=Koji Buildsystem for RHEL6 - noarch 
+baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/noarch
+enabled=1
+gpgcheck=1
+EOF
+
+
 # Install Koji dependencies & platform binaries
 yum -y install httpd mod_ssl openssl postgresql-server mod_wsgi yum-utils \
 rpm-build createrepo git pyOpenSSL python-krbV python-cheetah cvs svn \
 postgresql-python python-qpid libvirt-python qemu-img \
 mod_auth_kerb wget screen vim tree links dos2unix mlocate \
-java-1.7.0-openjdk-devel virt-install
+java-1.7.0-openjdk-devel virt-install koji
 
 # Configure Java version
 #alternatives --remove java /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.4.1.fc20.x86_64/jre/bin/java
 #alternatives --install /usr/bin/java java /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.4.1.fc20.x86_64/bin/java 0
-
-# Install Mock from latest sources
-cd /tmp
-git clone git://git.fedorahosted.org/mock
-cd mock/
-./configure
-make rpm
-rpm -Uvh --force --nodeps noarch/*
-cd -
-
-# Install Koji from latest sources
-cd /tmp
-git clone git://git.fedorahosted.org/koji
-cd koji/
-make rpm
-rpm -Uvh --force --nodeps noarch/*
-cd -
 
 # Create Koji user and SSL directories
 useradd koji
