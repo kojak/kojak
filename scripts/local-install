@@ -847,7 +847,7 @@ yum -y update
 EOF
 
 chmod +x /etc/init.d/99_cfg
-systemctl enable 99_cfg.service || chkconfig 99_cfg.service on
+systemctl enable 99_cfg.service || chkconfig 99_cfg on
 
 reboot
 
