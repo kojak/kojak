@@ -44,7 +44,7 @@ description() {
 menu () {
 PS3='Please Select installation type: '
 echo
-options=("Virtual Installation" "Local Installation" "Remove-Installation" "Quit")
+options=("Virtual Installation" "Local Installation" "Remove Installation" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
