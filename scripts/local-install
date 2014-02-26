@@ -633,7 +633,7 @@ systemctl stop firewalld.service || service firewalld stop
 systemctl disable firewalld.service || chkconfig firewalld off
 
 # Start the database
-postgresql-setup initdb
+service postgresql initdb
 systemctl enable postgresql.service || chkconfig postgresql on
 systemctl start postgresql.service || service postgresql start
 
