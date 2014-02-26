@@ -11,12 +11,12 @@ if [ "$USER" != "root" ]; then
     exit
 fi
 
-#  Stop all the servies
-systemctl stop kojid || service kojid stop
-systemctl stop kojira || service kojira stop
-
-# Remove the packages
-yum -y remove postgresql-server postgresql-libs postgresql koji mock httpd
+# Remove package
+yum -y remove httpd mod_ssl openssl postgresql-server mod_wsgi yum-utils \
+rpm-build createrepo git pyOpenSSL python-krbV python-cheetah cvs svn \
+postgresql-python python-qpid libvirt-python qemu-img mod_auth_kerb \
+wget screen vim tree links dos2unix mlocate java-1.7.0-openjdk-devel virt-install \
+koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder
 
 # Revert previous configuration files
 cat /etc/hosts.orig > /etc/hosts && rm /etc/hosts.orig
