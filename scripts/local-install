@@ -629,13 +629,13 @@ cat > /etc/init.d/99_cfg << 'EOF'
 # description: Configuration script.
 
 # Disable firewall
-systemctl stop firewalld.service || service firewalld stop
-systemctl disable firewalld.service || chkconfig firewalld off
+service firewalld stop
+chkconfig firewalld off
 
 # Start the database
 service postgresql initdb
-systemctl enable postgresql.service || chkconfig postgresql on
-systemctl start postgresql.service || service postgresql start
+chkconfig postgresql on
+service postgresql start
 
 #/tmp/users.sql
 echo -e "insert into users (name, status, usertype) values ('koji', 0, 0);
@@ -749,8 +749,8 @@ su -l koji -c "psql koji koji < /usr/share/doc/koji-1.8.0/docs/schema.sql"
 su -l koji -c "psql koji koji < /tmp/users.sql"
 
 # Restart database services
-systemctl restart postgresql.service || service postgresql restart
-systemctl restart httpd.service || service httpd restart
+service postgresql restart
+service httpd restart
 
 # Begin Koji configuration
 su -l koji -c "
@@ -812,12 +812,12 @@ koji add-pkg --owner=kojiadmin product bash binutils
 "
 
 # Restart Koji services
-systemctl enable httpd.service || chkconfig httpd on
-systemctl restart httpd.service || service httpd restart
-systemctl enable kojid.service || chkconfig kojid on  
-systemctl restart kojid.service || service kojid restart
-systemctl enable kojira.service || chkconfig kojira on
-systemctl restart kojira.service || service kojira start
+chkconfig httpd on
+service httpd restart
+chkconfig kojid on  
+service kojid restart
+chkconfig kojira on
+service kojira start
 
 # Grant permissions
 su -l koji -c "koji grant-permission repo kojira"
@@ -847,7 +847,7 @@ yum -y update
 EOF
 
 chmod +x /etc/init.d/99_cfg
-systemctl enable 99_cfg.service || chkconfig 99_cfg on
+chkconfig 99_cfg on
 
 reboot
 
