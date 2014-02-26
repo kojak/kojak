@@ -44,7 +44,7 @@ description() {
 menu () {
 PS3='Please Select installation type: '
 echo
-options=("Virtual Installation" "Local Installation" "Quit")
+options=("Virtual Installation" "Local Installation" "Remove-Innstallation" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -56,6 +56,11 @@ do
         "Local Installation")
             echo "Local Installation Selected "
             $SCRIPTS/local-install
+            exit
+            ;;
+        "Remove Installation")
+            echo "Remove Installation Selected "
+            $SCRIPTS/remove-install
             exit
             ;;
         "Quit")
