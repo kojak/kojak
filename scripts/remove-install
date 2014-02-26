@@ -12,11 +12,8 @@ if [ "$USER" != "root" ]; then
 fi
 
 # Remove package
-yum -y remove httpd mod_ssl openssl postgresql-server mod_wsgi yum-utils \
-rpm-build createrepo git pyOpenSSL python-krbV python-cheetah cvs svn \
-postgresql-python python-qpid libvirt-python qemu-img mod_auth_kerb \
-wget screen vim tree links dos2unix mlocate java-1.7.0-openjdk-devel virt-install \
-koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder
+yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils \
+koji-hub-plugins koji-vm koji-builder
 
 # Revert previous configuration files
 cat /etc/hosts.orig > /etc/hosts && rm /etc/hosts.orig
