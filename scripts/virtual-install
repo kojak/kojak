@@ -75,7 +75,7 @@ fi
 mkdir -p $CFGDIR 
 cp $KSCFG $CFGDIR/
 
-VMDOMAIN=`virsh list --all | grep ${VMNAME}`
+VMDOMAIN=$(virsh list --all | grep ${VMNAME})
 if [ ! "$VMDOMAIN" ]; then
     echo -e "# No pre-existing Kojak vm"
 else 
@@ -173,7 +173,7 @@ config() {
     # Virtual machine OS variant
     echo -e "\n>>Please specify your vm OS variant."
     read -e -i "$OS_VARIANT" -p "OS_VARIANT = " OS_VARIANT
-    OS_VARIANT="Fedora20"
+    OS_VARIANT="rhel6"
 
 
     echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDISTDIR=$DISTDIR\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > $CFGDIR/kojak.cfg
