@@ -32,7 +32,7 @@ fi
 # Distro information
 VMNAME=${VMNAME:="CentOS-6.5-x86_64"}
 VMHOME=${VMHOME:="/var/lib/libvirt/images"}
-TMPDIR=${TMPDIR:="/home/kojak"}
+TMPDIR=${TMPDIR:="/tmp/kojak"}
 DISTDIR=${DISTDIR:="RedHat/CentOS/6/5/x86_64"}
 
 # Sources and configuration
@@ -43,7 +43,7 @@ SRCLOC="${SRCLOC:="http://mirror.centos.org/centos/6/os/x86_64/"}"
 # Virtual machine specifications
 VMDISK="32768M"
 VMMEM="4096"
-OS_VARIANT="Fedora20"
+OS_VARIANT="rhel6"
 
 heading() {
     clear
@@ -74,7 +74,6 @@ fi
 
 mkdir -p $CFGDIR 
 cp $KSCFG $CFGDIR/
-cd ${VMHOME}
 
 VMDOMAIN=`virsh list --all | grep ${VMNAME}`
 if [ ! "$VMDOMAIN" ]; then
