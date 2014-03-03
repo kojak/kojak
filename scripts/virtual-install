@@ -111,13 +111,14 @@ virt-install \
 -n ${VMNAME} \
 -r ${VMMEM} \
 --accelerate \
---vcpus=2 \
---os-type=linux \
---os-variant=${OS_VARIANT} \
+--vcpus 2 \
+--os-type linux \
+--os-variant ${OS_VARIANT} \
+--arch x86_64 \
 --disk ${VMHOME}/${VMNAME}.img \
---initrd-inject=${KSCFG} \
+--initrd-inject ${KSCFG} \
 --location ${SRCLOC} \
---extra-args="ks=file:${KSCFG} console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH rd.debug=1" \
+--extra-args "ks file:${KSCFG} console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
 --console pty \
 --nographics
 exit
