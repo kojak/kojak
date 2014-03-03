@@ -72,8 +72,12 @@ else
     echo "# Using default configuration options"
 fi
 
-mkdir -p $CFGDIR 
-cp $KSCFG $CFGDIR/
+if [ -f "$KSCFG" ]; then
+    echo "# Found Kickstart file"
+else
+    echo "# Copying Kickstart file"
+    cp kojak-ks.cfg  $CFGDIR/
+fi
 
 VMDOMAIN=$(virsh list --all | grep ${VMNAME})
 if [ ! "$VMDOMAIN" ]; then
