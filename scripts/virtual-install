@@ -38,14 +38,14 @@ DISTDIR=${DISTDIR:="RedHat/CentOS/6/5/x86_64"}
 # Sources and configuration
 CFGDIR=${CFGDIR:="${TMPDIR}/cfg/${DISTDIR}"}
 KSCFG=${KSCFG:="${CFGDIR}/kojak-ks.cfg"}
-SRCLOC="${SRCLOC:="http://mirror.centos.org/centos/6/os/x86_64/"}"
+SRCLOC=${SRCLOC:="http://mirror.centos.org/centos/6/os/x86_64/"}
 
 # Virtual machine specifications
-VMDISK=${VMDISK:="32768M"}
-VMMEM=${VMMEM:="4096"}
 OS_VARIANT=${OS_VARIANT:="rhel6"}
 ARCH=${ARCH:="x86_64"}
-VCPU="2"
+VCPU=${VCPU:="2"}
+VMMEM=${VMMEM:="4096"}
+VMDISK=${VMDISK:="32768M"}
 
 heading() {
     clear
@@ -111,8 +111,8 @@ echo -e "# Initialising installation\n"
 virt-install \
 --debug \
 -n ${VMNAME} \
--r ${VMMEM} \
 --accelerate \
+--memory ${VMMEM} \
 --vcpus ${VCPU} \
 --os-type linux \
 --os-variant ${OS_VARIANT} \
@@ -120,7 +120,7 @@ virt-install \
 --disk ${VMHOME}/${VMNAME}.img \
 --initrd-inject ${KSCFG} \
 --location ${SRCLOC} \
---extra-args "ks file:${KSCFG} console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
+--extra-args "ks=file:${KSCFG} console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
 --console pty \
 --nographics
 exit
@@ -167,34 +167,33 @@ config() {
     read -e -i "${KSCFG}" -p "KSCFG = " KSCFG
     KSCFG="${KSCFG:=$KSCFG}"
 
-    # Virtual machine disk space allocation
-    echo -e "\n>>Please specify your vm disk size allocation."
-    read -e -i "${VMDISK}" -p "VMDISK = " VMDISK
-    VMDISK="32768M"
+    # Virtual machine OS variant
+    echo -e "\n>>Please specify your vm OS variant."
+    read -e -i "${OS_VARIANT}" -p "OS_VARIANT = " OS_VARIANT
+    OS_VARIANT="rhel6"
+
+    # Virtual machine CPU architecture
+    echo -e "\n>>Please specify your cpu architecture."
+    read -e -i "${ARCH}" -p "ARCH = " ARCH
+    ARCH="x86_64"
+
+    # Virtual machine VCPU's 
+    echo -e "\n>>Please specify the number of vcpu's."
+    read -e -i "${VCPU}" -p "VCPU = " VCPU
+    VCPU="2"
 
     # Virtual machine memory allocation
     echo -e "\n>>Please specify your vm memory size allocation."
     read -e -i "${VMMEM}" -p "VMMEM = "VMMEM
     VMMEM="4096"
-
-    # Virtual machine OS variant
-    echo -e "\n>>Please specify your vm OS variant."
-    read -e -i "{$OS_VARIANT}" -p "OS_VARIANT = " OS_VARIANT
-    OS_VARIANT="rhel6"
-
-    # CPU architecture
-    echo -e "\n>>Please specify your cpu architecture."
-    read -e -i "{$ARCH}" -p "ARCH = " ARCH
-    ARCH="x86_64"
-
-    # VCPU's a
-    echo -e "\n>>Please specify the number of vcpu's."
-    read -e -i "{$VCPU}" -p "VCPU = " VCPU
-    VCPU="2"
+    
+    # Virtual machine disk space allocation
+    echo -e "\n>>Please specify your vm disk size allocation."
+    read -e -i "${VMDISK}" -p "VMDISK = " VMDISK
+    VMDISK="32768M"
 
     echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDISTDIR=$DISTDIR\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > $CFGDIR/kojak.cfg
-    echo -e "# Saved config to ${CFGDIR}/kojak.cfg.\n"
-
+    echo -e "\n# Saved config to ${CFGDIR}/kojak.cfg.\n"
 
     read -n1 -p ">> Do you want to continue with the configuration options supplied? [Y/n]" OPTS 
     echo
