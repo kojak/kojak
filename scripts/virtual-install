@@ -41,9 +41,11 @@ KSCFG=${KSCFG:="${CFGDIR}/kojak-ks.cfg"}
 SRCLOC="${SRCLOC:="http://mirror.centos.org/centos/6/os/x86_64/"}"
 
 # Virtual machine specifications
-VMDISK="32768M"
-VMMEM="4096"
-OS_VARIANT="rhel6"
+VMDISK=${VMDISK:="32768M"}
+VMMEM=${VMMEM:="4096"}
+OS_VARIANT=${OS_VARIANT:="rhel6"}
+ARCH=${ARCH:="x86_64"}
+VCPU="2"
 
 heading() {
     clear
@@ -111,10 +113,10 @@ virt-install \
 -n ${VMNAME} \
 -r ${VMMEM} \
 --accelerate \
---vcpus 2 \
+--vcpus ${VCPU} \
 --os-type linux \
 --os-variant ${OS_VARIANT} \
---arch x86_64 \
+--arch ${ARCH} \
 --disk ${VMHOME}/${VMNAME}.img \
 --initrd-inject ${KSCFG} \
 --location ${SRCLOC} \
@@ -180,6 +182,15 @@ config() {
     read -e -i "{$OS_VARIANT}" -p "OS_VARIANT = " OS_VARIANT
     OS_VARIANT="rhel6"
 
+    # CPU architecture
+    echo -e "\n>>Please specify your cpu architecture."
+    read -e -i "{$ARCH}" -p "ARCH = " ARCH
+    ARCH="x86_64"
+
+    # VCPU's a
+    echo -e "\n>>Please specify the number of vcpu's."
+    read -e -i "{$VCPU}" -p "VCPU = " VCPU
+    VCPU="2"
 
     echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDISTDIR=$DISTDIR\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > $CFGDIR/kojak.cfg
     echo -e "# Saved config to ${CFGDIR}/kojak.cfg.\n"
@@ -220,7 +231,7 @@ do
             ;;
     esac
 done
-reset
+break
 }
 
 clear
