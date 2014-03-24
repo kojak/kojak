@@ -86,7 +86,7 @@ else
     export PS1="\[$(tput setaf 1)\][\u@\h \W]\$ "
 fi
 
-# Aliases
+# /etc/aliases
 alias d='dmesg -H'
 alias h='history'
 alias m='less /var/log/messages'
@@ -94,7 +94,7 @@ alias v='vim'
 alias l='ls -lash'
 alias n='netstat -vatlpn | grep'
 alias p='ps -A | grep'
-
+alias t='koji list-tasks --mine"
 
 # Configure bash history 
 HISTSIZE='1000000'
@@ -127,7 +127,7 @@ cp -p /etc/hosts /etc/hosts.orig
 cat > /etc/hosts << 'EOF'
 27.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
 ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-0.0.0.0     koji koji.localdomain
+192.168.122.2   koji koji.localdomain
 EOF
 
 # /etc/vimrc
@@ -608,17 +608,6 @@ sed -e '/SSLCertificateFile/s/^/#/' -e '/SSLCertificateKeyFile/s/^/#/' -e '/#SSL
 cat /etc/httpd/conf.d/ssl.tmp > /etc/httpd/conf.d/ssl.conf
 rm /etc/httpd/conf.d/ssl.tmp
 
-# /etc/yum.repos.d/fedora-mirror.repo
-#cat > /etc/yum.repos.d/fedora-mirror.repo << 'EOF'
-#[fedora-mirror]
-#name=Fedora $releasever - $basearch
-#failovermethod=priority
-#mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=fedora-$releasever&arch=$basearch
-#enabled=0
-#gpgcheck=1
-#gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$basearch
-#EOF
-
 # /tmp/init.d/99_cfg
 cat > /etc/init.d/99_cfg << 'EOF'
 #!/bin/bash
@@ -737,14 +726,14 @@ host    koji        koji                127.0.0.1/32             trust
 host    koji        apache              127.0.0.1/32             trust
 host    koji        koji                ::1/128                  trust
 host    koji        apache              ::1/128                  trust
-host    koji        koji                0.0.0.0/32        trust
-host    koji        apache              0.0.0.0/32        trust" >> /var/lib/pgsql/data/pg_hba.conf
+host    koji        koji                192.168.122.2/32        trust
+host    koji        apache              192.168.122.2/32        trust" >> /var/lib/pgsql/data/pg_hba.conf
 
 sed -i -e "s/local   all             all                                     peer/local   all             all                                     trust/g" /var/lib/pgsql/data/pg_hba.conf
 chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf.orig
 
 # Create the database tables
-su -l postgres -c "createuser koji; createdb -O koji koji"
+su -l postgres -c "createuser -S -D -R koji; createdb -O koji koji"
 su -l koji -c "psql koji koji < /usr/share/doc/koji-1.8.0/docs/schema.sql"
 su -l koji -c "psql koji koji < /tmp/users.sql"
 
@@ -777,7 +766,7 @@ koji add-tag-inheritance product-build maven-import --priority 10
 koji add-target product-candidate product-build product-candidate
 
 # Add external repo
-koji add-external-repo -t product fedora-mirror http://mirrors.kernel.org/fedora/releases/19/Everything/x86_64/os/
+koji add-external-repo -t product fedora-mirror http://ftp.hosteurope.de/mirror/centos.org/6.5/os/x86_64/
 
 # Add groups
 #
@@ -850,4 +839,3 @@ chmod +x /etc/init.d/99_cfg
 chkconfig 99_cfg on
 
 reboot
-
