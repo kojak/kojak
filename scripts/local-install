@@ -733,7 +733,7 @@ sed -i -e "s/local   all             all                                     pee
 chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf.orig
 
 # Create the database tables
-su -l postgres -c "createuser -S -D -R koji; createdb -O koji koji"
+su -l postgres -c "createuser -s -d -r koji; createdb -O koji koji"
 su -l koji -c "psql koji koji < /usr/share/doc/koji-1.8.0/docs/schema.sql"
 su -l koji -c "psql koji koji < /tmp/users.sql"
 
