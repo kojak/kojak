@@ -41,6 +41,7 @@ KSCFG=${KSCFG:="${CFGDIR}/kojak-ks.cfg"}
 SRCLOC=${SRCLOC:="http://mirror.centos.org/centos/6/os/x86_64/"}
 
 # Virtual machine specifications
+OS_TYPE=${OS_TYPE:="linux"}
 OS_VARIANT=${OS_VARIANT:="rhel6"}
 ARCH=${ARCH:="x86_64"}
 VCPU=${VCPU:="2"}
@@ -98,7 +99,7 @@ else
 fi
 
 echo -e "# Restarting virtualization services"
-systemctl restart  libvirtd.service || service libvirtd restart
+service libvirtd restart
 
 echo -e "# Allocating the diskspace"
 fallocate=$(which fallocate)
@@ -114,7 +115,7 @@ virt-install \
 --accelerate \
 --memory ${VMMEM} \
 --vcpus ${VCPU} \
---os-type linux \
+--os-type ${OS_TYPE} \
 --os-variant ${OS_VARIANT} \
 --arch ${ARCH} \
 --disk ${VMHOME}/${VMNAME}.img \
@@ -166,6 +167,11 @@ config() {
     echo -e "\n>> Please specify the location of your kickstart configuration file."
     read -e -i "${KSCFG}" -p "KSCFG = " KSCFG
     KSCFG="${KSCFG:=$KSCFG}"
+
+    # Virtual machine OS type
+    echo -e "\n>>Please specify your vm OS type."
+    read -e -i "${OS_VARIANT}" -p "OS_VARIANT = " OS_VARIANT
+    OS_VARIANT="linux"
 
     # Virtual machine OS variant
     echo -e "\n>>Please specify your vm OS variant."
