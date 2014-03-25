@@ -44,13 +44,13 @@ enabled=1
 gpgcheck=0
 EOF
 
-# Install Koji dependencies & platform binaries
+# Install platform binaries
 yum -y install httpd mod_ssl openssl postgresql-server mod_wsgi yum-utils \
 rpm-build createrepo git pyOpenSSL python-krbV python-cheetah cvs svn \
-postgresql-python python-qpid libvirt-python qemu-img mod_auth_kerb wget \
-screen vim tree links dos2unix mlocate java-1.7.0-openjdk-devel virt-install \
-koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder 
-
+postgresql-python python-qpid libvirt-python python-virtinst qemu-img \
+mod_auth_kerb wget htop iftop screen vim tree links dos2unix maven mlocate \
+java-1.7.0-openjdk-devel python-virtinst virt-install python-pudb.noarch \
+koji koji-builder koji-hub koji-hub-plugins koji-utils koji-vm koji-web mock pigz
 
 # Configure Java version
 #alternatives --remove java /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.4.1.fc20.x86_64/jre/bin/java
