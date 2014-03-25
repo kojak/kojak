@@ -68,6 +68,13 @@ echo -e "#                                                                      
 echo -e "#                  *** Running Kojak... Who loves you baby ***                 #"
 echo -e "#                                                                              #\n"
 
+if [ -d "${CFGDIR}" ]; then
+   echo -e "# Found configuration directory"
+else
+   echo -e "# Creating configuration direcory"
+   mkdir -p ${CFGDIR}
+fi
+
 if [ -f "${CFGDIR}/kojak.cfg" ]; then
     echo -e "# Using options in ${CFGDIR}/kojak.cfg"
     source ${CFGDIR}/kojak.cfg
@@ -102,18 +109,26 @@ echo -e "# Restarting virtualization services"
 service libvirtd restart
 
 echo -e "# Allocating the diskspace"
-fallocate=$(which fallocate)
-${fallocate} -l ${VMDISK} ${VMHOME}/${VMNAME}.img
+FALLOCATE=$(which fallocate)
+if  [ ! ${FALLOCATE} ]; then
+    yum -y install fallocate
+else
+    ${FALLOCATE} -l ${VMDISK} ${VMHOME}/${VMNAME}.img
+    chown qemu:qemu ${VMHOME}/${VMNAME}.img
+fi
 
-echo -e "# Setting permissions for ${VMHOME}/${VMNAME}.img"
-chown qemu:qemu ${VMHOME}/${VMNAME}.img
+echo -e "# Checking for virt-install"
+VIRT_INSTALL=$(which virt-install)
+if [ ! ${VIRT_INSTALL} ]; then
+    yum -y install virt-install
+fi
 
 echo -e "# Initialising installation\n"
 virt-install \
 --debug \
 -n ${VMNAME} \
 --accelerate \
---memory ${VMMEM} \
+--ram ${VMMEM} \
 --vcpus ${VCPU} \
 --os-type ${OS_TYPE} \
 --os-variant ${OS_VARIANT} \
@@ -198,7 +213,7 @@ config() {
     read -e -i "${VMDISK}" -p "VMDISK = " VMDISK
     VMDISK="32768M"
 
-    echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDISTDIR=$DISTDIR\nSRCLOC=$SRCLOC\nCFGDIR=$CFGDIR\nKSCFG=$KSCFG\nOS_TYPE=$OS_TYPE\nOS_VARIANT=$OS_VARIANT\nARCH=$ARCH\nVCPU=$VCPU\nVMMEM=$VMMEM\nVMDISK=$VMDISK" > $CFGDIR/kojak.cfg
+    echo -e "VMNAME=${VMNAME}\nVMHOME=${VMHOME}\nTMPDIR=${TMPDIR}\nDISTDIR=${DISTDIR}\nSRCLOC=${SRCLOC}\nCFGDIR=${CFGDIR}\nKSCFG=${KSCFG}\nOS_TYPE=${OS_TYPE}\nOS_VARIANT=${OS_VARIANT}\nARCH=${ARCH}\nVCPU=${VCPU}\nVMMEM=${VMMEM}\nVMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
     echo -e "\n# Saved config to ${CFGDIR}/kojak.cfg.\n"
 
     read -n1 -p ">> Do you want to continue with the configuration options supplied? [Y/n]" OPTS 
