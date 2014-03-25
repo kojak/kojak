@@ -119,7 +119,7 @@ virt-install \
 --os-variant ${OS_VARIANT} \
 --arch ${ARCH} \
 --disk ${VMHOME}/${VMNAME}.img \
---initrd-inject ${KSCFG} \
+--initrd-inject "${KSCFG}" \
 --location ${SRCLOC} \
 --extra-args "ks=file:${KSCFG} console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
 --console pty \
@@ -134,71 +134,71 @@ config() {
     heading
 
     # Virtual machine name
-    echo -e "\n>> Please specify a name for the virtual machine."
+    echo -e "\n01. Please specify a name for the virtual machine."
     read -e -i "${VMNAME}" -p "VMNAME = " VMNAME
     VMNAME="${VMNAME:=$VMNAME}"
 
-    # Images directory
-    echo -e "\n>> Please specify the directory where vm image will be created."
+    # Virtual machine home
+    echo -e "\n02. Please specify the directory where vm image will be created."
     read -e -i "${VMHOME}" -p "VMHOME = " VMHOME
     VMHOME="${VMHOME:=$VMHOME}"
 
     # Temp directory
-    echo -e "\n>> Please specify a temporay directory used for the installation."
+    echo -e "\n03. Please specify a temporay directory used for the installation."
     read -e -i "${TMPDIR}" -p "TMPDIR = " TMPDIR
     TMPDIR="${TMPDIR:=$TMPDIR}"
 
     # Distribution directory
-    echo -e "\n>> Please specify your OS distribution directory."
+    echo -e "\n04. Please specify your OS distribution directory."
     read -e -i "${DISTDIR}" -p "DISTDIR = " DISTDIR
     DISTDIR="${DISTDIR:=$DISTDIR}"
 
-    # Download source location
-    echo -e "\n>> Please specify the location of your distribution sources."
+    # Source location
+    echo -e "\n05. Please specify the location of your distribution sources."
     read -e -i "${SRCLOC}" -p "SRCLOC = " SRCLOC
-    KSISO="${SRCLOC:=$SRCLOC}"
+    SRCLOC="${SRCLOC:=$SRCLOC}"
 
-    # Kojak directories
-    echo -e "\n>> Please specify the location of the Kojak configuration directory."
+    # Configuration directories
+    echo -e "\n06. Please specify the location of the Kojak configuration directory."
     read -e -i "${CFGDIR}" -p "CFGDIR = " CFGDIR
     CFGDIR="${TMPDIR}/cfg/${DISTDIR}"
 
     # Kickstart configuration
-    echo -e "\n>> Please specify the location of your kickstart configuration file."
+    echo -e "\n07. Please specify the location of your kickstart configuration file."
     read -e -i "${KSCFG}" -p "KSCFG = " KSCFG
     KSCFG="${KSCFG:=$KSCFG}"
 
     # Virtual machine OS type
-    echo -e "\n>>Please specify your vm OS type."
-    read -e -i "${OS_VARIANT}" -p "OS_VARIANT = " OS_VARIANT
-    OS_VARIANT="linux"
+    echo -e "\n08. Please specify your vm OS type."
+    read -e -i "${OS_TYPE}" -p "OS_TYPE = " OS_TYPE
+    OS_TYPE="linux"
 
     # Virtual machine OS variant
-    echo -e "\n>>Please specify your vm OS variant."
+    echo -e "\n09. Please specify your vm OS variant."
     read -e -i "${OS_VARIANT}" -p "OS_VARIANT = " OS_VARIANT
     OS_VARIANT="rhel6"
 
     # Virtual machine CPU architecture
-    echo -e "\n>>Please specify your cpu architecture."
+    echo -e "\n10. Please specify your cpu architecture."
     read -e -i "${ARCH}" -p "ARCH = " ARCH
     ARCH="x86_64"
 
     # Virtual machine VCPU's 
-    echo -e "\n>>Please specify the number of vcpu's."
+    echo -e "\n11. Please specify the number of vcpu's."
     read -e -i "${VCPU}" -p "VCPU = " VCPU
     VCPU="2"
 
     # Virtual machine memory allocation
-    echo -e "\n>>Please specify your vm memory size allocation."
+    echo -e "\n12. Please specify your vm memory size allocation."
     read -e -i "${VMMEM}" -p "VMMEM = "VMMEM
     VMMEM="4096"
     
     # Virtual machine disk space allocation
-    echo -e "\n>>Please specify your vm disk size allocation."
+    echo -e "\n13. Please specify your vm disk size allocation."
     read -e -i "${VMDISK}" -p "VMDISK = " VMDISK
     VMDISK="32768M"
 
-    echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDISTDIR=$DISTDIR\nKSISO=$KSISO\nKSCFG=$KSCFG\nCFGDIR=$CFGDIR\nVMDISK=$VMDISK\nVMMEM=$VMMEM" > $CFGDIR/kojak.cfg
+    echo -e "VMNAME=$VMNAME\nVMHOME=$VMHOME\nTMPDIR=$TMPDIR\nDISTDIR=$DISTDIR\nSRCLOC=$SRCLOC\nCFGDIR=$CFGDIR\nKSCFG=$KSCFG\nOS_TYPE=$OS_TYPE\nOS_VARIANT=$OS_VARIANT\nARCH=$ARCH\nVCPU=$VCPU\nVMMEM=$VMMEM\nVMDISK=$VMDISK" > $CFGDIR/kojak.cfg
     echo -e "\n# Saved config to ${CFGDIR}/kojak.cfg.\n"
 
     read -n1 -p ">> Do you want to continue with the configuration options supplied? [Y/n]" OPTS 
