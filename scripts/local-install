@@ -766,7 +766,7 @@ koji add-tag-inheritance product-build maven-import --priority 10
 koji add-target product-candidate product-build product-candidate
 
 # Add external repo
-koji add-external-repo -t product fedora-mirror http://ftp.hosteurope.de/mirror/centos.org/6.5/os/x86_64/
+koji add-external-repo -t product centos-mirror http://mirror.centos.org/centos/6/os/x86_64/
 
 # Add groups
 #
