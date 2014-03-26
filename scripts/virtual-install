@@ -216,7 +216,7 @@ config() {
     read -n1 -p ">> Do you want to continue with the configuration options supplied? [Y/n]" OPTS 
 
 save_cfg() {
-    echo -e "# Kojak saved configuration options.\n
+    echo -e "# Kojak SAVED configuration options.\n
 VMNAME=${VMNAME}
 VMHOME=${VMHOME}
 TMPDIR=${TMPDIR}
@@ -262,22 +262,24 @@ do
         "Print Options")
             if [ ! -f "${CFGDIR}/kojak.cfg" ]; then
                 clear
-                echo -e "# Kojak default configuration options.\n
-VMNAME=${VMNAME}
-VMHOME=${VMHOME}
-TMPDIR=${TMPDIR}
-DISTDIR=${DISTDIR}
-SRCLOC=${SRCLOC}
-CFGDIR=${CFGDIR}
-KSCFG=${KSCFG}
-OS_TYPE=${OS_TYPE}
-OS_VARIANT=${OS_VARIANT}
-ARCH=${ARCH}
-VCPU=${VCPU}
-VMMEM=${VMMEM}
-VMDISK=${VMDISK}"
+                heading
+                echo -e "# Kojak DEFAULT configuration options.\n
+# VMNAME=${VMNAME}
+# VMHOME=${VMHOME}
+# TMPDIR=${TMPDIR}
+# DISTDIR=${DISTDIR}
+# SRCLOC=${SRCLOC}
+# CFGDIR=${CFGDIR}
+# KSCFG=${KSCFG}
+# OS_TYPE=${OS_TYPE}
+# OS_VARIANT=${OS_VARIANT}
+# ARCH=${ARCH}
+# VCPU=${VCPU}
+# VMMEM=${VMMEM}
+# VMDISK=${VMDISK}"
             else
                 clear
+                heading
                 cat ${CFGDIR}/kojak.cfg
             fi
             menu
