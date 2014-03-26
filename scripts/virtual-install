@@ -125,7 +125,6 @@ fi
 
 echo -e "# Initialising installation\n"
 virt-install \
-#--debug \
 -n ${VMNAME} \
 --accelerate \
 --ram ${VMMEM} \
