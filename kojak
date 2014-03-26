@@ -38,7 +38,7 @@ heading() {
 }
 
 description() {
-    echo -e ">> Select the type of installation form the menu options below.                \n"
+    echo -e ">> Select the type of installation from the menu options below.                \n"
 }
 
 menu () {
