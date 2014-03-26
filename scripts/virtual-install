@@ -213,13 +213,28 @@ config() {
     read -e -i "${VMDISK}" -p "VMDISK = " VMDISK
     VMDISK="32768M"
 
-    echo -e "VMNAME=${VMNAME}\nVMHOME=${VMHOME}\nTMPDIR=${TMPDIR}\nDISTDIR=${DISTDIR}\nSRCLOC=${SRCLOC}\nCFGDIR=${CFGDIR}\nKSCFG=${KSCFG}\nOS_TYPE=${OS_TYPE}\nOS_VARIANT=${OS_VARIANT}\nARCH=${ARCH}\nVCPU=${VCPU}\nVMMEM=${VMMEM}\nVMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
-    echo -e "\n# Saved config to ${CFGDIR}/kojak.cfg.\n"
-
     read -n1 -p ">> Do you want to continue with the configuration options supplied? [Y/n]" OPTS 
+
+save_cfg() {
+    echo -e "# Kojak saved configuration options.\n
+VMNAME=${VMNAME}
+VMHOME=${VMHOME}
+TMPDIR=${TMPDIR}
+DISTDIR=${DISTDIR}
+SRCLOC=${SRCLOC}
+CFGDIR=${CFGDIR}
+KSCFG=${KSCFG}
+OS_TYPE=${OS_TYPE}
+OS_VARIANT=${OS_VARIANT}
+ARCH=${ARCH}
+VCPU=${VCPU}
+VMMEM=${VMMEM}
+VMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
+}
+
     echo
     case $OPTS in  
-        y|Y) execute ;; 
+        y|Y) save_cfg && execute ;; 
         n|N) menu ;; 
         *) echo "Invalid Option" ;; 
     esac
