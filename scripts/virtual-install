@@ -82,7 +82,7 @@ else
     echo "# Using default configuration options"
 fi
 
-if [ -f "${KSCFG}" ]; then
+if [ -f "/kojak-ks.cfg" ]; then
     echo "# Found Kickstart file"
 else
     echo "# Copying Kickstart file"
