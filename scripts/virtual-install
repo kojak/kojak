@@ -205,7 +205,7 @@ config() {
 
     # Virtual machine memory allocation
     echo -e "\n12. Please specify your vm memory size allocation."
-    read -e -i "${VMMEM}" -p "VMMEM = "VMMEM
+    read -e -i "${VMMEM}" -p "VMMEM = " VMMEM
     VMMEM="4096"
     
     # Virtual machine disk space allocation
