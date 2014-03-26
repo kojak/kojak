@@ -37,7 +37,7 @@ DISTDIR=${DISTDIR:="RedHat/CentOS/6/5/x86_64"}
 
 # Sources and configuration
 CFGDIR=${CFGDIR:="${TMPDIR}/cfg/${DISTDIR}"}
-KSCFG=${KSCFG:="${CFGDIR}/kojak-ks.cfg"}
+KSCFG=${KSCFG:="/kojak-ks.cfg"}
 SRCLOC=${SRCLOC:="http://mirror.centos.org/centos/6/os/x86_64/"}
 
 # Virtual machine specifications
@@ -86,7 +86,7 @@ if [ -f "${KSCFG}" ]; then
     echo "# Found Kickstart file"
 else
     echo "# Copying Kickstart file"
-    cp kojak-ks.cfg  ${CFGDIR}/
+    cp kojak-ks.cfg  /
 fi
 
 VMDOMAIN=$(virsh list --all | grep ${VMNAME})
@@ -94,8 +94,8 @@ if [ ! "${VMDOMAIN}" ]; then
     echo -e "# No pre-existing Kojak vm"
 else 
     echo -e "# Removing any pre-existing Kojak vm"
-    virsh destroy ${VMNAME}
-    virsh undefine ${VMNAME}
+    virsh destroy ${VMNAME} > /dev/null 2>&1
+    virsh undefine ${VMNAME} > /dev/null 2>&1
 fi
 
 if [ ! "${VMHOME}/${VMNAME}.img" ]; then
@@ -106,7 +106,7 @@ else
 fi
 
 echo -e "# Restarting virtualization services"
-service libvirtd restart
+service libvirtd restart > /dev/null 2>&1
 
 echo -e "# Allocating the diskspace"
 FALLOCATE=$(which fallocate)
