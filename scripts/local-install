@@ -81,9 +81,9 @@ cd -
 cat > /etc/profile.d/custom.sh << 'EOF'
 # Prompt colors
 if [ `whoami` != "root" ]; then
-    export PS1="\[$(tput setaf 0)\][\u@\h \W]\$ "
+    PS1='\[\e[32m\][\u@\h \W]\$\[\e[0m\] '
 else
-    export PS1="\[$(tput setaf 1)\][\u@\h \W]\$ "
+    PS1='\[\e[31m\][\u@\h \W]\$\[\e[0m\] '
 fi
 
 # /etc/aliases
