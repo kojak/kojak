@@ -38,27 +38,27 @@ heading() {
 }
 
 description() {
-    echo -e ">> Select the type of installation from the menu options below.                \n"
+    echo -e ">> Select the type of installation from the menu options below."
 }
 
 menu () {
 PS3='Please Select installation type: '
 echo
-options=("Virtual Installation" "Local Installation" "Remove Installation" "Quit")
+options=("Virtual" "Local" "Remove installation" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
-        "Virtual Installation")
+        "Virtual")
             echo "Virtual Installation Selected "
             $SCRIPTS/virtual-install
             exit
             ;;
-        "Local Installation")
+        "Local")
             echo "Local Installation Selected "
             $SCRIPTS/local-install
             exit
             ;;
-        "Remove Installation")
+        "Remove install")
             echo "Remove Installation Selected "
             $SCRIPTS/remove-install
             exit
