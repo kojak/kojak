@@ -44,17 +44,23 @@ enabled=1
 gpgcheck=0
 EOF
 
-# Install platform binaries
-yum -y install httpd mod_ssl openssl postgresql-server mod_wsgi yum-utils \
-rpm-build createrepo git pyOpenSSL python-krbV python-cheetah cvs svn \
-postgresql-python python-qpid libvirt-python python-virtinst qemu-img \
-mod_auth_kerb wget htop iftop screen vim tree links dos2unix maven mlocate \
-java-1.7.0-openjdk-devel python-virtinst virt-install python-pudb.noarch \
-koji koji-builder koji-hub koji-hub-plugins koji-utils koji-vm koji-web mock pigz
-
-# Configure Java version
-#alternatives --remove java /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.4.1.fc20.x86_64/jre/bin/java
-#alternatives --install /usr/bin/java java /usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.4.1.fc20.x86_64/bin/java 0
+RELEASE=$(cat /etc/redhat-release)
+if [[ $RELEASE == *Fedora* ]]; then
+    echo "# Installing Fedora binaries";
+    yum -y install httpd mod_ssl openssl postgresql-server mod_wsgi yum-utils mock \
+    rpm-build createrepo git pyOpenSSL python-krbV python-cheetah cvs svn \
+    postgresql-python python-qpid libvirt-python python-virtinst qemu-img \
+    mod_auth_kerb wget htop iftop screen vim tree links dos2unix maven mlocate \
+    java-1.7.0-openjdk-devel python-virtinst virt-install python-pudb.noarch
+else
+    echo "# Installing Red Hat binaries";
+    yum -y install httpd mod_ssl openssl postgresql-server mod_wsgi yum-utils \
+    rpm-build createrepo git pyOpenSSL python-krbV python-cheetah cvs svn \
+    postgresql-python python-qpid libvirt-python python-virtinst qemu-img \
+    mod_auth_kerb wget htop iftop screen vim tree links dos2unix maven mlocate \
+    java-1.7.0-openjdk-devel python-virtinst virt-install python-pudb.noarch \
+    koji koji-builder koji-hub koji-hub-plugins koji-utils koji-vm koji-web mock pigz
+fi
 
 # Create Koji user and SSL directories
 useradd koji
@@ -784,10 +790,13 @@ koji add-group-pkg product-build appliance-build appliance-tools bash coreutils 
 #
 # maven-build
 koji add-group product-build maven-build
-# Fedora Package group
-koji add-group-pkg product-build maven-build bash coreutils java-1.7.0-openjdk-devel maven subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
-# Red Hat packages group
-#koji add-group-pkg product-build maven-build bash coreutils java-1.7.0-openjdk-devel maven3 subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
+if [[ $RELEASE == *Fedora* ]]; then
+    echo "# Fedora Package group"
+    koji add-group-pkg product-build maven-build bash coreutils java-1.7.0-openjdk-devel maven subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
+else
+    echo "# Red Hat packages group"
+    koji add-group-pkg product-build maven-build bash coreutils java-1.7.0-openjdk-devel maven3 subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
+fi
 #
 # livecd-build
 koji add-group product-build livecd-build
@@ -812,14 +821,18 @@ service kojira start
 su -l koji -c "koji grant-permission repo kojira"
 su -l koji -c "koji grant-permission build kojibuilder1.localdomain"
 
-# Maven installation
-#cd /tmp
-#wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/20/Everything/source/SRPMS/m/maven-3.1.1-13.fc20.src.rpm
-#wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/20/Everything/x86_64/os/Packages/m/maven-3.1.1-13.fc20.noarch.rpm
-#su -l koji -c "koji import --create-build /tmp/maven-3.1.1-13.fc20.src.rpm /tmp/maven-3.1.1-13.fc20.noarch.rpm"
-#su -l koji -c "koji add-pkg --owner=kojiadmin product-build maven"
-#su -l koji -c "koji tag-pkg product-build maven-3.1.1-13.fc20"
-#cd -
+if [[ $RELEASE == *Fedora* ]]; then
+    echo "# Installing Fedora Maven packages"
+    cd /tmp
+    wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/20/Everything/source/SRPMS/m/maven-3.1.1-13.fc20.src.rpm
+    wget http://mirror.karneval.cz/pub/linux/fedora/linux/releases/20/Everything/x86_64/os/Packages/m/maven-3.1.1-13.fc20.noarch.rpm
+    su -l koji -c "koji import --create-build /tmp/maven-3.1.1-13.fc20.src.rpm /tmp/maven-3.1.1-13.fc20.noarch.rpm"
+    su -l koji -c "koji add-pkg --owner=kojiadmin product-build maven"
+    su -l koji -c "koji tag-pkg product-build maven-3.1.1-13.fc20"
+    cd -
+else
+    echo "# Installing Red Hat Maven packages"
+fi
 
 # Create workspace for tool chain downloads
 mkdir /home/koji/workspace
