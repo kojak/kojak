@@ -71,7 +71,7 @@ echo -e "#                                                                      
 if [ -d "${CFGDIR}" ]; then
    echo -e "# Found configuration directory"
 else
-   echo -e "# Creating configuration direcory"
+   echo -e "# Creating configuration directory"
    mkdir -p ${CFGDIR}
 fi
 
@@ -102,7 +102,7 @@ if [ ! "${VMHOME}/${VMNAME}.img" ]; then
     echo -e "# No pre-existing Kojak image"
 else
     echo -e "# Removing pre-existing Kojak image"
-    rm ${VMHOME}/${VMNAME}.img
+    rm ${VMHOME}/${VMNAME}.img > /dev/null 2>&1
 fi
 
 echo -e "# Restarting virtualization services"
@@ -215,10 +215,8 @@ config() {
     echo
     read -n1 -p ">> Do you want to save the configuration options supplied? [Y/n]" OPTS 
 
-save_cfg() {
-    if [ ! -d "${CFGDIR}" ]; then 
+save() {
     mkdir -p ${CFGDIR}
-    else
     echo -e "# Kojak SAVED configuration options.\n
 VMNAME=${VMNAME}
 VMHOME=${VMHOME}
@@ -233,14 +231,13 @@ ARCH=${ARCH}
 VCPU=${VCPU}
 VMMEM=${VMMEM}
 VMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
-fi
 }
 
     echo
     case $OPTS in  
-        y|Y) save_cfg && menu ;; 
-        n|N) menu ;; 
-        *) echo "Invalid Option" ;; 
+        y|Y) save && execute ;; 
+        n|N) clear && heading && menu ;; 
+        *) echo -e ">> Invalid Option" ;; 
     esac
 
     done
@@ -248,9 +245,12 @@ fi
 }
 
 menu () {
-PS3='Please select the configuration options: '
+clear
+heading
+description
+PS3='Please select from the configuration options: '
 echo
-options=("Default" "Custom" "Saved" "Print Config" "Quit")
+options=("Default" "Custom" "Saved" "Print" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -264,25 +264,26 @@ do
             exit
             ;;
         "Saved")
-            CFG=$(find  /var/tmp/kojak/cfg/ -type f  -name "kojak.cfg")
-            if [ ! -z "$cfg" ]; then
-            for cfg in $CFG
-            do read -n1 -p ">> Do you want to ${cfg} [Y/n]" OPTS
-            echo
-                case $OPTS in 
-                y|Y) save_cfg && execute ;;
-                n|N) clear && heading && menu ;;
-                *) echo "Invalid Option" ;;
-                esac
-            done
-            else
-            clear
+            CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
+            if [ ! -z "${CFG}" ]; then
+                for cfg in ${CFG}; do
                     heading
-                echo -e "\n!!! No saved configuration files found !!!"
-            menu
+                    read -n1 -p ">> Do you want to use ${cfg} [Y/n]" OPTS
+                    case $OPTS in
+                        y|Y) execute ;;
+                        n|N) continue && clear ;;
+                        *) echo "Invalid Option" ;;
+                    esac
+                done
+            else
+                echo -e "\n>> No configuration files found!"
+                sleep 1
+                clear 
+                heading
+                menu
             fi
             ;;
-        "Print Config")
+        "Print")
             if [ ! -f "${CFGDIR}/kojak.cfg" ]; then
                 clear
                 heading
@@ -310,7 +311,7 @@ do
         "Quit")
             exit
             ;;
-        *) echo invalid option
+        *) echo -e ">> Invalid Option"
             ;;
     esac
 done
