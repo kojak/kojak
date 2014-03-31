@@ -14,7 +14,7 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.	
+# along with this program.  If not, see <http://www.gnu.org/licenses/>. 
 #
 ########################################################################
 
@@ -213,9 +213,12 @@ config() {
     VMDISK="${VMDISK}"
     
     echo
-    read -n1 -p ">> Do you want to continue with the configuration options supplied? [Y/n]" OPTS 
+    read -n1 -p ">> Do you want to save the configuration options supplied? [Y/n]" OPTS 
 
 save_cfg() {
+    if [ ! -d "${CFGDIR}" ]; then 
+    mkdir -p ${CFGDIR}
+    else
     echo -e "# Kojak SAVED configuration options.\n
 VMNAME=${VMNAME}
 VMHOME=${VMHOME}
@@ -230,11 +233,12 @@ ARCH=${ARCH}
 VCPU=${VCPU}
 VMMEM=${VMMEM}
 VMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
+fi
 }
 
     echo
     case $OPTS in  
-        y|Y) save_cfg && execute ;; 
+        y|Y) save_cfg && menu ;; 
         n|N) menu ;; 
         *) echo "Invalid Option" ;; 
     esac
@@ -246,12 +250,12 @@ VMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
 menu () {
 PS3='Please select the configuration options: '
 echo
-options=("Saved" "Custom" "Print Options" "Quit")
+options=("Default" "Custom" "Saved" "Print Config" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
-        "Saved")
-            echo "Saved"
+        "Default")
+            echo "Default"
             execute
             ;;
         "Custom")
@@ -259,7 +263,26 @@ do
             config
             exit
             ;;
-        "Print Options")
+        "Saved")
+            CFG=$(find  /var/tmp/kojak/cfg/ -type f  -name "kojak.cfg")
+            if [ ! -z "$cfg" ]; then
+            for cfg in $CFG
+            do read -n1 -p ">> Do you want to ${cfg} [Y/n]" OPTS
+            echo
+                case $OPTS in 
+                y|Y) save_cfg && execute ;;
+                n|N) clear && heading && menu ;;
+                *) echo "Invalid Option" ;;
+                esac
+            done
+            else
+            clear
+                    heading
+                echo -e "\n!!! No saved configuration files found !!!"
+            menu
+            fi
+            ;;
+        "Print Config")
             if [ ! -f "${CFGDIR}/kojak.cfg" ]; then
                 clear
                 heading
@@ -298,3 +321,4 @@ clear
 heading
 description
 menu
+
