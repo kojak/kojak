@@ -54,7 +54,7 @@ config() {
     while true
     do
     # Execute menu configuration options
-    heading
+    welcome_header
 
     # Virtual machine name
     echo -e "\n01. Please specify a name for the virtual machine."
@@ -127,7 +127,7 @@ config() {
     echo
     case $OPTS in  
         y|Y) save && main ;; 
-        n|N) heading && menu ;; 
+        n|N) welcome_header && menu ;; 
         *) echo -e ">> Invalid Option" ;; 
     esac
 
@@ -154,14 +154,10 @@ VMMEM=${VMMEM}
 VMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
 }
 
-# Execute program
+# Main function
 main () {
 
-clear 
-echo -e "\n################################################################################"
-echo -e "#                                                                              #"
-echo -e "#                  *** Running Kojak... Who loves you baby ***                 #"
-echo -e "#                                                                              #\n"
+main_header
 
 if [ -d "${CFGDIR}" ]; then
    echo -e "# Found configuration directory"
@@ -235,7 +231,7 @@ virt-install \
 exit
 }
 
-heading() {
+welcome_header() {
     clear
     echo -e "\n################################################################################"
     echo -e "#                                                                              #"
@@ -243,17 +239,25 @@ heading() {
     echo -e "#                                                                              #\n"
 }
 
-menu_msg-01() {
+main_header() {
+    clear
+    echo -e "\n################################################################################"
+    echo -e "#                                                                              #"
+    echo -e "#                  *** Running Kojak... Who loves you baby ***                 #"
+    echo -e "#                                                                              #\n"
+}
+
+menu_msg_01() {
     echo -e ">> Select which configuration options you want to use.\n"
 }
 
-menu_msg-02() {
+menu_msg_02() {
     echo -e ">> Select which configuration file you want to use.\n"
 }
 
 menu () {
-heading
-menu_msg-01
+welcome_header
+menu_msg_01
 PS3='Please select from the configuration options: '
 options=("Default" "Custom" "Saved" "Print" "Clear" "Quit")
 select opt in "${options[@]}"
@@ -271,7 +275,7 @@ do
         "Saved")
             CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
             if [ ! -z "${CFG}" ]; then
-            clear && heading && menu_msg-02
+            clear && welcome_header && menu_msg_02
             prompt="Please select a file:"
             options=( $(find "$TMPDIR" -type f  -name "kojak.cfg") )
             PS3="$prompt "
@@ -279,7 +283,7 @@ do
                 if (( REPLY == 1 + ${#options[@]} )) ; then
                     clear && menu
                 elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
-                    KJKFG=$opt && echo $opt && source $opt
+                    ${KJKFG:=$opt} && echo $opt && source $opt
                     read
                     main
                 else
@@ -290,14 +294,14 @@ do
                 echo -e "\n>> No configuration files found!"
                 sleep 1
                 clear 
-                heading
+                welcome_header
                 menu
             fi
             ;;
         "Print")
             if [ ! -f "${KJKCFG}" ]; then
                 clear
-                heading
+                welcome_header
                 echo -e "# Kojak DEFAULT configuration options.\n
 # VMNAME=${VMNAME}
 # VMHOME=${VMHOME}
@@ -315,7 +319,7 @@ do
 # VMDISK=${VMDISK}"
             else
                 clear
-                heading
+                welcome_header
                 cat ${KJKCFG}
             fi
             echo -e "\nPress any key to return to the configuration menu: "
@@ -323,7 +327,7 @@ do
             menu
             ;;
         "Clear")
-            rm -rf ${CFGDIR} && clear && heading && echo -e ">> Removed saved configuration files." && sleep 1
+            rm -rf ${CFGDIR} && clear && welcome_header && echo -e ">> Removed saved configuration files." && sleep 1
             menu
             ;;
         "Quit")
@@ -337,7 +341,7 @@ break
 }
 
 clear
-heading
-menu_msg-01
+welcome_header
+menu_msg_01
 menu
 
