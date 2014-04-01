@@ -127,7 +127,7 @@ config() {
     
     echo
     case $OPTS in  
-        y|Y) save && main ${KJKCFG} ;; 
+        y|Y) save && echo -e "\n>> Configuration saved..." && sleep 1 && welcome_header && menu ;; 
         n|N) welcome_header && menu ;; 
         *) echo -e ">> Invalid Option" ;; 
     esac
