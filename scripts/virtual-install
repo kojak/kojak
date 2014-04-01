@@ -38,6 +38,7 @@ DISTDIR=${DISTDIR:="RedHat/CentOS/6/5/x86_64"}
 # Sources and configuration
 CFGDIR=${CFGDIR:="${TMPDIR}/cfg/${DISTDIR}"}
 KSCFG=${KSCFG:="/kojak-ks.cfg"}
+KJKFG=${KJKCFG:="${CFGDIR}/kojak.cfg"}
 SRCLOC=${SRCLOC:="http://mirror.centos.org/centos/6/os/x86_64/"}
 
 # Virtual machine specifications
@@ -56,8 +57,12 @@ heading() {
     echo -e "#                                                                              #\n"
 }
 
-description() {
-    echo -e ">> Select which configuration options you would want to use."
+menu_msg-01() {
+    echo -e ">> Select which configuration options you want to use.\n"
+}
+
+menu_msg-02() {
+    echo -e ">> Select which configuration file you want to use.\n"
 }
 
 execute () {
@@ -75,18 +80,18 @@ else
    mkdir -p ${CFGDIR}
 fi
 
-if [ -f "${CFGDIR}/kojak.cfg" ]; then
-    echo -e "# Using options in ${CFGDIR}/kojak.cfg"
-    source ${CFGDIR}/kojak.cfg
-else
-    echo "# Using default configuration options"
-fi
-
 if [ -f "/kojak-ks.cfg" ]; then
     echo "# Found Kickstart file"
 else
     echo "# Copying Kickstart file"
     cp kojak-ks.cfg  /
+fi
+
+if [ -z "${KJKCFG}" ]; then
+    echo -e "# Using options in ${KJKCFG}"
+    source ${KJKCFG}
+else
+    echo "# Using default configuration options"
 fi
 
 VMDOMAIN=$(virsh list --all | grep ${VMNAME})
@@ -139,6 +144,24 @@ virt-install \
 --console pty \
 --nographics
 exit
+}
+
+save() {
+    mkdir -p ${CFGDIR}
+    echo -e "# Kojak SAVED configuration options.\n
+VMNAME=${VMNAME}
+VMHOME=${VMHOME}
+TMPDIR=${TMPDIR}
+DISTDIR=${DISTDIR}
+SRCLOC=${SRCLOC}
+CFGDIR=${CFGDIR}
+KSCFG=${KSCFG}
+OS_TYPE=${OS_TYPE}
+OS_VARIANT=${OS_VARIANT}
+ARCH=${ARCH}
+VCPU=${VCPU}
+VMMEM=${VMMEM}
+VMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
 }
 
 config() {
@@ -214,25 +237,7 @@ config() {
     
     echo
     read -n1 -p ">> Do you want to save the configuration options supplied? [Y/n]" OPTS 
-
-save() {
-    mkdir -p ${CFGDIR}
-    echo -e "# Kojak SAVED configuration options.\n
-VMNAME=${VMNAME}
-VMHOME=${VMHOME}
-TMPDIR=${TMPDIR}
-DISTDIR=${DISTDIR}
-SRCLOC=${SRCLOC}
-CFGDIR=${CFGDIR}
-KSCFG=${KSCFG}
-OS_TYPE=${OS_TYPE}
-OS_VARIANT=${OS_VARIANT}
-ARCH=${ARCH}
-VCPU=${VCPU}
-VMMEM=${VMMEM}
-VMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
-}
-
+    
     echo
     case $OPTS in  
         y|Y) save && execute ;; 
@@ -247,10 +252,9 @@ VMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
 menu () {
 clear
 heading
-description
+menu_msg-01
 PS3='Please select from the configuration options: '
-echo
-options=("Default" "Custom" "Saved" "Print" "Quit")
+options=("Default" "Custom" "Saved" "Print" "Clear" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -266,14 +270,21 @@ do
         "Saved")
             CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
             if [ ! -z "${CFG}" ]; then
-                for cfg in ${CFG}; do
-                    heading
-                    read -n1 -p ">> Do you want to use ${cfg} [Y/n]" OPTS
-                    case $OPTS in
-                        y|Y) execute ;;
-                        n|N) continue && clear ;;
-                        *) echo "Invalid Option" ;;
-                    esac
+            clear && heading && menu_msg-02
+            prompt="Please select a file:"
+            options=( $(find "$TMPDIR" -type f  -name "kojak.cfg") )
+            PS3="$prompt "
+            select opt in "${options[@]}" "Quit" ; do
+                if (( REPLY == 1 + ${#options[@]} )) ; then
+                    clear && menu
+                elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
+                    echo  "Using file $opt"
+                    read
+                    export KJKFG=${KJKCFG:="${opt}"}
+                    execute
+                else
+                    echo "Invalid option."
+                fi
                 done
             else
                 echo -e "\n>> No configuration files found!"
@@ -284,7 +295,7 @@ do
             fi
             ;;
         "Print")
-            if [ ! -f "${CFGDIR}/kojak.cfg" ]; then
+            if [ ! -f "${KJKCFG}" ]; then
                 clear
                 heading
                 echo -e "# Kojak DEFAULT configuration options.\n
@@ -295,6 +306,7 @@ do
 # SRCLOC=${SRCLOC}
 # CFGDIR=${CFGDIR}
 # KSCFG=${KSCFG}
+# KJKCFG=${KJKCFG}
 # OS_TYPE=${OS_TYPE}
 # OS_VARIANT=${OS_VARIANT}
 # ARCH=${ARCH}
@@ -304,8 +316,14 @@ do
             else
                 clear
                 heading
-                cat ${CFGDIR}/kojak.cfg
+                cat ${KJKCFG}
             fi
+            echo -e "\nPress any key to return to the configuration menu: "
+            read
+            menu
+            ;;
+        "Clear")
+            rm -rf ${CFGDIR} && clear && heading && echo -e ">> Removed saved configuration files." && sleep 1
             menu
             ;;
         "Quit")
@@ -320,6 +338,6 @@ break
 
 clear
 heading
-description
+menu_msg-01
 menu
 
