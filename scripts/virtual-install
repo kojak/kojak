@@ -49,6 +49,9 @@ VCPU=${VCPU:="2"}
 VMMEM=${VMMEM:="4096"}
 VMDISK=${VMDISK:="32768M"}
 
+# Create a temp working directory
+mkdir -p ${TMPDIR} 
+
 ## Interactive configuration options
 
 config() {
@@ -161,13 +164,6 @@ VMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
 main () {
 
 main_header
-
-if [ -d "${CFGDIR}" ]; then
-    echo "# Found ${CFGDIR}"
-else
-    echo "# Creating ${CFGDIR}"
-    mkdir -p ${CFGDIR}
-fi
 
 if [ -f "/kojak-ks.cfg" ]; then
     echo "# Found Kickstart file"

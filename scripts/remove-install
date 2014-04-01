@@ -23,6 +23,7 @@ cat /etc/httpd/conf.d/ssl.conf.orig > /etc/httpd/conf.d/ssl.conf && rm /etc/http
 cat /etc/security/limits.conf.orig > /etc/security/limits.conf && rm /etc/security/limits.conf.orig
 
 # Remove files koji related configuration files
+rm -rf /var/tmp/kojak
 rm -rf /mnt/koji
 rm /var/log/kojid.log
 rm /var/log/kojira.log
