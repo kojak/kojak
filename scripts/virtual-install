@@ -170,10 +170,10 @@ else
 fi
 
 if [ ! -z "${KJKCFG}" ]; then
-    echo -e "# Default options in ${KJKCFG}"
+    echo -e "# Saved options in ${KJKCFG}"
     source ${KJKCFG} > /dev/null 2>&1
 else
-    echo -e "# Saved options in ${KJKCFG}"
+    echo -e "# Default options in ${KJKCFG}"
     source ${KJKCFG} > /dev/null 2>&1
 fi
 
