@@ -332,11 +332,11 @@ do
                 rm -rf ${cfg}
                 done
                 welcome_header
-                echo -e ">> Removed saved configuration files."
+                echo -e "\n>> Removed saved configuration files."
                 sleep 1
                 menu
             else
-                echo -e ">> No saved configuration files found!"
+                echo -e "\n>> No saved configuration files found!"
                 sleep 1
                 menu
             fi
