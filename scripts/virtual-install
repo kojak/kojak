@@ -49,121 +49,7 @@ VCPU=${VCPU:="2"}
 VMMEM=${VMMEM:="4096"}
 VMDISK=${VMDISK:="32768M"}
 
-heading() {
-    clear
-    echo -e "\n################################################################################"
-    echo -e "#                                                                              #"
-    echo -e "#                   !!! Welcome to Kojak...Koji in a box !!!                   #"
-    echo -e "#                                                                              #\n"
-}
-
-menu_msg-01() {
-    echo -e ">> Select which configuration options you want to use.\n"
-}
-
-menu_msg-02() {
-    echo -e ">> Select which configuration file you want to use.\n"
-}
-
-execute () {
-
-clear 
-echo -e "\n################################################################################"
-echo -e "#                                                                              #"
-echo -e "#                  *** Running Kojak... Who loves you baby ***                 #"
-echo -e "#                                                                              #\n"
-
-if [ -d "${CFGDIR}" ]; then
-   echo -e "# Found configuration directory"
-else
-   echo -e "# Creating configuration directory"
-   mkdir -p ${CFGDIR}
-fi
-
-if [ -f "/kojak-ks.cfg" ]; then
-    echo "# Found Kickstart file"
-else
-    echo "# Copying Kickstart file"
-    cp kojak-ks.cfg  /
-fi
-
-if [ -z "${KJKCFG}" ]; then
-    echo -e "# Using options in ${KJKCFG}"
-    source ${KJKCFG}
-else
-    echo "# Using default configuration options"
-fi
-
-VMDOMAIN=$(virsh list --all | grep ${VMNAME})
-if [ ! "${VMDOMAIN}" ]; then
-    echo -e "# No pre-existing Kojak vm"
-else 
-    echo -e "# Removing any pre-existing Kojak vm"
-    virsh destroy ${VMNAME} > /dev/null 2>&1
-    virsh undefine ${VMNAME} > /dev/null 2>&1
-fi
-
-if [ ! "${VMHOME}/${VMNAME}.img" ]; then
-    echo -e "# No pre-existing Kojak image"
-else
-    echo -e "# Removing pre-existing Kojak image"
-    rm ${VMHOME}/${VMNAME}.img > /dev/null 2>&1
-fi
-
-echo -e "# Restarting virtualization services"
-service libvirtd restart > /dev/null 2>&1
-
-echo -e "# Allocating the diskspace"
-FALLOCATE=$(which fallocate)
-if  [ ! ${FALLOCATE} ]; then
-    yum -y install fallocate
-else
-    ${FALLOCATE} -l ${VMDISK} ${VMHOME}/${VMNAME}.img
-    chown qemu:qemu ${VMHOME}/${VMNAME}.img
-fi
-
-echo -e "# Checking for virt-install"
-VIRT_INSTALL=$(which virt-install)
-if [ ! ${VIRT_INSTALL} ]; then
-    yum -y install virt-install
-fi
-
-echo -e "# Initialising installation\n"
-virt-install \
--n ${VMNAME} \
---accelerate \
---ram ${VMMEM} \
---vcpus ${VCPU} \
---os-type ${OS_TYPE} \
---os-variant ${OS_VARIANT} \
---arch ${ARCH} \
---disk ${VMHOME}/${VMNAME}.img \
---initrd-inject "${KSCFG}" \
---location ${SRCLOC} \
---extra-args "ks=file:${KSCFG} console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
---console pty \
---nographics
-exit
-}
-
-save() {
-    mkdir -p ${CFGDIR}
-    echo -e "# Kojak SAVED configuration options.\n
-VMNAME=${VMNAME}
-VMHOME=${VMHOME}
-TMPDIR=${TMPDIR}
-DISTDIR=${DISTDIR}
-SRCLOC=${SRCLOC}
-CFGDIR=${CFGDIR}
-KSCFG=${KSCFG}
-OS_TYPE=${OS_TYPE}
-OS_VARIANT=${OS_VARIANT}
-ARCH=${ARCH}
-VCPU=${VCPU}
-VMMEM=${VMMEM}
-VMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
-}
-
+# Define configuration options
 config() {
     while true
     do
@@ -240,8 +126,8 @@ config() {
     
     echo
     case $OPTS in  
-        y|Y) save && execute ;; 
-        n|N) clear && heading && menu ;; 
+        y|Y) save && main ;; 
+        n|N) heading && menu ;; 
         *) echo -e ">> Invalid Option" ;; 
     esac
 
@@ -249,8 +135,123 @@ config() {
     exit
 }
 
+# Save configuration options
+save() {
+    mkdir -p ${CFGDIR}
+    echo -e "# Kojak SAVED configuration options.\n
+VMNAME=${VMNAME}
+VMHOME=${VMHOME}
+TMPDIR=${TMPDIR}
+DISTDIR=${DISTDIR}
+SRCLOC=${SRCLOC}
+CFGDIR=${CFGDIR}
+KSCFG=${KSCFG}
+OS_TYPE=${OS_TYPE}
+OS_VARIANT=${OS_VARIANT}
+ARCH=${ARCH}
+VCPU=${VCPU}
+VMMEM=${VMMEM}
+VMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
+}
+
+# Execute program
+main () {
+
+clear 
+echo -e "\n################################################################################"
+echo -e "#                                                                              #"
+echo -e "#                  *** Running Kojak... Who loves you baby ***                 #"
+echo -e "#                                                                              #\n"
+
+if [ -d "${CFGDIR}" ]; then
+   echo -e "# Found configuration directory"
+else
+   echo -e "# Creating configuration directory"
+   mkdir -p ${CFGDIR}
+fi
+
+if [ -f "/kojak-ks.cfg" ]; then
+    echo "# Found Kickstart file"
+else
+    echo "# Copying Kickstart file"
+    cp kojak-ks.cfg  /
+fi
+
+if [ ! -f "${KJKCFG}" ]; then
+    echo -e "# Using default options in ${KJKCFG}"
+else
+    echo -e "# Using saved options in ${KJKCFG}"
+fi
+
+VMDOMAIN=$(virsh list --all | grep ${VMNAME})
+if [ ! "${VMDOMAIN}" ]; then
+    echo -e "# No pre-existing Kojak vm"
+else 
+    echo -e "# Removing any pre-existing Kojak vm"
+    virsh destroy ${VMNAME} > /dev/null 2>&1
+    virsh undefine ${VMNAME} > /dev/null 2>&1
+fi
+
+if [ ! "${VMHOME}/${VMNAME}.img" ]; then
+    echo -e "# No pre-existing Kojak image"
+else
+    echo -e "# Removing pre-existing Kojak image"
+    rm ${VMHOME}/${VMNAME}.img > /dev/null 2>&1
+fi
+
+echo -e "# Restarting virtualization services"
+service libvirtd restart > /dev/null 2>&1
+
+echo -e "# Allocating the diskspace"
+FALLOCATE=$(which fallocate)
+if  [ ! ${FALLOCATE} ]; then
+    yum -y install fallocate
+else
+    ${FALLOCATE} -l ${VMDISK} ${VMHOME}/${VMNAME}.img
+    chown qemu:qemu ${VMHOME}/${VMNAME}.img
+fi
+
+echo -e "# Checking for virt-install"
+VIRT_INSTALL=$(which virt-install)
+if [ ! ${VIRT_INSTALL} ]; then
+    yum -y install virt-install
+fi
+
+echo -e "# Initialising installation\n"
+virt-install \
+-n ${VMNAME} \
+--accelerate \
+--ram ${VMMEM} \
+--vcpus ${VCPU} \
+--os-type ${OS_TYPE} \
+--os-variant ${OS_VARIANT} \
+--arch ${ARCH} \
+--disk ${VMHOME}/${VMNAME}.img \
+--initrd-inject "${KSCFG}" \
+--location ${SRCLOC} \
+--extra-args "ks=file:${KSCFG} console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
+--console pty \
+--nographics
+exit
+}
+
+heading() {
+    clear
+    echo -e "\n################################################################################"
+    echo -e "#                                                                              #"
+    echo -e "#                   !!! Welcome to Kojak...Koji in a box !!!                   #"
+    echo -e "#                                                                              #\n"
+}
+
+menu_msg-01() {
+    echo -e ">> Select which configuration options you want to use.\n"
+}
+
+menu_msg-02() {
+    echo -e ">> Select which configuration file you want to use.\n"
+}
+
 menu () {
-clear
 heading
 menu_msg-01
 PS3='Please select from the configuration options: '
@@ -260,7 +261,7 @@ do
     case $opt in
         "Default")
             echo "Default"
-            execute
+            main
             ;;
         "Custom")
             echo "Custom"
@@ -278,10 +279,9 @@ do
                 if (( REPLY == 1 + ${#options[@]} )) ; then
                     clear && menu
                 elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
-                    echo  "Using file $opt"
+                    KJKFG=$opt && echo $opt && source $opt
                     read
-                    export KJKFG=${KJKCFG:="${opt}"}
-                    execute
+                    main
                 else
                     echo "Invalid option."
                 fi
