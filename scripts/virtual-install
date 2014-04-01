@@ -49,9 +49,6 @@ VCPU=${VCPU:="2"}
 VMMEM=${VMMEM:="4096"}
 VMDISK=${VMDISK:="32768M"}
 
-# Create a temp working directory
-mkdir -p ${TMPDIR} 
-
 ## Interactive configuration options
 
 config() {

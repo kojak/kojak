@@ -31,7 +31,10 @@ reset
 
 SCRIPTS="`pwd`/scripts"
 
-heading() {
+# Create a temp working directory
+mkdir -p ${TMPDIR}
+
+welcome_header() {
     clear
     echo -e "\n################################################################################"
     echo -e "#                                                                              #"
@@ -39,7 +42,7 @@ heading() {
     echo -e "#                                                                              #\n"
 }
 
-description() {
+menu_msg_01() {
     echo -e ">> Select the type of installation from the menu options below."
 }
 
@@ -74,6 +77,6 @@ do
 done
 }
 
-heading
-description
+welcome_header
+menu_msg_01
 menu
