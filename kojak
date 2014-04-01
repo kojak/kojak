@@ -31,9 +31,6 @@ reset
 
 SCRIPTS="`pwd`/scripts"
 
-# Create a temp working directory
-mkdir -p ${TMPDIR}
-
 welcome_header() {
     clear
     echo -e "\n################################################################################"

@@ -254,6 +254,9 @@ menu_msg_02() {
 }
 
 menu () {
+if [ ! -d ${TMPDIR} ]; then
+    mkdir -p ${TMPDIR} 
+fi
 welcome_header
 menu_msg_01
 PS3='Please select from the configuration options: '
