@@ -171,10 +171,10 @@ fi
 
 if [ ! -z "${KJKCFG}" ]; then
     echo -e "# Using default options in ${KJKCFG}"
-    source ${KJKCFG}
+    source ${KJKCFG} > /dev/null 2>&1
 else
     echo -e "# Using saved options in ${KJKCFG}"
-    source ${KJKCFG}
+    source ${KJKCFG} > /dev/null 2>&1
 fi
 
 VMDOMAIN=$(virsh list --all | grep ${VMNAME})
