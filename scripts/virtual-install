@@ -283,7 +283,8 @@ do
                 if (( REPLY == 1 + ${#options[@]} )) ; then
                     clear && menu
                 elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
-                    ${KJKFG:=$opt} && echo $opt && source $opt
+                    export KJKCFG="$opt"
+                    echo $KJKCFG
                     read
                     main
                 else
