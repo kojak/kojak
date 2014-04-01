@@ -162,6 +162,13 @@ main () {
 
 main_header
 
+if [ -d "${CFGDIR}" ]; then
+    echo "# Found ${CFGDIR}"
+else
+    echo "# Creating ${CFGDIR}"
+    mkdir -p ${CFGDIR}
+fi
+
 if [ -f "/kojak-ks.cfg" ]; then
     echo "# Found Kickstart file"
 else
