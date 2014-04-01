@@ -173,10 +173,11 @@ else
     cp kojak-ks.cfg  /
 fi
 
-if [ ! -f "${KJKCFG}" ]; then
+if [[ ! -z "${KJKCFG}" || ! -f "${KJKCFG}" ]]; then
     echo -e "# Using default options in ${KJKCFG}"
 else
     echo -e "# Using saved options in ${KJKCFG}"
+    source ${KJKCFG}
 fi
 
 VMDOMAIN=$(virsh list --all | grep ${VMNAME})
@@ -284,8 +285,6 @@ do
                     clear && menu
                 elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
                     export KJKCFG="$opt"
-                    echo $KJKCFG
-                    read
                     main
                 else
                     echo "Invalid option."
