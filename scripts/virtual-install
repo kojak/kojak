@@ -127,7 +127,7 @@ config() {
     
     echo
     case $OPTS in  
-        y|Y) save && main ;; 
+        y|Y) save && main ${KJKCFG} ;; 
         n|N) welcome_header && menu ;; 
         *) echo -e ">> Invalid Option" ;; 
     esac
@@ -162,13 +162,6 @@ main () {
 
 main_header
 
-if [ -d "${CFGDIR}" ]; then
-   echo -e "# Found configuration directory"
-else
-   echo -e "# Creating configuration directory"
-   mkdir -p ${CFGDIR}
-fi
-
 if [ -f "/kojak-ks.cfg" ]; then
     echo "# Found Kickstart file"
 else
@@ -176,8 +169,9 @@ else
     cp kojak-ks.cfg  /
 fi
 
-if [[ ! -z "${KJKCFG}" || ! -f "${KJKCFG}" ]]; then
+if [ ! -z "${KJKCFG}" ]; then
     echo -e "# Using default options in ${KJKCFG}"
+    source ${KJKCFG}
 else
     echo -e "# Using saved options in ${KJKCFG}"
     source ${KJKCFG}
@@ -289,7 +283,7 @@ do
                     clear && menu
                 elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
                     export KJKCFG="$opt"
-                    main
+                    main ${KJKCFG}
                 else
                     echo "Invalid option."
                 fi
