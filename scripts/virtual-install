@@ -323,7 +323,7 @@ do
             menu
             ;;
         "Clear")
-            CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg" 2>/dev/null )
+            CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
             if [ ! -z "${CFG}" ]; then
                 for cfg in ${CFG}; do
                 rm -rf ${cfg}
