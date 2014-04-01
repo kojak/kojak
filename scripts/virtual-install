@@ -27,8 +27,8 @@ if [ "${USER}" != "root" ]; then
     exit
 fi
 
-## Declare environment varibles
-#
+## Declare default configuration options
+
 # Distro information
 VMNAME=${VMNAME:="CentOS-6.5-x86_64"}
 VMHOME=${VMHOME:="/var/lib/libvirt/images"}
@@ -49,7 +49,8 @@ VCPU=${VCPU:="2"}
 VMMEM=${VMMEM:="4096"}
 VMDISK=${VMDISK:="32768M"}
 
-# Define configuration options
+## Interactive configuration options
+
 config() {
     while true
     do
@@ -135,7 +136,8 @@ config() {
     exit
 }
 
-# Save configuration options
+## Save configuration options
+
 save() {
     mkdir -p ${CFGDIR}
     echo -e "# Kojak SAVED configuration options.\n
@@ -154,7 +156,8 @@ VMMEM=${VMMEM}
 VMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
 }
 
-# Main function
+## Main function
+
 main () {
 
 main_header
@@ -276,7 +279,8 @@ do
         "Saved")
             CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
             if [ ! -z "${CFG}" ]; then
-            clear && welcome_header && menu_msg_02
+            welcome_header
+            menu_msg_02
             prompt="Please select a file:"
             options=( $(find "$TMPDIR" -type f  -name "kojak.cfg") )
             PS3="$prompt "
@@ -293,14 +297,12 @@ do
             else
                 echo -e "\n>> No configuration files found!"
                 sleep 1
-                clear 
                 welcome_header
                 menu
             fi
             ;;
         "Print")
             if [ ! -f "${KJKCFG}" ]; then
-                clear
                 welcome_header
                 echo -e "# Kojak DEFAULT configuration options.\n
 # VMNAME=${VMNAME}
@@ -327,8 +329,20 @@ do
             menu
             ;;
         "Clear")
-            rm -rf ${CFGDIR} && clear && welcome_header && echo -e ">> Removed saved configuration files." && sleep 1
-            menu
+            CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
+            if [ ! -z "${CFG}" ]; then
+                for cfg in ${CFG}; do
+                rm -rf ${cfg}
+                done
+                welcome_header
+                echo -e ">> Removed saved configuration files."
+                sleep 1
+                menu
+            else
+                echo -e ">> No saved configuration files found!"
+                sleep 1
+                menu
+            fi
             ;;
         "Quit")
             exit
