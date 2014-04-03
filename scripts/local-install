@@ -49,7 +49,7 @@ if [[ $RELEASE != *Fedora* ]]; then
     baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/noarch
     enabled=1
     gpgcheck=0
-EOF
+    EOF
 else
     cat > /etc/yum.repos.d/fedora-mirror.repo << 'EOF'
     [fedora-mirror]
