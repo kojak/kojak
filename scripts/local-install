@@ -27,33 +27,6 @@ if [ "$USER" != "root" ]; then
     exit
 fi
 
-#version=DEVEL
-auth --enableshadow --passalgo=sha512
-url --url http://mirror.centos.org/centos/6/os/x86_64/
-firstboot --disable
-ignoredisk --only-use=vda
-lang en_US.UTF-8
-keyboard us
-network --hostname=koji.localdomain --bootproto=static --ip=192.168.122.2 --netmask=255.255.255.0 --gateway=192.168.122.1 --nameserver=192.168.122.1
-rootpw --iscrypted $1$osxvII91$h0GUDy5ST6KMHKKX15ZFh.
-selinux --disabled
-firewall --disabled
-timezone America/New_York --isUtc
-xconfig --startxonboot
-bootloader --location=mbr --driveorder=vda --append="crashkernel=auto rhgb quiet"
-autopart
-zerombr
-clearpart --all --initlabel --drives=vda
-reboot
-
-%packages
-@core
-%end
-
-###  Running Kojak Post Install
-%post --log=/root/kojak-ks.log
-set -x
-
 RELEASE=$(cat /etc/redhat-release)
 
 echo -e "# 00. Creating yum repo"
