@@ -31,21 +31,38 @@ fi
 cat > /etc/yum.repos.d/rhel6-koji.repo << 'EOF'
 #Internal koji packages
 
-[koji]
-name=Koji Buildsystem for RHEL6 - $basearch
-baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/$basearch
-enabled=1
-gpgcheck=0
-
-[koji-noarch]
-name=Koji Buildsystem for RHEL6 - noarch
-baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/noarch
-enabled=1
-gpgcheck=0
-EOF
-
 RELEASE=$(cat /etc/redhat-release)
 
+echo -e "# 00. Creating yum repo"
+if [[ $RELEASE != *Fedora* ]]; then
+    cat > /etc/yum.repos.d/rhel6-koji.repo << 'EOF'
+    #Internal koji packages
+
+    [koji]
+    name=Koji Buildsystem for RHEL6 - $basearch
+    baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/$basearch
+    enabled=1
+    gpgcheck=0
+
+    [koji-noarch]
+    name=Koji Buildsystem for RHEL6 - noarch
+    baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/noarch
+    enabled=1
+    gpgcheck=0
+EOF
+else
+    cat > /etc/yum.repos.d/fedora-mirror.repo << 'EOF'
+    [fedora-mirror]
+    name=Fedora $releasever - $basearch
+    failovermethod=priority
+    mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=fedora-$releasever&arch=$basearch
+    enabled=0
+    gpgcheck=1
+    gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$basearch
+    EOF
+fi
+
+echo -e "# 01. Installing packages"
 if [[ $RELEASE == *Fedora* ]]; then
     echo "# Installing Fedora binaries";
     yum -y install httpd mod_ssl openssl mod_auth_kerb mod_wsgi \
@@ -64,7 +81,7 @@ else
     koji koji-builder koji-hub koji-hub-plugins koji-utils koji-vm koji-web
 fi
 
-# Create Koji user and SSL directories
+echo -e "# 02. Creating Koji user and SSL directories"
 useradd koji
 echo koji | passwd koji --stdin
 mkdir -p /home/koji/.koji
@@ -76,15 +93,14 @@ touch /etc/pki/CA/index.txt
 echo 01 > /etc/pki/CA/serial
 cd -
 
-# Create koji build directories
+echo -e "# 03. Creating koji build directories"
 mkdir /mnt/koji
 cd /mnt/koji
 mkdir {packages,repos,work,scratch}
 chown apache.apache *
 cd -
 
-## Create custom config files
-
+echo -e "# 04. Creating custom.sh file for Fedora"
 if [[ $RELEASE == *Fedora* ]]; then
     # /etc/profile.d/custom.sh
     cat > /etc/profile.d/custom.sh << 'EOF'
@@ -132,6 +148,7 @@ if [[ $RELEASE == *Fedora* ]]; then
 EOF
 fi
 
+echo -e "# 05. Creating vimrc file for Fedora"
 if [[ $RELEASE == *Fedora* ]]; then
 # /etc/vimrc
     cp -p /etc/vimrc /etc/vimrc.orig
@@ -147,6 +164,7 @@ if [[ $RELEASE == *Fedora* ]]; then
     EOF
 fi
 
+echo -e "# 06. Creating hosts file"
 # /etc/hosts
 cp -p /etc/hosts /etc/hosts.orig
 cat > /etc/hosts << 'EOF'
@@ -155,6 +173,7 @@ cat > /etc/hosts << 'EOF'
 192.168.122.2   koji koji.localdomain
 EOF
 
+echo -e "# 07. Creating security file"
 # /etc/security/limits.conf
 cp -p /etc/security/limits.conf /etc/security/limits.conf.orig
 cat > /etc/security/limits.conf << 'EOF'
@@ -222,6 +241,7 @@ koji             hard    priority       -5
 # End of file
 EOF
 
+echo -e "# 08. Creating koji.conf file"
 # /etc/koji.conf
 cp -p /etc/koji.conf /etc/koji.conf.orig
 cat > /etc/koji.conf << 'EOF'
@@ -258,6 +278,7 @@ ca = ~/.koji/serverca.crt
 serverca = ~/.koji/serverca.crt
 EOF
 
+echo -e "# 08. Creating kojihub.conf file"
 # /etc/httpd/conf.d/kojihub.conf
 cp -p /etc/httpd/conf.d/kojihub.conf /etc/httpd/conf.d/kojihub.conf.orig
 cat > /etc/httpd/conf.d/kojihub.conf << 'EOF'
@@ -314,6 +335,7 @@ Alias /kojifiles "/mnt/koji/"
 # SSLVerifyDepth  10
 EOF
 
+echo -e "# 09. Creating kojihub.conf file"
 # /etc/httpd/conf.d/kojiweb.conf
 cp /etc/httpd/conf.d/kojiweb.conf /etc/httpd/conf.d/kojiweb.conf.orig
 cat > /etc/httpd/conf.d/kojiweb.conf << 'EOF'
@@ -377,6 +399,7 @@ Alias /koji-static/ "/usr/share/koji-web/static/"
 </Directory>
 EOF
 
+echo -e "# 10. Creating kojid.conf file"
 # /etc/kojid/kojid.conf
 cp -p /etc/kojid/kojid.conf /etc/kojid/kojid.conf.orig
 cat > /etc/kojid/kojid.conf << 'EOF'
@@ -458,6 +481,7 @@ ca = /etc/pki/koji/koji_ca_cert.crt
 serverca = /etc/pki/koji/koji_ca_cert.crt
 EOF
 
+echo -e "# 11. Creating hub.conf file"
 # /etc/koji-hub/hub.conf
 cp -p /etc/koji-hub/hub.conf /etc/koji-hub/hub.conf.orig
 cat > /etc/koji-hub/hub.conf << 'EOF'
@@ -546,6 +570,7 @@ EnableMaven = True
 ## If LockOut is True, the server will report a ServerOffline fault for all non-admin
 EOF
 
+echo -e "# 12. Creating kojira.conf file"
 # /etc/kojira/kojira.conf
 cp -p /etc/kojira/kojira.conf /etc/kojira/kojira.conf.orig
 cat > /etc/kojira/kojira.conf << 'EOF'
@@ -595,7 +620,9 @@ ca = /etc/pki/koji/koji_ca_cert.crt
 serverca = /etc/pki/koji/koji_ca_cert.crt
 EOF
 
+echo -e "# 13. Creating web.conf file"
 # /etc/kojiweb/web.conf
+cp /etc/kojiweb/web.conf /etc/kojiweb/web.conf.orig
 cat > /etc/kojiweb/web.conf << 'EOF'
 [web]
 SiteName = koji
@@ -623,26 +650,14 @@ LoginTimeout = 72
 LibPath = /usr/share/koji-web/lib
 EOF
 
+echo -e "# 14. Creating ssl.conf file"
 # /etc/httpd/conf.d/ssl
 cp -p /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf.orig
 sed -e '0,/SSLCertificateFile/! {0,/SSLCertificateFile/ s/SSLCertificateFile/#SSLCertificateFile/}' -e '/SSLCertificateKeyFile/s/^/#/' -e '/#SSLVerifyDepth/{:a;n;/^$/!ba;i\\n#   Koji Configuration\nSSLCertificateFile /etc/pki/koji/certs/kojihub.crt\nSSLCertificateKeyFile /etc/pki/koji/certs/kojihub.key\nSSLCertificateChainFile /etc/pki/koji/koji_ca_cert.crt\nSSLCACertificateFile /etc/pki/koji/koji_ca_cert.crt\nSSLVerifyClient require\nSSLVerifyDepth  10\nBrowserMatch "koji" ssl-accurate-shutdown' -e '}' /etc/httpd/conf.d/ssl.conf > /etc/httpd/conf.d/ssl.tmp
 cat /etc/httpd/conf.d/ssl.tmp > /etc/httpd/conf.d/ssl.conf
 rm /etc/httpd/conf.d/ssl.tmp
 
-# /etc/yum.repos.d/fedora-mirror.repo
-if [[ $RELEASE == *Fedora* ]]; then
-    cat > /etc/yum.repos.d/fedora-mirror.repo << 'EOF'
-    [fedora-mirror]
-    name=Fedora $releasever - $basearch
-    failovermethod=priority
-    mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=fedora-$releasever&arch=$basearch
-    enabled=0
-    gpgcheck=1
-    gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$basearch
-    EOF
-fi
-
-# /tmp/init.d/99_cfg
+echo -e "# 15. Creating /tmp/init.d/99_cfg file"
 cat > /etc/init.d/99_cfg << 'EOF'
 #!/bin/bash
 #
