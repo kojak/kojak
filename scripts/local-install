@@ -145,7 +145,7 @@ if [[ $RELEASE == *Fedora* ]]; then
     }
 
     PROMPT_COMMAND=history_sync
-EOF
+    EOF
 fi
 
 echo -e "# 05. Creating vimrc file for Fedora"
