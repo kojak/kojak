@@ -30,33 +30,31 @@ fi
 RELEASE=$(cat /etc/redhat-release)
 
 echo -e "# 00. Creating yum repo"
-if [[ $RELEASE != *Fedora* ]]; then
-    cat > /etc/yum.repos.d/rhel6-koji.repo << 'EOF'
-    #Internal koji packages
+cat > /etc/yum.repos.d/rhel6-koji.repo << 'EOF'
+#Internal koji packages
 
-    [koji]
-    name=Koji Buildsystem for RHEL6 - $basearch
-    baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/$basearch
-    enabled=1
-    gpgcheck=0
+[koji]
+name=Koji Buildsystem for RHEL6 - $basearch
+baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/$basearch
+enabled=1
+gpgcheck=0
 
-    [koji-noarch]
-    name=Koji Buildsystem for RHEL6 - noarch
-    baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/noarch
-    enabled=1
-    gpgcheck=0
-    EOF
-else
-    cat > /etc/yum.repos.d/fedora-mirror.repo << 'EOF'
-    [fedora-mirror]
-    name=Fedora $releasever - $basearch
-    failovermethod=priority
-    mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=fedora-$releasever&arch=$basearch
-    enabled=0
-    gpgcheck=1
-    gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$basearch
-    EOF
-fi
+[koji-noarch]
+name=Koji Buildsystem for RHEL6 - noarch
+baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/noarch
+enabled=1
+gpgcheck=0
+EOF
+
+cat > /etc/yum.repos.d/fedora-mirror.repo << 'EOF'
+[fedora-mirror]
+name=Fedora $releasever - $basearch
+failovermethod=priority
+mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=fedora-$releasever&arch=$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$basearch
+EOF
 
 echo -e "# 01. Installing packages"
 if [[ $RELEASE == *Fedora* ]]; then
