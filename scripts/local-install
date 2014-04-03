@@ -38,7 +38,7 @@ enabled=1
 gpgcheck=0
 
 [koji-noarch]
-name=Koji Buildsystem for RHEL6 - noarch 
+name=Koji Buildsystem for RHEL6 - noarch
 baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/noarch
 enabled=1
 gpgcheck=0
@@ -101,7 +101,7 @@ alias v='vim'
 alias l='ls -lash'
 alias n='netstat -vatlpn | grep'
 alias p='ps -A | grep'
-alias t='koji list-tasks --mine"
+alias t='koji list-tasks --mine'
 
 # Configure bash history 
 HISTSIZE='1000000'
@@ -265,7 +265,9 @@ Alias /kojihub /usr/share/koji-hub/kojixmlrpc.py
 <Directory "/usr/share/koji-hub">
     Options ExecCGI
     SetHandler wsgi-script
-    Require all granted
+    Order allow,deny
+    Allow from all
+    Require all granted # Apache 2.4 Comptibility
 </Directory>
 
 # Support for mod_python is DEPRECATED. If you still need mod_python support,
@@ -283,18 +285,20 @@ Alias /kojihub /usr/share/koji-hub/kojixmlrpc.py
 Alias /kojifiles "/mnt/koji/"
 
 <Directory "/mnt/koji">
-    Options Indexes FollowSymLinks
+    Options Indexes
     AllowOverride None
-    Require all granted
-    AddType application/octet-stream .signature
+    Order allow,deny
+    Allow from all
+    Require all granted # Apache 2.4 Comptibility
+    AddType application/octet-stream .signature # Apache 2.4 Comptibility
 </Directory>
 
 # uncomment this to enable authentication via SSL client certificates
- <Location /kojihub/ssllogin>
-         SSLVerifyClient require
-         SSLVerifyDepth  10
-         SSLOptions +StdEnvVars
- </Location>
+<Location /kojihub/ssllogin>
+        SSLVerifyClient require
+        SSLVerifyDepth  10
+        SSLOptions +StdEnvVars
+</Location>
 
 # If you need to support koji < 1.4.0 clients using SSL authentication, then use the following instead:
 # <Location /kojihub>
@@ -306,6 +310,7 @@ Alias /kojifiles "/mnt/koji/"
 EOF
 
 # /etc/httpd/conf.d/kojiweb.conf
+cp /etc/httpd/conf.d/kojiweb.conf /etc/httpd/conf.d/kojiweb.conf.orig
 cat > /etc/httpd/conf.d/kojiweb.conf << 'EOF'
 # We use wsgi by default
 Alias /koji "/usr/share/koji-web/scripts/wsgi_publisher.py"
@@ -314,7 +319,9 @@ Alias /koji "/usr/share/koji-web/scripts/wsgi_publisher.py"
 <Directory "/usr/share/koji-web/scripts/">
     Options ExecCGI
     SetHandler wsgi-script
-    Require all granted
+    Order allow,deny
+    Allow from all
+    Require all granted # Apache 2.4 Compatibility
 </Directory>
 
 # Support for mod_python is DEPRECATED. If you still need mod_python support,
@@ -348,18 +355,20 @@ Alias /koji "/usr/share/koji-web/scripts/wsgi_publisher.py"
 # </Location>
 
 # uncomment this to enable authentication via SSL client certificates
- <Location /koji/login>
-     SSLVerifyClient require
-     SSLVerifyDepth  10
-     SSLOptions +StdEnvVars
- </Location>
+<Location /koji/login>
+    SSLVerifyClient require
+    SSLVerifyDepth  10
+    SSLOptions +StdEnvVars
+</Location>
 
 Alias /koji-static/ "/usr/share/koji-web/static/"
 
 <Directory "/usr/share/koji-web/static/">
     Options None
     AllowOverride None
-    Require all granted
+    Order allow,deny
+    Allow from all
+    Require all granted # Apache 2.4 Compatibility
 </Directory>
 EOF
 
@@ -611,9 +620,22 @@ EOF
 
 # /etc/httpd/conf.d/ssl
 cp -p /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf.orig
-sed -e '/SSLCertificateFile/s/^/#/' -e '/SSLCertificateKeyFile/s/^/#/' -e '/#SSLVerifyDepth/{:a;n;/^$/!ba;i\\n#   Koji Configuration\nSSLCertificateFile /etc/pki/koji/certs/kojihub.crt\nSSLCertificateKeyFile /etc/pki/koji/certs/kojihub.key\nSSLCertificateChainFile /etc/pki/koji/koji_ca_cert.crt\nSSLCACertificateFile /etc/pki/koji/koji_ca_cert.crt\nSSLVerifyClient require\nSSLVerifyDepth  10\nBrowserMatch "koji" ssl-accurate-shutdown' -e '}' /etc/httpd/conf.d/ssl.conf > /etc/httpd/conf.d/ssl.tmp
+sed -e '0,/SSLCertificateFile/! {0,/SSLCertificateFile/ s/SSLCertificateFile/#SSLCertificateFile/}' -e '/SSLCertificateKeyFile/s/^/#/' -e '/#SSLVerifyDepth/{:a;n;/^$/!ba;i\\n#   Koji Configuration\nSSLCertificateFile /etc/pki/koji/certs/kojihub.crt\nSSLCertificateKeyFile /etc/pki/koji/certs/kojihub.key\nSSLCertificateChainFile /etc/pki/koji/koji_ca_cert.crt\nSSLCACertificateFile /etc/pki/koji/koji_ca_cert.crt\nSSLVerifyClient require\nSSLVerifyDepth  10\nBrowserMatch "koji" ssl-accurate-shutdown' -e '}' /etc/httpd/conf.d/ssl.conf > /etc/httpd/conf.d/ssl.tmp
 cat /etc/httpd/conf.d/ssl.tmp > /etc/httpd/conf.d/ssl.conf
 rm /etc/httpd/conf.d/ssl.tmp
+
+# /etc/yum.repos.d/fedora-mirror.repo
+if [[ $RELEASE == *Fedora* ]]; then
+    cat > /etc/yum.repos.d/fedora-mirror.repo << 'EOF'
+    [fedora-mirror]
+    name=Fedora $releasever - $basearch
+    failovermethod=priority
+    mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=fedora-$releasever&arch=$basearch
+    enabled=0
+    gpgcheck=1
+    gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-fedora-$basearch
+    EOF
+fi
 
 # /tmp/init.d/99_cfg
 cat > /etc/init.d/99_cfg << 'EOF'
@@ -623,10 +645,6 @@ cat > /etc/init.d/99_cfg << 'EOF'
 #
 # chkconfig: 345 99 00
 # description: Configuration script.
-
-# Disable firewall
-service firewalld stop
-chkconfig firewalld off
 
 # Start the database
 service postgresql initdb
@@ -758,7 +776,6 @@ koji add-host-to-channel kojibuilder1.localdomain createrepo
 koji add-host-to-channel kojibuilder1.localdomain livecd
 koji add-host-to-channel kojibuilder1.localdomain maven
 koji add-host-to-channel kojibuilder1.localdomain vm
-
 # Add tags
 koji add-tag product --maven-support --include-all --arches="x86_64"
 koji add-tag product-candidate --maven-support --include-all --parent=product --arches="x86_64"
@@ -773,7 +790,12 @@ koji add-tag-inheritance product-build maven-import --priority 10
 koji add-target product-candidate product-build product-candidate
 
 # Add external repo
-koji add-external-repo -t product centos-mirror http://mirror.centos.org/centos/6/os/x86_64/
+if [[ $RELEASE == *Fedora* ]]; then
+    echo "Installing Fedora repo
+    koji add-external-repo -t fedora-20 fedora-mirror http://mirrors.kernel.org/fedora/releases/20/Everything/x86_64/os/
+else
+    koji add-external-repo -t centos-6 centos-mirror http://mirror.centos.org/centos/6/os/x86_64/
+fi
 
 # Add groups
 #
@@ -788,6 +810,10 @@ koji add-group-pkg product-build srpm-build bash curl cvs fedora-release fedpkg 
 # appliance-build
 koji add-group product-build appliance-build
 koji add-group-pkg product-build appliance-build appliance-tools bash coreutils grub parted perl policycoreutils selinux-policy shadow-utils
+#
+# maven-build
+koji add-group product-build maven-build
+#
 #
 # maven-build
 koji add-group product-build maven-build
@@ -813,7 +839,7 @@ koji add-pkg --owner=kojiadmin product bash binutils
 # Restart Koji services
 chkconfig httpd on
 service httpd restart
-chkconfig kojid on  
+chkconfig kojid on 
 service kojid restart
 chkconfig kojira on
 service kojira start
