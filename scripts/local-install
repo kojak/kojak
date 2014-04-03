@@ -27,9 +27,32 @@ if [ "$USER" != "root" ]; then
     exit
 fi
 
-# /etc/yum.repos.d/rhel6-koji.repo
-cat > /etc/yum.repos.d/rhel6-koji.repo << 'EOF'
-#Internal koji packages
+#version=DEVEL
+auth --enableshadow --passalgo=sha512
+url --url http://mirror.centos.org/centos/6/os/x86_64/
+firstboot --disable
+ignoredisk --only-use=vda
+lang en_US.UTF-8
+keyboard us
+network --hostname=koji.localdomain --bootproto=static --ip=192.168.122.2 --netmask=255.255.255.0 --gateway=192.168.122.1 --nameserver=192.168.122.1
+rootpw --iscrypted $1$osxvII91$h0GUDy5ST6KMHKKX15ZFh.
+selinux --disabled
+firewall --disabled
+timezone America/New_York --isUtc
+xconfig --startxonboot
+bootloader --location=mbr --driveorder=vda --append="crashkernel=auto rhgb quiet"
+autopart
+zerombr
+clearpart --all --initlabel --drives=vda
+reboot
+
+%packages
+@core
+%end
+
+###  Running Kojak Post Install
+%post --log=/root/kojak-ks.log
+set -x
 
 RELEASE=$(cat /etc/redhat-release)
 
@@ -100,69 +123,63 @@ mkdir {packages,repos,work,scratch}
 chown apache.apache *
 cd -
 
-echo -e "# 04. Creating custom.sh file for Fedora"
-if [[ $RELEASE == *Fedora* ]]; then
-    # /etc/profile.d/custom.sh
-    cat > /etc/profile.d/custom.sh << 'EOF'
-    # Prompt colors
-    if [ `whoami` != "root" ]; then
-        PS1='\[\e[32m\][\u@\h \W]\$\[\e[0m\] '
-    else
-        PS1='\[\e[31m\][\u@\h \W]\$\[\e[0m\] '
-    fi
-
-    # /etc/aliases
-    alias d='dmesg -H'
-    alias h='history'
-    alias m='less /var/log/messages'
-    alias v='vim'
-    alias l='ls -lash'
-    alias n='netstat -vatlpn | grep'
-    alias p='ps -A | grep'
-    alias t='koji list-tasks --mine'
-
-    # Configure bash history 
-    HISTSIZE='1000000'
-    HISTIGNORE=' *:&:?:??'
-    HISTCONTROL='ignoreboth:erasedups'
-
-    export HISTSIZE HISTIGNORE HISTCONTROL
-
-    # Turn on bash history options
-    shopt -s histappend histreedit histverify
-
-    # Sync term history
-    history() {
-      history_sync
-      builtin history "$@"
-    }
-
-    history_sync() {
-      builtin history -a         
-      HISTFILESIZE=$HISTSIZE     
-      builtin history -c         
-      builtin history -r         
-    }
-
-    PROMPT_COMMAND=history_sync
-    EOF
+echo -e "# 04. Creating custom.sh file"
+cat > /etc/profile.d/custom.sh << 'EOF'
+# Prompt colors
+if [ `whoami` != "root" ]; then
+    PS1='\[\e[32m\][\u@\h \W]\$\[\e[0m\] '
+else
+    PS1='\[\e[31m\][\u@\h \W]\$\[\e[0m\] '
 fi
 
-echo -e "# 05. Creating vimrc file for Fedora"
-if [[ $RELEASE == *Fedora* ]]; then
-# /etc/vimrc
-    cp -p /etc/vimrc /etc/vimrc.orig
-    cat >> /etc/vimrc << 'EOF'
+# /etc/aliases
+alias d='dmesg -H'
+alias h='history'
+alias m='less /var/log/messages'
+alias v='vim'
+alias l='ls -lash'
+alias n='netstat -vatlpn | grep'
+alias p='ps -A | grep'
+alias t='koji list-tasks --mine'
+
+# Configure bash history 
+HISTSIZE='1000000'
+HISTIGNORE=' *:&:?:??'
+HISTCONTROL='ignoreboth:erasedups'
+
+export HISTSIZE HISTIGNORE HISTCONTROL
+
+# Turn on bash history options
+shopt -s histappend histreedit histverify
+
+# Sync term history
+history() {
+  history_sync
+  builtin history "$@"
+}
+
+history_sync() {
+  builtin history -a         
+  HISTFILESIZE=$HISTSIZE     
+  builtin history -c         
+  builtin history -r         
+}
+
+PROMPT_COMMAND=history_sync
+EOF
+
+echo -e "# 05. Creating vimrc file"
+cp -p /etc/vimrc /etc/vimrc.orig
+cat >> /etc/vimrc << 'EOF'
 
 
-    set paste
-    set tabstop=4
-    set shiftwidth=4
-    set softtabstop=4
-    set smarttab
-    set expandtab
-    EOF
-fi
+set paste
+set tabstop=4
+set shiftwidth=4
+set softtabstop=4
+set smarttab
+set expandtab
+EOF
 
 echo -e "# 06. Creating hosts file"
 # /etc/hosts
@@ -898,4 +915,5 @@ EOF
 chmod +x /etc/init.d/99_cfg
 chkconfig 99_cfg on
 
+echo -e "# 17. All steps completed...successfully"
 reboot
