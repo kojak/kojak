@@ -330,6 +330,7 @@ do
             if [ ! -z "${CFG}" ]; then
                 for cfg in ${CFG}; do
                 rm -rf ${cfg}
+                rm /kojak-ks.cfg
                 done
                 welcome_header
                 echo -e "\n>> Removed saved configuration files."
