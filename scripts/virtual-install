@@ -327,10 +327,10 @@ do
             ;;
         "Clear")
             CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
+            rm -f /kojak-ks.cfg
             if [ ! -z "${CFG}" ]; then
                 for cfg in ${CFG}; do
                 rm -rf ${cfg}
-                rm /kojak-ks.cfg
                 done
                 welcome_header
                 echo -e "\n>> Removed saved configuration files."
