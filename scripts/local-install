@@ -222,7 +222,7 @@ Alias /kojifiles "/mnt/koji/"
     Order allow,deny
     Allow from all
     # Require all granted # Apache 2.4 Comptibility
-    AddType application/octet-stream .signature # Apache 2.4 Comptibility
+    # AddType application/octet-stream .signature # Apache 2.4 Comptibility
 </Directory>
 
 # uncomment this to enable authentication via SSL client certificates
