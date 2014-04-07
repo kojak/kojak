@@ -614,6 +614,12 @@ cat > /etc/init.d/99_cfg << 'EOF'
 # chkconfig: 345 99 00
 # description: Configuration script.
 
+# Stop firewall
+service iptables stop
+chkconfig iptables off
+service ip6tables stop
+chkconfig ip6tables off
+
 # Start the database
 service postgresql initdb
 chkconfig postgresql on
