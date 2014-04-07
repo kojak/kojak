@@ -32,6 +32,8 @@ rm -rf /etc/koji*
 rm -rf /etc/httpd
 rm -rf /etc/pki/koji
 rm -rf /var/lib/pgsql
+rm -rf ~/kickstart.log
+rm -rf ~/kojak.log
 
 # Remove user koji user
 userdel -r koji
