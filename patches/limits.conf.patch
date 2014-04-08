@@ -1,26 +1,9 @@
---- /etc/security/limits.conf	2013-11-22 09:06:14.000000000 -0500
-+++ /etc/security/limits.conf	2014-04-07 16:17:42.044000014 -0400
-@@ -1,5 +1,16 @@
- # /etc/security/limits.conf
- #
-+#This file sets the resource limits for the users logged in via PAM.
-+#It does not affect resource limits of the system services.
-+#
-+#Also note that configuration files in /etc/security/limits.d directory,
-+#which are read in alphabetical order, override the settings in this
-+#file in case the domain is the same or more specific.
-+#That means for example that setting a limit for wildcard domain here
-+#can be overriden with a wildcard setting in a config file in the
-+#subdirectory, but a user specific setting here can be overriden only
-+#with a user specific setting in the subdirectory.
-+#
- #Each line describes a limit for a user in the form:
- #
- #<domain>        <type>  <item>  <value>
-@@ -46,5 +57,6 @@
+--- /etc/security/limits.conf   2013-11-22 09:06:14.000000000 -0500
++++ /etc/security/limits.conf   2014-04-07 18:02:46.481999976 -0400
+@@ -46,5 +46,6 @@
  #@faculty        hard    nproc           50
  #ftp             hard    nproc           0
  #@student        -       maxlogins       4
 +koji             hard    priority       -5
- 
+
  # End of file

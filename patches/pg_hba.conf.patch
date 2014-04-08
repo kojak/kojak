@@ -1,9 +1,9 @@
---- /var/lib/pgsql/data/pg_hba.conf	2014-04-07 16:19:25.352000001 -0400
-+++ /var/lib/pgsql/data/pg_hba.conf	2014-04-07 16:41:16.005000025 -0400
+--- /var/lib/pgsql/data/pg_hba.conf     2014-04-07 16:19:25.352000001 -0400
++++ /var/lib/pgsql/data/pg_hba.conf     2014-04-07 16:41:16.005000025 -0400
 @@ -66,9 +66,20 @@
- 
+
  # TYPE  DATABASE    USER        CIDR-ADDRESS          METHOD
- 
+
 +# Koji
 +local   koji        koji                                         trust
 +local   koji        apache                                       trust
@@ -20,4 +20,3 @@
  host    all         all         127.0.0.1/32          ident
  # IPv6 local connections:
  host    all         all         ::1/128               ident
-+

@@ -1,5 +1,5 @@
---- /etc/hosts	2010-01-12 08:28:22.000000000 -0500
-+++ /etc/hosts	2014-04-07 16:17:42.026000014 -0400
+--- /etc/hosts  2010-01-12 08:28:22.000000000 -0500
++++ /etc/hosts  2014-04-07 16:17:42.026000014 -0400
 @@ -1,2 +1,3 @@
  127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
  ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6

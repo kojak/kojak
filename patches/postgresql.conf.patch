@@ -1,11 +1,11 @@
---- /var/lib/pgsql/data/postgresql.conf	2014-04-07 16:19:01.833000001 -0400
-+++ /var/lib/pgsql/data/postgresql.conf	2014-04-07 16:19:25.342000001 -0400
+--- /var/lib/pgsql/data/postgresql.conf 2014-04-07 16:19:01.833000001 -0400
++++ /var/lib/pgsql/data/postgresql.conf 2014-04-07 16:19:25.342000001 -0400
 @@ -56,7 +56,7 @@
- 
+
  # - Connection Settings -
- 
--#listen_addresses = 'localhost'		# what IP address(es) to listen on;
-+listen_addresses = '*'		# what IP address(es) to listen on;
- 					# comma-separated list of addresses;
- 					# defaults to 'localhost', '*' = all
- 					# (change requires restart)
+
+-#listen_addresses = 'localhost'        # what IP address(es) to listen on;
++listen_addresses = '*'     # what IP address(es) to listen on;
+                    # comma-separated list of addresses;
+                    # defaults to 'localhost', '*' = all
+                    # (change requires restart)
