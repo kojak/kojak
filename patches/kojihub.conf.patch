@@ -1,0 +1,32 @@
+--- /etc/httpd/conf.d/kojihub.conf	2014-02-26 14:22:18.000000000 -0500
++++ /etc/httpd/conf.d/kojihub.conf	2014-04-07 16:17:42.086000014 -0400
+@@ -9,6 +9,7 @@
+     SetHandler wsgi-script
+     Order allow,deny
+     Allow from all
++    # Require all granted # Apache 2.4 Compatibility
+ </Directory>
+ 
+ # Support for mod_python is DEPRECATED. If you still need mod_python support,
+@@ -30,14 +31,16 @@
+     AllowOverride None
+     Order allow,deny
+     Allow from all
++    # Require all granted # Apache 2.4 Compatibility
++    # AddType application/octet-stream .signature # Apache 2.4 Compatibility
+ </Directory>
+ 
+ # uncomment this to enable authentication via SSL client certificates
+-# <Location /kojihub/ssllogin>
+-#         SSLVerifyClient require
+-#         SSLVerifyDepth  10
+-#         SSLOptions +StdEnvVars
+-# </Location>
++<Location /kojihub/ssllogin>
++        SSLVerifyClient require
++        SSLVerifyDepth  10
++        SSLOptions +StdEnvVars
++</Location>
+ 
+ # If you need to support koji < 1.4.0 clients using SSL authentication, then use the following instead:
+ # <Location /kojihub>

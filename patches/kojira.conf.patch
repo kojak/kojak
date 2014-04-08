@@ -1,0 +1,25 @@
+--- /etc/kojira/kojira.conf	2014-02-26 14:22:18.000000000 -0500
++++ /etc/kojira/kojira.conf	2014-04-07 16:17:42.164000014 -0400
+@@ -10,7 +10,7 @@
+ keytab=/etc/kojira.keytab
+ 
+ ; The URL for the koji hub server
+-server=http://hub.example.com/kojihub
++server=http://koji.localdomain/kojihub
+ 
+ ; The directory containing the repos/ directory
+ topdir=/mnt/koji
+@@ -35,10 +35,10 @@
+ ;configuration for SSL authentication
+ 
+ ;client certificate
+-;cert = /etc/kojira/client.crt
++cert = /etc/pki/koji/kojira.pem
+ 
+ ;certificate of the CA that issued the client certificate
+-;ca = /etc/kojira/clientca.crt
++ca = /etc/pki/koji/koji_ca_cert.crt
+ 
+ ;certificate of the CA that issued the HTTP server certificate
+-;serverca = /etc/kojira/serverca.crt
++serverca = /etc/pki/koji/koji_ca_cert.crt

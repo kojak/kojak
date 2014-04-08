@@ -17,8 +17,6 @@ koji-hub-plugins koji-vm koji-builder
 
 # Revert previous configuration files
 cat /etc/hosts.orig > /etc/hosts && rm /etc/hosts.orig
-cat /etc/sudoers.orig > /etc/sudoers && rm /etc/sudoers.orig
-cat /etc/vimrc.orig > /etc/vimrc && rm /etc/vimrc.orig
 cat /etc/httpd/conf.d/ssl.conf.orig > /etc/httpd/conf.d/ssl.conf && rm /etc/httpd/conf.d/ssl.conf.orig
 cat /etc/security/limits.conf.orig > /etc/security/limits.conf && rm /etc/security/limits.conf.orig
 
