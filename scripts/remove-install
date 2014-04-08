@@ -15,23 +15,31 @@ fi
 yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils \
 koji-hub-plugins koji-vm koji-builder
 
-# Revert previous configuration files
-cat /etc/hosts.orig > /etc/hosts && rm /etc/hosts.orig
-cat /etc/httpd/conf.d/ssl.conf.orig > /etc/httpd/conf.d/ssl.conf && rm /etc/httpd/conf.d/ssl.conf.orig
-cat /etc/security/limits.conf.orig > /etc/security/limits.conf && rm /etc/security/limits.conf.orig
+CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/httpd/conf.d/koji* /etc/koji* /etc/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql"
+for dir in $CFG_DIRS; do rm -rf $dir || echo "$dir not found"; done
 
-# Remove files koji related configuration files
-rm -rf /var/tmp/kojak
-rm -rf /mnt/koji
-rm /var/log/kojid.log
-rm /var/log/kojira.log
-rm -rf /etc/httpd/conf.d/koji*
-rm -rf /etc/koji*
-rm -rf /etc/httpd
-rm -rf /etc/pki/koji
-rm -rf /var/lib/pgsql
-rm -rf ~/kickstart.log
-rm -rf ~/kojak.log
+CFG_FILES="/etc/hosts.orig
+/etc/koji.conf.orig
+/etc/httpd/conf.d/kojihub.conf.orig
+/etc/httpd/conf.d/kojiweb.conf.orig
+/etc/httpd/conf.d/ssl.conf.orig
+/etc/koji-hub/hub.conf.orig
+/etc/kojid/kojid.conf.orig
+/etc/kojira/kojira.conf.orig
+/etc/kojiweb/web.conf.orig
+/etc/rc.d/init.d/kojid.orig
+/etc/security/limits.conf.orig
+/var/lib/pgsql/data/pg_hba.conf.orig
+/var/lib/pgsql/data/postgresql.conf.orig"
+for file in $CFG_FILES; do cat $file > $(echo $file | sed "s/\.orig$//") && rm -f $file || echo "$file not found"; done
+
+LOG_FILES="/var/log/kojira.log 
+/var/log/kojid.log 
+~/kickstart.log 
+~/kojak.log
+/etc/profile.d/custom.sh
+/etc/yum.repos.d/rhel6-koji.repo"
+for file in $LOG_FILES; do rm -f $file || echo "$file not found"; done
 
 # Remove user koji user
 userdel -r koji
