@@ -564,7 +564,7 @@ su -l koji -c "psql koji koji < /tmp/users.sql"
 
 rm /tmp/users.sql
 
-echo -e "# Patching pg_hba.conf file"
+echo -e "# 16. Patching pg_hba.conf file"
 cp -p /var/lib/pgsql/data/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf.orig
 cat > /tmp/pg_hba.conf.patch << 'EOF'
 --- /var/lib/pgsql/data/pg_hba.conf.orig    2014-04-09 07:30:10.925999550 -0400
@@ -590,7 +590,7 @@ EOF
 patch -p0 < /tmp/pg_hba.conf.patch
 rm -f /tmp/pg_hba.conf.patch
 
-echo -e "# Patching postgresql.conf file"
+echo -e "# 17. Patching postgresql.conf file"
 cp -p /var/lib/pgsql/data/postgresql.conf /var/lib/pgsql/data/postgresql.conf.orig
 cat > /tmp/postgresql.conf.patch << 'EOF'
 --- /var/lib/pgsql/data/postgresql.conf 2014-04-07 16:19:01.833000001 -0400
@@ -610,6 +610,25 @@ rm -f /tmp/postgresql.conf.patch
 
 # Fix permissions on database directories
 chown -R postgres:postgres /var/lib/pgsql/data
+
+echo -e "# 18. Patching httpd.conf file"
+cp -p /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.orig
+cat > /tmp/httpd.conf.patch << 'EOF'
+*** /etc/httpd/conf/httpd.conf  2014-03-20 11:17:58.000000000 +0100
+--- /etc/httpd/conf/httpd.conf  2014-04-09 19:54:14.659594159 +0200
+***************
+*** 274,279 ****
+--- 274,280 ----
+  # redirections work in a sensible way.
+  #
+  #ServerName www.example.com:80
++ ServerName koji.localdomain
+
+  #
+  # UseCanonicalName: Determines how Apache constructs self-referencing
+EOF
+patch -p0 < /tmp/httpd.conf.patch
+rm -f /tmp/httpd.conf.patch
 
 # SSL certs
 rm -rf /etc/pki/CA/serial*
@@ -799,5 +818,4 @@ chkconfig kojira on
 service kojira restart
 EOF
 
-echo -e "# 17. Installation successfull" >> ${LOG}
-
+echo -e "# 19. Installation successfull" >> ${LOG}
