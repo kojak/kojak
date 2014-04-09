@@ -42,7 +42,6 @@ Installation Instructions
     as the koji user, execute the following:  
 
 ```
-    [koji@localhost ~]$ koji list-tasks
     [koji@koji ~]$ koji hello
     hi, kojiadmin!
 
