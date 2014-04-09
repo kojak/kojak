@@ -697,17 +697,6 @@ cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/serverca.crt
 chown -R koji:apache /home/koji/.koji/
 cd -
 
-# Copy the client certficates to the koji users home directory.
-echo -e "Deploying certificates...\n"
-
-cp -f /etc/pki/koji/kojiadmin.pem /home/koji/.koji/client.crt
-cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/clientca.crt
-cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/serverca.crt
-
-# Set the appropriate permissions
-chown -R koji:apache /home/koji/.koji/
-cd -
-
 # Stop firewall
 service iptables stop
 chkconfig iptables off
@@ -790,13 +779,14 @@ koji edit-host --capacity 10.0 kojibuilder1.localdomain
 # Add required build packages
 koji add-pkg --owner=kojiadmin product bash binutils
 "
+
 # Restart Koji services
 chkconfig httpd on
 service httpd restart
 chkconfig kojid on 
 service kojid restart
 chkconfig kojira on
-service kojira start
+service kojira restart
 
 # Grant permissions
 su -l koji -c "koji grant-permission repo kojira"
@@ -819,4 +809,3 @@ EOF
 chmod +x /etc/init.d/99_cfg
 chkconfig 99_cfg on
 echo -e "# 17. Installation successfull" >> ${LOG}
-
