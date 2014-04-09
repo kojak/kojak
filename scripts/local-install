@@ -129,6 +129,13 @@ EOF
 patch -p0 < /tmp/hosts.patch
 rm -f /tmp/hosts.patch
 
+IP_ADDR=$(ip route get 8.8.8.8 | awk '/8.8.8.8/ {print $NF}')
+if [ "${IP_ADDR}" != "192.168.122.2" ]; then 
+    echo "Updating /etc/hosts with ${IP_ADDR}"
+    sed 's/192.168.122.2/'${IP_ADDR}'/' /etc/hosts > /etc/hosts.tmp 
+    cat /etc/hosts.tmp > /etc/hosts && rm -f /etc/hosts.tmp
+fi
+
 echo -e "# 06. Patching limits file" >> ${LOG} 
 cp -p /etc/security/limits.conf /etc/security/limits.conf.orig
 cat > /tmp/limits.conf.patch << 'EOF'
@@ -709,9 +716,9 @@ chkconfig ip6tables off
 
 # Restart database services
 service postgresql restart
-service httpd restart
-service kojid restart
-service kojira restart
+service httpd start
+service kojid start
+service kojira start
 
 echo -e "# 16. Creating /tmp/init.d/99_cfg file" >> ${LOG}
 cat > /etc/init.d/99_cfg << 'EOF'
@@ -812,5 +819,4 @@ EOF
 chmod +x /etc/init.d/99_cfg
 chkconfig 99_cfg on
 echo -e "# 17. Installation successfull" >> ${LOG}
-
 

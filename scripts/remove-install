@@ -17,9 +17,9 @@ yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub
 CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql"
 for dir in $CFG_DIRS; do rm -rf $dir || echo "$dir not found"; done
 
-LOG_FILES="/var/log/kojira.log 
-/var/log/kojid.log 
-~/kickstart.log 
+LOG_FILES="/var/log/kojira.log
+/var/log/kojid.log
+~/kickstart.log
 ~/kojak.log
 /etc/profile.d/custom.sh
 /etc/yum.repos.d/rhel6-koji.repo"
