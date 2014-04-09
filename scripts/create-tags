@@ -63,4 +63,4 @@ koji add-pkg --owner=kojiadmin ${PRODUCT} bash binutils
 # Grant permissions
 koji grant-permission repo kojira
 koji grant-permission build kojibuilder1
-
+"
