@@ -29,8 +29,8 @@ for file in $LOG_FILES; do rm -f $file || echo "$file not found"; done
 userdel -r koji
 
 # Update mlocate database
-updatedb
 cd /
+updatedb
 ORIG_FILES=$(locate *.orig)
 for file in $ORIG_FILES; do cat $file > $(echo $file | sed "s/\.orig$//") && rm -f $file || echo "$file not found"; done
-
+updatedb
