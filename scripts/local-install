@@ -622,8 +622,8 @@ chown -R postgres:postgres /var/lib/pgsql/data
 echo -e "# 18. Patching httpd.conf file"
 cp -p /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.orig
 cat > /tmp/httpd.conf.patch << 'EOF'
-*** httpd.conf  2014-03-20 11:17:58.000000000 +0100
---- httpd.conf  2014-04-09 20:29:36.517973074 +0200
+*** /etc/httpd/conf/httpd.conf  2014-03-20 11:17:58.000000000 +0100
+--- /etc/httpd/conf/httpd.conf  2014-04-09 20:29:36.517973074 +0200
 ***************
 *** 273,279 ****
   # You will have to access it by its address anyway, and this will make
