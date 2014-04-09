@@ -593,8 +593,8 @@ rm -f /tmp/pg_hba.conf.patch
 echo -e "# 17. Patching postgresql.conf file"
 cp -p /var/lib/pgsql/data/postgresql.conf /var/lib/pgsql/data/postgresql.conf.orig
 cat > /tmp/postgresql.conf.patch << 'EOF'
-*** /var/lib/pgsql/data/postgresql.conf 2014-04-09 20:15:02.450334915 +0200
---- /var/lib/pgsql/data/postgresql.conf 2014-04-09 20:18:31.303613789 +0200
+*** /var/lib/pgsql/data/postgresql.conf.orig    2014-04-09 20:33:40.633814624 +0200
+--- /var/lib/pgsql/data/postgresql.conf 2014-04-09 20:34:40.717037374 +0200
 ***************
 *** 56,62 ****
 
@@ -608,7 +608,7 @@ cat > /tmp/postgresql.conf.patch << 'EOF'
 
   # - Connection Settings -
 
-! listen_addresses = '*'                        # what IP address(es) to listen on;
+! listen_addresses = '*'                # what IP address(es) to listen on;
                                         # comma-separated list of addresses;
                                         # defaults to 'localhost', '*' = all
                                         # (change requires restart)
