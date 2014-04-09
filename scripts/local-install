@@ -622,15 +622,22 @@ chown -R postgres:postgres /var/lib/pgsql/data
 echo -e "# 18. Patching httpd.conf file"
 cp -p /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.orig
 cat > /tmp/httpd.conf.patch << 'EOF'
-*** /etc/httpd/conf/httpd.conf  2014-03-20 11:17:58.000000000 +0100
---- /etc/httpd/conf/httpd.conf  2014-04-09 19:54:14.659594159 +0200
+*** httpd.conf  2014-03-20 11:17:58.000000000 +0100
+--- httpd.conf  2014-04-09 20:29:36.517973074 +0200
 ***************
-*** 274,279 ****
---- 274,280 ----
+*** 273,279 ****
+  # You will have to access it by its address anyway, and this will make
   # redirections work in a sensible way.
   #
-  #ServerName www.example.com:80
-+ ServerName koji.localdomain
+! #ServerName www.example.com:80
+
+  #
+  # UseCanonicalName: Determines how Apache constructs self-referencing
+--- 273,279 ----
+  # You will have to access it by its address anyway, and this will make
+  # redirections work in a sensible way.
+  #
+! ServerName koji.localdomain
 
   #
   # UseCanonicalName: Determines how Apache constructs self-referencing
