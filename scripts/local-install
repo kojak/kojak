@@ -106,6 +106,8 @@ koji koji-builder koji-hub koji-hub-plugins koji-utils koji-vm koji-web
 echo -e "# 03. Creating Koji user directories" >> ${LOG}
 useradd koji
 echo koji | passwd koji --stdin
+mkdir /home/koji/workspace
+chown -R koji:koji /home/koji
 mkdir -p /home/koji/.koji
 chown koji:apache /home/koji/.koji
 
@@ -776,35 +778,26 @@ koji edit-host --capacity 10.0 kojibuilder1
 
 # Add required build packages
 koji add-pkg --owner=kojiadmin product bash binutils
+
+# Grant permissions
+koji grant-permission repo kojira
+koji grant-permission build kojibuilder1
 "
+
+# Clean up files
+rm -f /etc/init.d/99_cfg
+
+# Update system
+yum -y update
 
 # Restart Koji services
 chkconfig httpd on
 service httpd restart
-chkconfig kojid on 
+chkconfig kojid on
 service kojid restart
 chkconfig kojira on
 service kojira restart
-
-# Grant permissions
-su -l koji -c "koji grant-permission repo kojira"
-su -l koji -c "koji grant-permission build kojibuilder1"
-
-# Create workspace for tool chain downloads
-mkdir /home/koji/workspace
-chown -R koji:koji /home/koji
-
-# Clean up files
-rm /tmp/*.rpm
-rm -rf /tmp/koji
-rm -f /etc/init.d/99_cfg
-cd -
-
-# Update system
-yum -y update
 EOF
 
-chmod +x /etc/init.d/99_cfg
-chkconfig 99_cfg on
 echo -e "# 17. Installation successfull" >> ${LOG}
 
