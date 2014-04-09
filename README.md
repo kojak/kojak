@@ -8,24 +8,12 @@ Tool Chain
 
 Future implementations of Kojak will ship with a standardised tool chain designed to allow developers to build, test, deploy, verfiy and replicate product builds and their associated repositories in a consistent way.  The long term goal is to provide a development/staging platform to allow users to familerise themselves with the build system and allow them access to Koji outside of prodcution environments.   
 
-See the links below for the tools that are planned to be shipped with Kojak:
-
-1. aprox - http://github.com/jdcasey/aprox
-2. atlas - http://github.com/jdcasey/atlas
-3. buildmetadata-maven-plugin - http://github.com/sbadakhc/buildmetadata-maven-plugin.git
-4. cartographer - http://github.com/jdcasey/cartographer
-5. galley - http://github.com/jdcasey/galley
-6. koji - http://fedoraproject.org/wiki/Koji
-7. maven-repository-builder - http://github.com/jboss-eap/maven-repository-builder
-8. python-javatools - http://github.com/obriencj/python-javatools.git
- 
-
 Installation Prerequisites
 ---------------------------
 
-If you opt for the virtual installation option the scripts will build a virtual machine which will be accessible from your localhost.  Alternatively you can install directly on the localhost if, for example, you have a dedicated server.  Kojak has been successfully installed and tested on Fedora 18 and above. 
+If you opt for the virtual installation option the scripts will build a virtual machine which will be accessible from your localhost.  Alternatively you can install directly on the localhost if, for example, you have a dedicated server.  Kojak has been successfully installed and tested on CentOS 6.5. 
 
-See http://fedoraproject.org/wiki/Getting_started_with_virtualization for more information
+See http://wiki.centos.org/HowTos#head-fb1ff7e71fb5f2f511cda8c68cb6ba5f6e8decae 
 
 It is recommended that the system be updated before beginning the installation.  A fast internet connection and is also 
 required in order to facilitate the downloading of any package dependancies.
@@ -40,7 +28,7 @@ The virtual machine is configured with the following default specifications:
 
 The you localhost should be configured with the following minimum specifications:
 
-1. Fedora 18+ with virtualization package group
+1. Centos 6.5 or Fedora 18+ with virtualization package group
 2. 8GB RAM
 3. 120 GB Disk Space 
 
@@ -49,16 +37,16 @@ Installation Instructions
 
 1.  Checkout the contents of the Kojak git repository to a suitable directory on your localhost .
 2.  As root execute kojak script.  You will be prompted about the type of installtion you want to conduct.
-    If you choose to install Koji as a virtual machine you will be further prompted to supply some configuration            options or simply accept the default options. 
+    If you choose to install Koji as a virtual machine you will be further prompted to supply some configuration options or simply accept the default options. 
 3.  Once the installation is complete you should confirm the state of all the tasks are closed.  From the command line,
     as the koji user, execute the following:  
 
 ```
     [koji@localhost ~]$ koji list-tasks
-    ID    Pri  Owner        State    Arch       Name
-    1     10   kojiadmin    CLOSED   noarch     tagBuild [kojibuilder1.localdomain]
-    2     15   kojira       CLOSED   noarch     newRepo [kojibuilder1.localdomain]
-    3     14   kojira       CLOSED   noarch      +createrepo [kojibuilder1.localdomain]
+    [koji@koji ~]$ koji hello
+    hi, kojiadmin!
+
+    You are using the hub at http://koji.localdomain/kojihub
 ```
 
 Configuration Notes
