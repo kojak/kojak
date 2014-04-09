@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Simple script to re-initialise the koji database
+# Kojak installation removal
 
 # Debugging
 set -x
@@ -12,26 +12,10 @@ if [ "$USER" != "root" ]; then
 fi
 
 # Remove package
-yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils \
-koji-hub-plugins koji-vm koji-builder
+yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder
 
-CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/httpd/conf.d/koji* /etc/koji* /etc/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql"
+CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql"
 for dir in $CFG_DIRS; do rm -rf $dir || echo "$dir not found"; done
-
-CFG_FILES="/etc/hosts.orig
-/etc/koji.conf.orig
-/etc/httpd/conf.d/kojihub.conf.orig
-/etc/httpd/conf.d/kojiweb.conf.orig
-/etc/httpd/conf.d/ssl.conf.orig
-/etc/koji-hub/hub.conf.orig
-/etc/kojid/kojid.conf.orig
-/etc/kojira/kojira.conf.orig
-/etc/kojiweb/web.conf.orig
-/etc/rc.d/init.d/kojid.orig
-/etc/security/limits.conf.orig
-/var/lib/pgsql/data/pg_hba.conf.orig
-/var/lib/pgsql/data/postgresql.conf.orig"
-for file in $CFG_FILES; do cat $file > $(echo $file | sed "s/\.orig$//") && rm -f $file || echo "$file not found"; done
 
 LOG_FILES="/var/log/kojira.log 
 /var/log/kojid.log 
@@ -46,5 +30,7 @@ userdel -r koji
 
 # Update mlocate database
 updatedb
-locate *.orig
+cd /
+ORIG_FILES=$(locate *.orig)
+for file in $ORIG_FILES; do cat $file > $(echo $file | sed "s/\.orig$//") && rm -f $file || echo "$file not found"; done
 
