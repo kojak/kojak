@@ -33,4 +33,6 @@ cd /
 updatedb
 ORIG_FILES=$(locate *.orig)
 for file in $ORIG_FILES; do cat $file > $(echo $file | sed "s/\.orig$//") && rm -f $file || echo "$file not found"; done
+
 updatedb
+
