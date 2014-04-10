@@ -40,33 +40,33 @@ welcome_header() {
 }
 
 menu_msg_01() {
-    echo -e ">> Select installation method from the menu options below."
+    echo -e ">> Select from the menu options below."
 }
 
 menu () {
 PS3='Please Select installation type: '
 echo
-options=("Virtual" "Local" "Remove" "Create Tags" "Quit")
+options=("Virtual Appliance" "Local Install" "Remove Install" "Create Tags" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
-        "Virtual")
+        "Virtual Appliance")
             echo "Virtual Installation Selected"
             $SCRIPTS/install/virtual-install
             exit
             ;;
-        "Local")
+        "Install Local")
             echo "Local Installation Selected"
             $SCRIPTS/install/local-install
             exit
             ;;
-        "Remove")
+        "Remove Install")
             echo "Removing Installation"
             $SCRIPTS/install/remove-install
             exit
             ;;
         "Create Tags")
-            echo "Creating default tag base"
+            echo "Creating demo tag base"
             $SCRIPTS/config/create-tags
             exit
             ;;
