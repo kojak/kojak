@@ -29,7 +29,7 @@ fi
 
 reset
 
-SCRIPTS="`pwd`/scripts"
+SCRIPTS="`pwd`/scripts/install"
 
 welcome_header() {
     clear
