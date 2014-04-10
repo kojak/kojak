@@ -50,17 +50,17 @@ options=("Virtual" "Local" "Remove" "Create Tags" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
-        "Virtual Install")
+        "Virtual")
             echo "Virtual Installation Selected"
             $SCRIPTS/install/virtual-install
             exit
             ;;
-        "Local Install")
+        "Local")
             echo "Local Installation Selected"
             $SCRIPTS/install/local-install
             exit
             ;;
-        "Remove Install")
+        "Remove")
             echo "Removing Installation"
             $SCRIPTS/install/remove-install
             exit
