@@ -16,6 +16,7 @@ If you opt for the virtual installation option the scripts will build a virtual 
 For more information about virtualization see below:
 
 CentOS http://wiki.centos.org/HowTos#head-fb1ff7e71fb5f2f511cda8c68cb6ba5f6e8decae 
+
 Fedora http://fedoraproject.org/wiki/Virtualization?rd=Tools/Virtualization
 
 It is recommended that the system be updated before beginning the installation.  A fast internet connection and is also required in order to facilitate the downloading of any package dependancies.
@@ -48,7 +49,8 @@ Installation Instructions
 
     You are using the hub at http://koji.localdomain/kojihub
 ```
-4.  If the command executed successfully then your ready to begin creating a tag base for your builds and start building.  For a demo tag base you can simply execute Kojak again and select option number 4 (Create Tags) from the main menu.  You can also edit the create-tags file to create a custom tag set for your build.
+
+If the command executed successfully then your ready to begin creating a tag base for your builds and start building.  For a demo tag base you can simply execute Kojak again and select option number 4 (Create Tags) from the main menu.  You can also edit the create-tags file to create a custom tag set for your build.
 
 See https://fedoraproject.org/wiki/Koji for more details about using Koji.
 
