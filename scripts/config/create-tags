@@ -61,6 +61,6 @@ koji edit-host --capacity 10.0 kojibuilder1
 koji add-pkg --owner=kojiadmin ${PRODUCT} bash binutils
 
 # List created tags
-echo -e "Created the following tags...\n"
+echo -e 'Created the following tags...\n'
 koji list-tags
 "
