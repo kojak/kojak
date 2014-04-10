@@ -22,32 +22,22 @@
 #set -x
 
 # Check to see if user is root
-if [ "$USER" != "root" ]; then
+if [ "${USER}" != "root" ]; then
     echo -e "\n# This script requires root priviledges to run"
     exit
 fi
 
-RELEASE=$(cat /etc/redhat-release)
-LOG="/root/kojak.log"
+# Check access to Red Hat servers
+wget -q --tries=10 --timeout=5  http://download.devel.redhat.com
+if [[ $? -eq 0 ]]; then
+    echo -e "\n# Red Hat servers accessible"
+    rm index.html
+else
+    echo -e "\n# Please make sure you have access to Red Hat servers"
+    exit
+fi
 
-echo -e "# 00. Creating yum repo" > ${LOG}
-cat > /etc/yum.repos.d/rhel6-koji.repo << 'EOF'
-#Internal koji packages
-
-[koji]
-name=Koji Buildsystem for RHEL6 - $basearch
-baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/$basearch
-enabled=1
-gpgcheck=0
-
-[koji-noarch]
-name=Koji Buildsystem for RHEL6 - noarch
-baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/noarch
-enabled=1
-gpgcheck=0
-EOF
-
-echo -e "# 01. Creating custom.sh file" >> ${LOG}
+echo -e "# 00. Creating custom.sh file" >> ${LOG}
 cat > /etc/profile.d/custom.sh << 'EOF'
 # Prompt colors
 if [ $(whoami) != "root" ]; then
@@ -94,6 +84,27 @@ history_sync() {
 PROMPT_COMMAND=history_sync
 EOF
 chmod +x /etc/profile.d/custom.sh
+
+RELEASE=$(cat /etc/redhat-release)
+LOG="/root/kojak.log"
+TSTAMP=$(date '+_%Y%m%d%H%M%S')
+
+echo -e "# 01. Creating yum repo" > ${LOG}
+cat > /etc/yum.repos.d/rhel6-koji.repo << 'EOF'
+#Internal koji packages
+
+[koji]
+name=Koji Buildsystem for RHEL6 - $basearch
+baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/$basearch
+enabled=1
+gpgcheck=0
+
+[koji-noarch]
+name=Koji Buildsystem for RHEL6 - noarch
+baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/noarch
+enabled=1
+gpgcheck=0
+EOF
 
 echo -e "# 02. Installing packages" >> ${LOG}
 yum -y install httpd mod_ssl openssl mod_auth_kerb mod_wsgi \
@@ -757,5 +768,7 @@ koji add-host-to-channel kojibuilder1 createrepo
 koji add-host-to-channel kojibuilder1 livecd
 koji add-host-to-channel kojibuilder1 maven
 koji add-host-to-channel kojibuilder1 vm
+koji grant-permission repo kojira
+koji grant-permission build kojibuilder1
 "
 

@@ -31,6 +31,7 @@ fi
 wget -q --tries=10 --timeout=5  http://download.devel.redhat.com
 if [[ $? -eq 0 ]]; then
     echo -e "\n# Red Hat servers accessible"
+    rm index.html
 else
     echo -e "\n# Please make sure you have access to Red Hat servers"
     exit    
