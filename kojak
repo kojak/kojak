@@ -69,6 +69,7 @@ do
             echo "Creating default tag base"
             $SCRIPTS/config/remove-install
             exit
+            ;;
         "Quit")
             break
             ;;
