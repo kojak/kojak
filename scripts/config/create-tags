@@ -60,7 +60,7 @@ koji edit-host --capacity 10.0 kojibuilder1
 # Add required build packages
 koji add-pkg --owner=kojiadmin ${PRODUCT} bash binutils
 
-# Grant permissions
-koji grant-permission repo kojira
-koji grant-permission build kojibuilder1
+koji list-tags
 "
+
+
