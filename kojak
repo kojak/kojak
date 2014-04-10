@@ -55,7 +55,7 @@ do
             $SCRIPTS/install/virtual-install
             exit
             ;;
-        "Install Local")
+        "Local Install")
             echo "Local Installation Selected"
             $SCRIPTS/install/local-install
             exit
