@@ -67,7 +67,7 @@ do
             ;;
         "Create Tags")
             echo "Creating default tag base"
-            $SCRIPTS/config/remove-install
+            $SCRIPTS/config/create-tags
             exit
             ;;
         "Quit")
