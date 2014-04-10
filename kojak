@@ -29,7 +29,7 @@ fi
 
 reset
 
-SCRIPTS="`pwd`/scripts/install"
+SCRIPTS="`pwd`/scripts"
 
 welcome_header() {
     clear
@@ -40,31 +40,35 @@ welcome_header() {
 }
 
 menu_msg_01() {
-    echo -e ">> Select the type of installation from the menu options below."
+    echo -e ">> Select installation method from the menu options below."
 }
 
 menu () {
 PS3='Please Select installation type: '
 echo
-options=("Virtual" "Local" "Remove install" "Quit")
+options=("Virtual" "Local" "Remove" "Create Tags" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
-        "Virtual")
-            echo "Virtual Installation Selected "
-            $SCRIPTS/virtual-install
+        "Virtual Install")
+            echo "Virtual Installation Selected"
+            $SCRIPTS/install/virtual-install
             exit
             ;;
-        "Local")
-            echo "Local Installation Selected "
-            $SCRIPTS/local-install
+        "Local Install")
+            echo "Local Installation Selected"
+            $SCRIPTS/install/local-install
             exit
             ;;
-        "Remove install")
-            echo "Remove Installation Selected "
-            $SCRIPTS/remove-install
+        "Remove Install")
+            echo "Removing Installation"
+            $SCRIPTS/install/remove-install
             exit
             ;;
+        "Create Tags")
+            echo "Creating default tag base"
+            $SCRIPTS/config/remove-install
+            exit
         "Quit")
             break
             ;;
