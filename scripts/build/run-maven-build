@@ -1,0 +1,127 @@
+#!/bin/bash
+
+# Enable debugging
+set -x
+
+if [ $# -lt 1 ]
+then
+        echo "Usage : $0 {git+https://github.com/<user>/<repo>.git#<checksum>}"
+        echo "Example : $0 git+https://github.com/sbadakhc/buildmetadata-maven-plugin.git#ce68bfc08000ada70a3aa04d92d7c88271ac5b5e"
+        exit
+fi
+
+SRC="$1"
+
+build_src() {
+    koji maven-build -Dmaven.test.skip=true fedora-20-candidate $SRC
+}
+
+resolve_deps() {
+	WORKSPACE="$HOME/workspace/kojak/scripts"
+	TMP="$WORKSPACE/tmp"
+	LOG="/mnt/koji/work/tasks/$TASK/$TASK/root.log"
+	ERRORS=('Failed to execute goal' 'Non-resolvable parent POM' 'Non-resolvable import POM');
+	FAULT="`for error in "${ERRORS[@]}"; do grep -e $error $LOG  | awk '{NF++;while(NF-->1)print $NF}' | grep "[0-9]$" | grep ':' ; done`"
+	DEPS="`for dep in $(echo $FAULT | tr " " "\n"); do echo "$dep" ; done`"
+	REPOS="--repo http://repository.jboss.org/nexus/content/groups/public \
+		--repo https://repository.jboss.org/nexus/content/repositories/thirdparty-uploads \
+		--repo=https://repository.jboss.org/nexus/service/local/staging/deploy/maven2 \
+		--repo=https://repository.jboss.org/nexus/content/repositories/snapshots"
+    COUNT=`echo "$DEPS" | wc -l`
+    until [ "$COUNT" -eq 0 ]; do
+        for dep in $DEPS; do
+            if [ "$RES" == "$dep" ]; then
+                echo "Dependency already imported"
+                break
+            else
+                # Some house keeping.
+                if [ -d "$TMP" ]; then
+                    rm -rf $TMP
+                    mkdir $TMP
+                else
+                    mkdir $TMP
+                fi
+                cd $TMP
+                # Executes the modified version of these utility scripts specific to Kojak.
+                $WORKSPACE/get-maven-artifacts $REPOS $dep
+                $WORKSPACE/import-maven *
+                cd $WORKSPACE
+                rm -rf $TMP
+                RES=$dep
+                let COUNT-=1
+            fi
+        done
+        break
+    done
+}
+
+check_task() {
+	echo "Monitoring tasks"
+    	while [[ true ]];do
+		TASK="`koji list-tasks --quiet | tail -n1 | awk '{ print $1 }'`"
+			if [[ $TASK != [0-9]* ]]; then
+				TASK="`cd /mnt/koji/work/tasks/  && ls -l | tail -1 | awk ' { print ( $(NF-0) ) }'`"
+			fi
+		TYPE="`koji taskinfo $TASK | grep  "Type:" | awk '{ print $NF }'`"
+		STATE="`koji taskinfo $TASK | grep  "State:" | awk '{ print $NF }'`"
+		STATUS="$TYPE $STATE"
+            case  $STATUS  in  
+                "buildMaven failed")    
+                    echo "Status: $STATUS"
+                    resolve_deps
+                    build_src
+                    ;;
+                "buildMaven canceled")
+                    echo "Status: $STATUS"
+                    build_src
+                    ;;    
+                "buildMaven open")
+                    echo "Status: $STATUS"
+                    wait
+                    ;;
+                "buildMaven free")
+                    echo "Status: $STATUS"
+                    wait
+                    ;;
+                "buildMaven closed")
+                    echo "Status: $STATUS"
+                    read -s -n1 -p "`echo Status: $STATUS $'\n>> '`Press [RETURN] or [SPACE] to resubmit the task: `echo $'\n>> '`Press [CTRL-C] to exit:" KEY
+                    if [ ${#KEY} -eq "0" ]; then
+                        PROC=`koji list-tasks --quiet | tail -n1 | grep "+"`
+                        if [ -z $PROC ]; then
+                            echo -e "\n\nExiting build."
+                            exit
+                        else
+                            build_src
+                        fi
+                    fi
+                    ;;
+                "createrepo open")
+                    echo "Status: $STATUS"
+                    wait
+                    ;;
+                "createrepo closed")
+                    echo "Status: $STATUS"
+                    build_src
+                    ;;
+                "tagBuild open")
+                    echo "Status: $STATUS"
+                    wait
+                    ;;
+                "tagBuild closed")
+                    PROC=`koji list-tasks --quiet | tail -n2 | grep "FAILED"`
+                    if [ -z "$PROC" ]; then
+                        exit
+                    else
+                        build_src
+                    fi
+                    ;;
+                # We can use this case to identify new cases.
+                *)  echo "unknown status: $STATUS"             
+                    exit
+                    ;;
+            esac 
+        done
+}
+
+check_task
