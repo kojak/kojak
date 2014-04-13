@@ -68,7 +68,7 @@ do
             ;;
         "Uninstall")
             echo "Removing Installation"
-            $SCRIPTS/install/remove-install
+            $SCRIPTS/install/uninstall
             exit
             ;;
         "Create Tags")
