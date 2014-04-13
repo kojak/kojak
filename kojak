@@ -48,27 +48,25 @@ menu_msg_01() {
 }
 
 # The main menu
-while true
-do
 welcome_header
 menu_msg_01
 PS3='Please Select installation type: '
 echo
-options=("Virtual Appliance" "Local Install" "Remove Install" "Create Tags" "Quit")
+options=("Virtual" "Local" "Uninstall" "Create Tags" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
-        "Virtual Appliance")
+        "Virtual")
             echo "Virtual Installation Selected"
             $SCRIPTS/install/virtual-install
             exit
             ;;
-        "Local Install")
+        "Local")
             echo "Local Installation Selected"
             $SCRIPTS/install/local-install
             exit
             ;;
-        "Remove Install")
+        "Uninstall")
             echo "Removing Installation"
             $SCRIPTS/install/remove-install
             exit
@@ -84,5 +82,4 @@ do
         *) echo -e ">> Invalid Option"
             ;;
     esac
-done
 done
