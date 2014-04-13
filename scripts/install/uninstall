@@ -27,7 +27,10 @@ for file in ${LOG_FILES}; do rm -f $file || echo "$file not found"; done
 
 # Remove user koji user
 userdel -rf koji
+userdel -rf kojibuilder
 groupdel koji
+groupdel kojibuilder
+groupdel mock
 
 # Update mlocate database
 cd /
