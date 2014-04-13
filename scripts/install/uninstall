@@ -11,10 +11,17 @@ if [ "${USER}" != "root" ]; then
     exit
 fi
 
+# Remove user koji user
+userdel -rf koji
+userdel -rf kojibuilder
+groupdel koji
+groupdel kojibuilder
+groupdel mock
+
 # Remove package
 yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder
 
-CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql"
+CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /home/koji /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql"
 for dir in ${CFG_DIRS}; do rm -rf $dir || echo "$dir not found"; done
 
 LOG_FILES="/var/log/kojira.log
@@ -24,13 +31,6 @@ ${HOME}/kojak.log
 /etc/profile.d/custom.sh
 /etc/yum.repos.d/rhel6-koji.repo"
 for file in ${LOG_FILES}; do rm -f $file || echo "$file not found"; done
-
-# Remove user koji user
-userdel -rf koji
-userdel -rf kojibuilder
-groupdel koji
-groupdel kojibuilder
-groupdel mock
 
 # Update mlocate database
 cd /
