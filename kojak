@@ -27,10 +27,13 @@ if [ "$USER" != "root" ]; then
     exit
 fi
 
+# Reset the terminal 
 reset
 
+# Delcare the scripts directory
 SCRIPTS="`pwd`/scripts"
 
+# The menu header
 welcome_header() {
     clear
     echo -e "\n################################################################################"
@@ -39,11 +42,16 @@ welcome_header() {
     echo -e "#                                                                              #\n"
 }
 
+# Menu message
 menu_msg_01() {
     echo -e ">> Select from the menu options below."
 }
 
-menu () {
+# The main menu
+while true
+do
+welcome_header
+menu_msg_01
 PS3='Please Select installation type: '
 echo
 options=("Virtual Appliance" "Local Install" "Remove Install" "Create Tags" "Quit")
@@ -77,8 +85,4 @@ do
             ;;
     esac
 done
-}
-
-welcome_header
-menu_msg_01
-menu
+done

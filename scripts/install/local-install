@@ -39,7 +39,6 @@ fi
 
 RELEASE=$(cat /etc/redhat-release)
 LOG="/root/kojak.log"
-TSTAMP=$(date '+_%Y%m%d%H%M%S')
 
 echo -e "# 00. Creating custom.sh file" >> ${LOG}
 cat > /etc/profile.d/custom.sh << 'EOF'
