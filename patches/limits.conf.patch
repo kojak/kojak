@@ -1,9 +1,0 @@
---- /etc/security/limits.conf   2013-11-22 09:06:14.000000000 -0500
-+++ /etc/security/limits.conf   2014-04-07 18:02:46.481999976 -0400
-@@ -46,5 +46,6 @@
- #@faculty        hard    nproc           50
- #ftp             hard    nproc           0
- #@student        -       maxlogins       4
-+koji             hard    priority       -5
-
- # End of file
