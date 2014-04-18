@@ -67,4 +67,14 @@ ${PROG} add-pkg --owner=${PROG}admin ${PRODUCT} bash binutils
 # List created tags
 echo -e 'Created the following tags...\n'
 ${PROG} list-tags
+
+# Adding Maven
+cd /tmp
+wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/SRPMS/apache-maven-3.2.1-1.el6.src.rpm
+wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/x86_64/apache-maven-3.2.1-1.el6.noarch.rpm
+${PROG} import --create-build /tmp/apache-maven-3.2.1-1.el6.src.rpm /tmp/apache-maven-3.2.1-1.el6.noarch.rpm
+${PROG} add-pkg --owner=kojiadmin jb-ip-6 apache-maven
+${PROG} tag-build jb-ip-6-candidate apache-maven-3.2.1-1.el6
+rm -rf apache*
+cd -
 "
