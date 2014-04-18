@@ -193,6 +193,12 @@ if [ ! ${LIBVIRT} ]; then
     yum -y install libvirt
 fi
 
+echo -e "# Checking for virt-install"
+VIRT_INSTALL=$(which virt-install)
+if [ ! ${VIRT_INSTALL} ]; then
+    yum -y install virt-install
+fi
+
 VMDOMAIN=$(virsh list --all | grep ${VMNAME})
 if [ ! "${VMDOMAIN}" ]; then
     echo -e "# No pre-existing Kojak vm"
@@ -219,12 +225,6 @@ if  [ ! ${FALLOCATE} ]; then
 else
     ${FALLOCATE} -l ${VMDISK} ${VMHOME}/${VMNAME}.img
     chown qemu:qemu ${VMHOME}/${VMNAME}.img
-fi
-
-echo -e "# Checking for virt-install"
-VIRT_INSTALL=$(which virt-install)
-if [ ! ${VIRT_INSTALL} ]; then
-    yum -y install virt-install
 fi
 
 echo -e "# Initialising installation\n"
