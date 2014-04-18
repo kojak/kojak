@@ -188,7 +188,7 @@ else
 fi
 
 echo -e "# Checking for libvirt"
-LIBVIRT=$(which libvirt)
+LIBVIRT=$(which libvirtd)
 if [ ! ${LIBVIRT} ]; then
     yum -y install libvirt
 fi
