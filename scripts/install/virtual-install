@@ -187,6 +187,12 @@ else
     source ${KJKCFG} > /dev/null 2>&1
 fi
 
+echo -e "# Checking for libvirt"
+LIBVIRT=$(which virt-install)
+if [ ! ${LIBVIRT} ]; then
+    yum -y install libvirt
+fi
+
 VMDOMAIN=$(virsh list --all | grep ${VMNAME})
 if [ ! "${VMDOMAIN}" ]; then
     echo -e "# No pre-existing Kojak vm"
