@@ -318,6 +318,7 @@ do
             if [ ! -f "${KJKCFG}" ]; then
                 welcome_header
                 echo -e "# Kojak DEFAULT configuration options.\n
+                sleep 1
 # VMNAME=${VMNAME}
 # VMHOME=${VMHOME}
 # TMPDIR=${TMPDIR}
