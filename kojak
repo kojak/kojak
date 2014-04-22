@@ -48,8 +48,7 @@ menu_msg_01() {
 }
 
 # The main menu
-welcome_header
-menu_msg_01
+main_menu() {
 PS3='Please Select installation type: '
 echo
 options=("Virtual" "Local" "Uninstall" "Create Tags" "Quit")
@@ -57,29 +56,38 @@ select opt in "${options[@]}"
 do
     case $opt in
         "Virtual")
-            echo "Virtual Installation Selected"
+            echo -e "\n>> Virtual Installation Selected"
             $SCRIPTS/install/virtual-install
             exit
             ;;
         "Local")
-            echo "Local Installation Selected"
+            echo -e "\n>> Local Installation Selected"
             $SCRIPTS/install/local-install
             exit
             ;;
         "Uninstall")
-            echo "Removing Installation"
+            echo -e "\n>> Removing Installation"
             $SCRIPTS/install/uninstall
             exit
             ;;
         "Create Tags")
-            echo "Creating demo tag base"
+            echo -e "\n>> Creating demo tag base"
             $SCRIPTS/config/create-tags
             exit
             ;;
         "Quit")
             break
             ;;
-        *) echo -e ">> Invalid Option"
+        *) echo -e "\n>> Invalid Option"
+           sleep 1
+           welcome_header
+           menu_msg_01
+           main_menu
             ;;
     esac
 done
+}
+
+welcome_header
+menu_msg_01
+main_menu
