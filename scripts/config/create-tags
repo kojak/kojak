@@ -19,14 +19,16 @@ ${PROG} add-tag ${PRODUCT}-override --arches ${ARCH} --maven-support --include-a
 ${PROG} add-tag ${PRODUCT}-build --arches ${ARCH} --maven-support --include-all
 ${PROG} add-tag ${PRODUCT}-todo --arches ${ARCH} --maven-support --include-all
 
-# Add required tags
+# Add dependency tags
 ${PROG} add-tag jb-middleware-imports --arches none --maven-support --include-all
+${PROG} add-tag mead-import-maven-all --arches none --maven-support --include-all
 
 # Add tag inheritance
 ${PROG} add-tag-inheritance ${PRODUCT}-candidate ${PRODUCT} --priority 0
 ${PROG} add-tag-inheritance ${PRODUCT}-override ${PRODUCT}-candidate --priority 0
 ${PROG} add-tag-inheritance ${PRODUCT}-build ${PRODUCT}-override --priority 0
 ${PROG} add-tag-inheritance ${PRODUCT}-build jb-middleware-imports --priority 10
+${PROG} add-tag-inheritance ${PRODUCT}-build mead-import-maven-all --priority 20
 ${PROG} add-tag-inheritance ${PRODUCT}-build ${PRODUCT}-todo --priority 40
 
 # Add target
