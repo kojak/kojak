@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Debugging
-set -x
+#set -x
 
 # Declare variable
 export PROG="koji"
@@ -11,6 +11,16 @@ export ARCH="none"
 
 # Begin Koji configuration
 su -l ${USER} -c "
+
+# Configure Koji
+${PROG} add-host kojibuilder1.localdomain x86_64
+${PROG} add-host-to-channel kojibuilder1.localdomain appliance
+${PROG} add-host-to-channel kojibuilder1.localdomain createrepo
+${PROG} add-host-to-channel kojibuilder1.localdomain livecd
+${PROG} add-host-to-channel kojibuilder1.localdomain maven
+${PROG} add-host-to-channel kojibuilder1.localdomain vm
+${PROG} grant-permission repo kojira
+${PROG} grant-permission build kojibuilder1
 
 # Add product tags
 ${PROG} add-tag ${PRODUCT} --arches ${ARCH} --maven-support --include-all
@@ -64,14 +74,20 @@ ${PROG} add-group ${PRODUCT}-build wrapper-rpm-build
 ${PROG} add-group-pkg ${PRODUCT}-build wrapper-rpm-build bash redhat-release redhat-release-server redhat-rpm-config rpm-build shadow-utils
 
 # Ramp up capacity
-${PROG} edit-host --capacity 10.0 kojibuilder1
+${PROG} edit-host --capacity 10.0 kojibuilder1.localdomain
 
 # Add required build packages
 ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} bash binutils
 
-# List created tags
-echo -e 'Created the following tags...\n'
-${PROG} list-tags
+# Show config
+echo -e 'Created the configuration...\n'
+${PROG} list-external-repos
+${PROG} list-groups
+${PROG} list-hosts
+${PROG} list-pkgs 
+${PROG} list-tags  
+${PROG} list-targets
+${PROG} list-tasks
 
 # Adding Maven
 cd /tmp
@@ -80,7 +96,6 @@ wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/x86_64/apache
 ${PROG} import --create-build /tmp/apache-maven-3.2.1-1.el6.src.rpm /tmp/apache-maven-3.2.1-1.el6.noarch.rpm
 ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} apache-maven
 ${PROG} tag-build ${PRODUCT}-candidate apache-maven-3.2.1-1.el6
-rm -rf apache*
 cd -
 "
 

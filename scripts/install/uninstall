@@ -14,7 +14,6 @@ fi
 # Remove user koji user
 userdel -rf koji
 userdel -rf kojibuilder
-groupdel kojibuilder
 groupdel mock
 
 # Remove package

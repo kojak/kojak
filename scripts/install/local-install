@@ -604,32 +604,6 @@ EOF
 patch -p0 < /tmp/pg_hba.conf.patch
 rm -f /tmp/pg_hba.conf.patch
 
-echo -e "# 17. Patching postgresql.conf file"
-cp -p /var/lib/pgsql/data/postgresql.conf /var/lib/pgsql/data/postgresql.conf.orig
-cat > /tmp/postgresql.conf.patch << 'EOF'
-*** /var/lib/pgsql/data/postgresql.conf 2014-04-09 20:33:40.633814624 +0200
---- /var/lib/pgsql/data/postgresql.conf 2014-04-09 20:34:40.717037374 +0200
-***************
-*** 56,62 ****
-
-  # - Connection Settings -
-
-! #listen_addresses = 'localhost'               # what IP address(es) to listen on;
-                                        # comma-separated list of addresses;
-                                        # defaults to 'localhost', '*' = all
-                                        # (change requires restart)
---- 56,62 ----
-
-  # - Connection Settings -
-
-! listen_addresses = '*'                # what IP address(es) to listen on;
-                                        # comma-separated list of addresses;
-                                        # defaults to 'localhost', '*' = all
-                                        # (change requires restart)
-EOF
-patch -p0 < /tmp/postgresql.conf.patch 
-rm -f /tmp/postgresql.conf.patch
-
 # Fix permissions on database directories
 chown -R postgres:postgres /var/lib/pgsql/data
 
@@ -690,7 +664,7 @@ echo -e "Generating component keys and signing certificates\n"
 echo -e "y\ny" > ${CRTHOME}/response.txt
 
 # Create certificates for the koji components.
-for USER in koji kojiadmin kojira kojiweb kojihub
+for USER in koji kojiadmin kojira kojiweb kojihub kojibuilder1.localdomain
 do
     echo "creating certificate for ${USER} ..."
     openssl genrsa -out ${CRTHOME}/certs/${USER}.key 2048
@@ -709,25 +683,6 @@ do
     echo "...done"
 done
 
-# Create certificates for the koji builders.
-for USER in kojibuilder{1..3}
-do
-    echo "creating certificate for ${USER} ..."
-    openssl genrsa -out ${CRTHOME}/certs/${USER}.key 2048
-
-    cat ${CNF} | sed '0,/${HOSTNAME}/s//'${USER}.${DOMAINNAME}'/' > ${CRTHOME}/${USER}-ssl.cnf
-
-    openssl req -config ${CRTHOME}/${USER}-ssl.cnf -new -days 3650 -subj \
-    "/C=XX/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=${USER}.${DOMAINNAME}/emailAddress=${USER}@${DOMAINNAME}" \
-    -out ${CRTHOME}/certs/${USER}.csr -key ${CRTHOME}/certs/${USER}.key
-
-    < response.txt openssl ca -config ${CRTHOME}/${USER}-ssl.cnf -keyfile ${CRTHOME}/private/${CANAME}_ca_cert.key -cert ${CRTHOME}/${CANAME}_ca_cert.crt \
-    -out ${CRTHOME}/certs/${USER}.crt -outdir ${CRTHOME}/certs -infiles ${CRTHOME}/certs/${USER}.csr
-    cat ${CRTHOME}/certs/${USER}.crt ${CRTHOME}/certs/${USER}.key > ${USER}.pem
-    mv -f ${CRTHOME}/${USER}-ssl.cnf ${CRTHOME}/confs/${USER}-ssl.cnf
-
-    echo "...done"
-done
 rm -f response.txt
 
 # Begin certificate generation
@@ -762,16 +717,3 @@ chkconfig kojid on
 service kojid start
 chkconfig kojira on
 service kojira start
-
-# Configure Koji
-su -l koji -c "
-koji add-host kojibuilder1 x86_64
-koji add-host-to-channel kojibuilder1 appliance
-koji add-host-to-channel kojibuilder1 createrepo
-koji add-host-to-channel kojibuilder1 livecd
-koji add-host-to-channel kojibuilder1 maven
-koji add-host-to-channel kojibuilder1 vm
-koji grant-permission repo kojira
-koji grant-permission build kojibuilder1
-"
-

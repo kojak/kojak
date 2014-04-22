@@ -44,7 +44,7 @@ echo -e "Generating component keys and signing certificates\n"
 echo -e "y\ny" > ${CRTHOME}/response.txt
 
 # Create certificates for the koji components.
-for USER in koji kojiadmin kojira kojiweb kojihub
+for USER in koji kojiadmin kojira kojiweb kojihub kojibuilder1
 do
     echo "creating certificate for ${USER} ..."
     openssl genrsa -out ${CRTHOME}/certs/${USER}.key 2048
@@ -63,25 +63,6 @@ do
     echo "...done"
 done
 
-# Create certificates for the koji builders.
-for USER in kojibuilder{1..3}
-do
-    echo "creating certificate for ${USER} ..."
-    openssl genrsa -out ${CRTHOME}/certs/${USER}.key 2048
-
-    cat ${CNF} | sed '0,/${HOSTNAME}/s//'${USER}.${DOMAINNAME}'/' > ${CRTHOME}/${USER}-ssl.cnf
-
-    openssl req -config ${CRTHOME}/${USER}-ssl.cnf -new -days 3650 -subj \
-    "/C=XX/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=${USER}.${DOMAINNAME}/emailAddress=${USER}@${DOMAINNAME}" \
-    -out ${CRTHOME}/certs/${USER}.csr -key ${CRTHOME}/certs/${USER}.key
-
-    < response.txt openssl ca -config ${CRTHOME}/${USER}-ssl.cnf -keyfile ${CRTHOME}/private/${CANAME}_ca_cert.key -cert ${CRTHOME}/${CANAME}_ca_cert.crt \
-    -out ${CRTHOME}/certs/${USER}.crt -outdir ${CRTHOME}/certs -infiles ${CRTHOME}/certs/${USER}.csr
-    cat ${CRTHOME}/certs/${USER}.crt ${CRTHOME}/certs/${USER}.key > ${USER}.pem
-    mv -f ${CRTHOME}/${USER}-ssl.cnf ${CRTHOME}/confs/${USER}-ssl.cnf
-
-    echo "...done"
-done
 rm -f response.txt
 
 # Copy the client certficates to the koji users home directory.
