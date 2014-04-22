@@ -1,22 +1,25 @@
 #!/bin/bash
 
 # Debugging
-#set -x
+set -x
 
 # Declare variable
 export PROG="koji"
 export USER="koji"
-export PRODUCT="jb-ip-6"
+export PRODUCT="rcm-mw-tools"
+export ARCH="none"
 
 # Begin Koji configuration
 su -l ${USER} -c "
 
-# Add tags
-${PROG} add-tag ${PRODUCT} --arches x86_64 --maven-support --include-all
-${PROG} add-tag ${PRODUCT}-candidate --arches x86_64 --maven-support --include-all
-${PROG} add-tag ${PRODUCT}-override --arches x86_64 --maven-support --include-all
-${PROG} add-tag ${PRODUCT}-build --arches x86_64 --maven-support --include-all
-${PROG} add-tag ${PRODUCT}-todo --arches x86_64 --maven-support --include-all
+# Add product tags
+${PROG} add-tag ${PRODUCT} --arches ${ARCH} --maven-support --include-all
+${PROG} add-tag ${PRODUCT}-candidate --arches ${ARCH} --maven-support --include-all
+${PROG} add-tag ${PRODUCT}-override --arches ${ARCH} --maven-support --include-all
+${PROG} add-tag ${PRODUCT}-build --arches ${ARCH} --maven-support --include-all
+${PROG} add-tag ${PRODUCT}-todo --arches ${ARCH} --maven-support --include-all
+
+# Add required tags
 ${PROG} add-tag jb-middleware-imports --arches none --maven-support --include-all
 
 # Add tag inheritance
@@ -59,10 +62,10 @@ ${PROG} add-group ${PRODUCT}-build wrapper-rpm-build
 ${PROG} add-group-pkg ${PRODUCT}-build wrapper-rpm-build bash redhat-release redhat-release-server redhat-rpm-config rpm-build shadow-utils
 
 # Ramp up capacity
-${PROG} edit-host --capacity 10.0 ${PROG}builder1
+${PROG} edit-host --capacity 10.0 kojibuilder1
 
 # Add required build packages
-${PROG} add-pkg --owner=${PROG}admin ${PRODUCT} bash binutils
+${PROG} add-pkg --owner=kojiadmin ${PRODUCT} bash binutils
 
 # List created tags
 echo -e 'Created the following tags...\n'
@@ -73,8 +76,9 @@ cd /tmp
 wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/SRPMS/apache-maven-3.2.1-1.el6.src.rpm
 wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/x86_64/apache-maven-3.2.1-1.el6.noarch.rpm
 ${PROG} import --create-build /tmp/apache-maven-3.2.1-1.el6.src.rpm /tmp/apache-maven-3.2.1-1.el6.noarch.rpm
-${PROG} add-pkg --owner=kojiadmin jb-ip-6 apache-maven
-${PROG} tag-build jb-ip-6-candidate apache-maven-3.2.1-1.el6
+${PROG} add-pkg --owner=kojiadmin ${PRODUCT} apache-maven
+${PROG} tag-build ${PRODUCT}-candidate apache-maven-3.2.1-1.el6
 rm -rf apache*
 cd -
 "
+
