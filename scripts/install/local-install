@@ -346,7 +346,7 @@ cat > /tmp/kojid.conf.patch << 'EOF'
  
  ;client certificate
 -;cert = /etc/kojid/client.crt
-+cert = /etc/pki/koji/kojibuilder1.pem
++cert = /etc/pki/koji/kojibuilder.pem
  
  ;certificate of the CA that issued the client certificate
 -;ca = /etc/kojid/clientca.crt
@@ -664,7 +664,7 @@ echo -e "Generating component keys and signing certificates\n"
 echo -e "y\ny" > ${CRTHOME}/response.txt
 
 # Create certificates for the koji components.
-for USER in koji kojiadmin kojira kojiweb kojihub kojibuilder1.localdomain
+for USER in koji kojiadmin kojira kojiweb kojihub kojibuilder
 do
     echo "creating certificate for ${USER} ..."
     openssl genrsa -out ${CRTHOME}/certs/${USER}.key 2048
