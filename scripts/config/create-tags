@@ -79,24 +79,9 @@ ${PROG} edit-host --capacity 10.0 kojibuilder1.localdomain
 # Add required build packages
 ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} bash binutils
 
-# Show config
-echo -e 'Created the configuration...\n'
-${PROG} list-external-repos
-${PROG} list-hosts
-${PROG} list-tags  
-${PROG} list-targets
-${PROG} list-tasks
-
-# Start the database
-service postgresql initdb
-chkconfig postgresql on
-service postgresql start
-
 # Update kojibuilder record
 echo -e "UPDATE host set user_id = '3' where user_id = '5';\q" >> /tmp/kojibuilder.sql
-
-# Create the database tables
-su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
+psql koji koji < /tmp/kojibuilder.sql
 rm /tmp/kojibuilder.sql
 
 # Adding Maven
@@ -107,5 +92,13 @@ ${PROG} import --create-build /tmp/apache-maven-3.2.1-1.el6.src.rpm /tmp/apache-
 ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} apache-maven
 ${PROG} tag-build ${PRODUCT}-candidate apache-maven-3.2.1-1.el6
 cd -
+
+# Show config
+echo -e 'Created the configuration...\n'
+${PROG} list-external-repos
+${PROG} list-hosts
+${PROG} list-tags  
+${PROG} list-targets
+${PROG} list-tasks
 "
 
