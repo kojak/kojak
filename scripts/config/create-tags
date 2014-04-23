@@ -107,4 +107,4 @@ ${PROG} list-tasks
 service postgresql restart
 service httpd restart
 service kojid restart
-service koira restart
+service kojira restart
