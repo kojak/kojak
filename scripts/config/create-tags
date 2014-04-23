@@ -13,14 +13,14 @@ export ARCH="none"
 su -l ${USER} -c "
 
 # Configure Koji
-${PROG} add-host kojibuilder.localdomain x86_64
-${PROG} add-host-to-channel kojibuilder.localdomain appliance
-${PROG} add-host-to-channel kojibuilder.localdomain createrepo
-${PROG} add-host-to-channel kojibuilder.localdomain livecd
-${PROG} add-host-to-channel kojibuilder.localdomain maven
-${PROG} add-host-to-channel kojibuilder.localdomain vm
+${PROG} add-host kojibuilder1.localdomain x86_64
+${PROG} add-host-to-channel kojibuilder1.localdomain appliance
+${PROG} add-host-to-channel kojibuilder1.localdomain createrepo
+${PROG} add-host-to-channel kojibuilder1.localdomain livecd
+${PROG} add-host-to-channel kojibuilder1.localdomain maven
+${PROG} add-host-to-channel kojibuilder1.localdomain vm
 ${PROG} grant-permission repo kojira
-${PROG} grant-permission build kojibuilder.localdomain
+${PROG} grant-permission build kojibuilder1.localdomain
 
 # Add product tags
 ${PROG} add-tag ${PRODUCT} --arches ${ARCH} --maven-support --include-all
@@ -74,7 +74,7 @@ ${PROG} add-group ${PRODUCT}-build wrapper-rpm-build
 ${PROG} add-group-pkg ${PRODUCT}-build wrapper-rpm-build bash redhat-release redhat-release-server redhat-rpm-config rpm-build shadow-utils
 
 # Ramp up capacity
-${PROG} edit-host --capacity 10.0 kojibuilder.localdomain
+${PROG} edit-host --capacity 10.0 kojibuilder1.localdomain
 
 # Add required build packages
 ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} bash binutils
@@ -86,6 +86,18 @@ ${PROG} list-hosts
 ${PROG} list-tags  
 ${PROG} list-targets
 ${PROG} list-tasks
+
+# Start the database
+service postgresql initdb
+chkconfig postgresql on
+service postgresql start
+
+# Update kojibuilder record
+echo -e "UPDATE host set user_id = '3' where user_id = '5';\q" >> /tmp/kojibuilder.sql
+
+# Create the database tables
+su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
+rm /tmp/kojibuilder.sql
 
 # Adding Maven
 cd /tmp
