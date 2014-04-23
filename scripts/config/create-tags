@@ -88,10 +88,10 @@ rm ~/kojibuilder.sql
 cd ~
 wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/SRPMS/apache-maven-3.2.1-1.el6.src.rpm
 wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/x86_64/apache-maven-3.2.1-1.el6.noarch.rpm
-${PROG} import --create-build /tmp/apache-maven-3.2.1-1.el6.src.rpm /tmp/apache-maven-3.2.1-1.el6.noarch.rpm
+${PROG} import --create-build apache-maven-3.2.1-1.el6.src.rpm apache-maven-3.2.1-1.el6.noarch.rpm
 ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} apache-maven
 ${PROG} tag-build ${PRODUCT}-candidate apache-maven-3.2.1-1.el6
-rm *.rpm
+rm -f *.rpm
 cd -
 
 # Show config
