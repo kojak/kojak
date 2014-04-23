@@ -103,3 +103,8 @@ ${PROG} list-targets
 ${PROG} list-tasks
 "
 
+# Restart the services
+service postgresql restart
+service kojid retsart
+service koira retsart
+service httpd restart
