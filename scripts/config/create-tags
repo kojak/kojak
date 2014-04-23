@@ -80,7 +80,7 @@ ${PROG} edit-host --capacity 10.0 kojibuilder1.localdomain
 ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} bash binutils
 
 # Update kojibuilder record
-echo -e "UPDATE host set user_id = '3' where user_id = '5';\q" >> /tmp/kojibuilder.sql
+echo -e 'UPDATE host set user_id = '3' where user_id = '5';\q' > /tmp/kojibuilder.sql
 psql koji koji < /tmp/kojibuilder.sql
 rm /tmp/kojibuilder.sql
 
