@@ -71,7 +71,7 @@ do
             exit
             ;;
         "Create Tags")
-            echo -e "\n>> Creating demo tag base"
+            echo -e "\n>> Creating rcm tag base"
             $SCRIPTS/config/create-tags
             exit
             ;;
