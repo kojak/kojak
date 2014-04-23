@@ -80,17 +80,18 @@ ${PROG} edit-host --capacity 10.0 kojibuilder1.localdomain
 ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} bash binutils
 
 # Update kojibuilder record
-echo -e 'UPDATE host set user_id = '3' where user_id = '5';\q' > /tmp/kojibuilder.sql
+echo -e 'UPDATE host set user_id = '3' where user_id = '5';\q' > ~/kojibuilder.sql
 psql koji koji < /tmp/kojibuilder.sql
-rm /tmp/kojibuilder.sql
+rm ~/kojibuilder.sql
 
 # Adding Maven
-cd /tmp
+cd ~
 wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/SRPMS/apache-maven-3.2.1-1.el6.src.rpm
 wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/x86_64/apache-maven-3.2.1-1.el6.noarch.rpm
 ${PROG} import --create-build /tmp/apache-maven-3.2.1-1.el6.src.rpm /tmp/apache-maven-3.2.1-1.el6.noarch.rpm
 ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} apache-maven
 ${PROG} tag-build ${PRODUCT}-candidate apache-maven-3.2.1-1.el6
+rm *.rpm
 cd -
 
 # Show config
