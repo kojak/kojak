@@ -27,86 +27,38 @@ if [ "${USER}" != "root" ]; then
     exit
 fi
 
-# Check access to Red Hat servers
-wget -q --tries=10 --timeout=5  http://download.devel.redhat.com
-if [[ $? -eq 0 ]]; then
-    echo -e "\n# Red Hat servers accessible"
-    rm index.html
-else
-    echo -e "\n# Please make sure you have access to Red Hat servers"
-    exit
-fi
-
-RELEASE=$(cat /etc/redhat-release)
-LOG="/root/kojak.log"
-
-echo -e "# 00. Creating custom.sh file" >> ${LOG}
-cat > /etc/profile.d/custom.sh << 'EOF'
-# Prompt colors
-if [ $(whoami) != "root" ]; then
-    PS1='\[\e[32m\][\u@\h \W]\$\[\e[0m\] '
-else
-    PS1='\[\e[31m\][\u@\h \W]\$\[\e[0m\] '
-fi
-
-# Aliases
-alias d='dmesg -H'
-alias h='history'
-alias m='less /var/log/messages'
-alias v='vim'
-alias l='ls -lash'
-alias n='netstat -vatlpn | grep'
-alias p='ps -A | grep'
-
-# Declare system variables
-TSTAMP=$(date '+_%Y%m%d%H%M%S')
-
-# Configure bash history 
-HISTSIZE='1000000'
-HISTIGNORE=' *:&:?:??'
-HISTCONTROL='ignoreboth:erasedups'
-
-export TSTAMP HISTSIZE HISTIGNORE HISTCONTROL
-
-# Turn on bash history options
-shopt -s histappend histreedit histverify
-
-# Sync term history
-history() {
-  history_sync
-  builtin history "$@"
-}
-
-history_sync() {
-  builtin history -a         
-  HISTFILESIZE=$HISTSIZE     
-  builtin history -c         
-  builtin history -r         
-}
-
-PROMPT_COMMAND=history_sync
-EOF
-chmod +x /etc/profile.d/custom.sh
-
 RELEASE=$(cat /etc/redhat-release)
 LOG="/root/kojak.log"
 TSTAMP=$(date '+_%Y%m%d%H%M%S')
 
 echo -e "# 01. Creating yum repo" > ${LOG}
 cat > /etc/yum.repos.d/rhel6-koji.repo << 'EOF'
-#Internal koji packages
-
-[koji]
-name=Koji Buildsystem for RHEL6 - $basearch
-baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/$basearch
+[epel]
+name=Extra Packages for Enterprise Linux 6 - $basearch
+#baseurl=http://download.fedoraproject.org/pub/epel/6/$basearch
+mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch
+failovermethod=priority
 enabled=1
 gpgcheck=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
 
-[koji-noarch]
-name=Koji Buildsystem for RHEL6 - noarch
-baseurl=http://download.devel.redhat.com/yum/redhat/koji/rhel6/noarch
-enabled=1
+[epel-debuginfo]
+name=Extra Packages for Enterprise Linux 6 - $basearch - Debug
+#baseurl=http://download.fedoraproject.org/pub/epel/6/$basearch/debug
+mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-debug-6&arch=$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
 gpgcheck=0
+
+[epel-source]
+name=Extra Packages for Enterprise Linux 6 - $basearch - Source
+#baseurl=http://download.fedoraproject.org/pub/epel/6/SRPMS
+mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-source-6&arch=$basearch
+failovermethod=priority
+enabled=0
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
+gpgcheck=1
 EOF
 
 echo -e "# 02. Installing packages" >> ${LOG}
