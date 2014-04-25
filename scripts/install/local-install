@@ -123,8 +123,8 @@ rm -f /tmp/limits.conf.patch
 echo -e "# 07. Patching koji.conf file" >> ${LOG}
 cp -p /etc/koji.conf /etc/koji.conf.orig
 cat > /tmp/koji.conf.patch << 'EOF'
---- /etc/koji.conf  2014-02-26 14:22:18.000000000 -0500
-+++ /etc/koji.conf  2014-04-07 16:17:42.063000014 -0400
+--- /etc/koji.conf.orig 2013-07-31 16:13:27.000000000 +0200
++++ /etc/koji.conf  2014-04-26 01:16:13.256984698 +0200
 @@ -3,16 +3,16 @@
  ;configuration for koji cli tool
  
@@ -137,16 +137,16 @@ cat > /tmp/koji.conf.patch << 'EOF'
 +weburl = http://koji.localdomain/koji
  
  ;url of package download site
--topurl = http://koji.fedoraproject.org/
-+topurl=http://koji.localdomain/kojifiles
+-topurl = http://kojipkgs.fedoraproject.org/
++topurl = http://kojipkgs.localdomain/
  
  ;path to the koji top directory
--topdir = /mnt/koji
-+;topdir = /mnt/koji
+-;topdir = /mnt/koji
++topdir = /mnt/koji
  
  ;configuration for Kerberos authentication
  
-@@ -22,10 +22,10 @@
+@@ -22,11 +22,10 @@
  ;configuration for SSL authentication
  
  ;client certificate
@@ -159,6 +159,7 @@ cat > /tmp/koji.conf.patch << 'EOF'
  
  ;certificate of the CA that issued the HTTP server certificate
 -serverca = ~/.fedora-server-ca.cert
+-
 +serverca = ~/.koji/serverca.crt
 EOF
 patch -p0 < /tmp/koji.conf.patch
