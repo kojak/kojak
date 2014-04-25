@@ -173,7 +173,7 @@ main () {
 main_header
 
 if [ -f "/kojak-ks.cfg" ]; then
-    rm -f /kojak-ks.cfg && cp kojak-ks.cfg  /
+    echo "# Found Kickstart file"
 else
     echo "# Copying Kickstart file"
     cp kojak-ks.cfg  /
