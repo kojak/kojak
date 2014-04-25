@@ -529,36 +529,6 @@ EOF
 patch -p0 < /tmp/ssl.conf.patch
 rm -f /tmp/ssl.conf.patch
 
-echo -e "# 15. Patching kojid file" >> ${LOG}
-cp -p /etc/init.d/kojid /etc/init.d/kojid.orig
-cat > /tmp/kojid.patch << 'EOF'
---- /etc/init.d/kojid   2014-02-26 14:22:18.000000000 -0500
-+++ /etc/init.d/kojid   2014-04-07 16:52:53.252001501 -0400
-@@ -33,13 +33,13 @@
-     cd /
-     ARGS=""
-     [ "$FORCE_LOCK" == "Y" ] && ARGS="$ARGS --force-lock"
--    [ "$KOJID_DEBUG" == "Y" ] && ARGS="$ARGS --debug"
--    [ "$KOJID_VERBOSE" == "Y" ] && ARGS="$ARGS --verbose"
--    # XXX Fix for make download-checks in kernel builds
--    # Remove once we're running the buildSRPMFromSCM task
--    # as an unpriviledged user with their own environment
--    export HOME="/root"
--    daemon /usr/sbin/kojid $ARGS
-+    [ "$KOJIRA_DEBUG" == "Y" ] && ARGS="$ARGS --debug"
-+    [ "$KOJIRA_VERBOSE" == "Y" ] && ARGS="$ARGS --verbose"
-+    if [ -n "$RUNAS" -a "$RUNAS" != "root" ]; then
-+        daemon --user "$RUNAS" /usr/sbin/kojid $ARGS
-+    else
-+        daemon /usr/sbin/kojid $ARGS
-+    fi
-     RETVAL=$?
-     echo
-     [ $RETVAL -eq 0 ] && touch /var/lock/subsys/kojid
-EOF
-patch -p0 < /tmp/kojid.patch
-rm -f /tmp/kojid.patch
-
 # Start the database
 service postgresql initdb
 chkconfig postgresql on
@@ -578,7 +548,7 @@ su -l koji -c "psql koji koji < /tmp/users.sql"
 
 rm /tmp/users.sql
 
-echo -e "# 16. Patching pg_hba.conf file"
+echo -e "# 15. Patching pg_hba.conf file"
 cp -p /var/lib/pgsql/data/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf.orig
 cat > /tmp/pg_hba.conf.patch << 'EOF'
 --- /var/lib/pgsql/data/pg_hba.conf 2014-04-09 07:30:10.925999550 -0400
@@ -613,7 +583,7 @@ fi
 # Fix permissions on database directories
 chown -R postgres:postgres /var/lib/pgsql/data
 
-echo -e "# 17. Patching httpd.conf file"
+echo -e "# 16. Patching httpd.conf file"
 cp -p /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.orig
 cat > /tmp/httpd.conf.patch << 'EOF'
 *** /etc/httpd/conf/httpd.conf  2014-03-20 11:17:58.000000000 +0100
