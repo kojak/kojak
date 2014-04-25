@@ -93,7 +93,7 @@ LOG="/root/kojak.log"
 TSTAMP=$(date '+_%Y%m%d%H%M%S')
 
 echo -e "# 01. Creating yum repo" > ${LOG}
-cat > /etc/yum.repos.d/rhel6-koji.repo << 'EOF'
+cat > /etc/yum.repos.d/epel.repo << 'EOF'
 [epel]
 name=Extra Packages for Enterprise Linux 6 - $basearch
 #baseurl=http://download.fedoraproject.org/pub/epel/6/$basearch
