@@ -7,7 +7,7 @@
 export PROG="koji"
 export USER="koji"
 export PRODUCT="rcm-mw-tools"
-export ARCH="none"
+export ARCH="x86_64"
 
 # Begin Koji configuration
 su -l ${USER} -c "
@@ -86,11 +86,11 @@ rm ~/kojibuilder.sql
 
 # Adding Maven
 cd ~
-wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/SRPMS/apache-maven-3.2.1-1.el6.src.rpm
-wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/x86_64/apache-maven-3.2.1-1.el6.noarch.rpm
-${PROG} import --create-build apache-maven-3.2.1-1.el6.src.rpm apache-maven-3.2.1-1.el6.noarch.rpm
-${PROG} add-pkg --owner=kojiadmin ${PRODUCT} apache-maven
-${PROG} tag-build ${PRODUCT}-candidate apache-maven-3.2.1-1.el6
+wget http://kojipkgs.fedoraproject.org//packages/maven/3.2.1/5.fc21/src/maven-3.2.1-5.fc21.src.rpm
+wget http://kojipkgs.fedoraproject.org//packages/maven/3.2.1/5.fc21/noarch/maven-3.2.1-5.fc21.noarch.rpm
+${PROG} import --create-build maven-3.2.1-5.fc21.src.rpm maven-3.2.1-5.fc21.noarch.rpm
+${PROG} add-pkg --owner=kojiadmin ${PRODUCT} maven
+${PROG} tag-build ${PRODUCT}-candidate maven-3.2.1-5.fc21
 rm -f *.rpm
 cd -
 
@@ -107,4 +107,4 @@ ${PROG} list-tasks
 service postgresql restart
 service httpd restart
 service kojid restart
-service koira restart
+service kojira restart

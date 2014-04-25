@@ -27,7 +27,7 @@ LOG_FILES="/var/log/kojira.log
 ${HOME}/kickstart.log
 ${HOME}/kojak.log
 /etc/profile.d/custom.sh
-/etc/yum.repos.d/rhel6-koji.repo"
+/etc/yum.repos.d/epel.repo"
 for file in ${LOG_FILES}; do rm -f $file || echo "$file not found"; done
 
 # Update mlocate database
