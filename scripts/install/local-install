@@ -32,7 +32,7 @@ LOG="/root/kojak.log"
 TSTAMP=$(date '+_%Y%m%d%H%M%S')
 
 echo -e "# 01. Creating yum repo" > ${LOG}
-cat > /etc/yum.repos.d/rhel6-koji.repo << 'EOF'
+cat > /etc/yum.repos.d/epel.repo << 'EOF'
 [epel]
 name=Extra Packages for Enterprise Linux 6 - $basearch
 #baseurl=http://download.fedoraproject.org/pub/epel/6/$basearch
@@ -123,43 +123,39 @@ rm -f /tmp/limits.conf.patch
 echo -e "# 07. Patching koji.conf file" >> ${LOG}
 cp -p /etc/koji.conf /etc/koji.conf.orig
 cat > /tmp/koji.conf.patch << 'EOF'
---- /etc/koji.conf  2014-02-26 14:22:18.000000000 -0500
-+++ /etc/koji.conf  2014-04-07 16:17:42.063000014 -0400
-@@ -3,16 +3,16 @@
+--- koji.conf.orig      2013-07-31 16:13:27.000000000 +0200
++++ koji.conf   2014-04-25 22:04:35.660902721 +0200
+@@ -3,13 +3,13 @@
  ;configuration for koji cli tool
- 
+
  ;url of XMLRPC server
 -server = http://koji.fedoraproject.org/kojihub
 +server = http://koji.localdomain/kojihub
- 
+
  ;url of web interface
 -weburl = http://koji.fedoraproject.org/koji
 +weburl = http://koji.localdomain/koji
- 
+
  ;url of package download site
--topurl = http://koji.fedoraproject.org/
-+topurl=http://koji.localdomain/kojifiles
- 
+-topurl = http://kojipkgs.fedoraproject.org/
++topurl = http://kojipkgs.localdomain/
+
  ;path to the koji top directory
--topdir = /mnt/koji
-+;topdir = /mnt/koji
- 
- ;configuration for Kerberos authentication
- 
-@@ -22,10 +22,10 @@
+ ;topdir = /mnt/koji
+@@ -22,11 +22,11 @@
  ;configuration for SSL authentication
- 
+
  ;client certificate
 -cert = ~/.fedora.cert
-+cert = ~/.koji/client.crt
- 
++cert = ~/.koji.cert
+
  ;certificate of the CA that issued the client certificate
 -ca = ~/.fedora-server-ca.cert
-+ca = ~/.koji/serverca.crt
- 
++ca = ~/.koji-server-ca.cert
+
  ;certificate of the CA that issued the HTTP server certificate
 -serverca = ~/.fedora-server-ca.cert
-+serverca = ~/.koji/serverca.crt
++serverca = ~/.koji-server-ca.cert
 EOF
 patch -p0 < /tmp/koji.conf.patch
 rm -f /tmp/koji.conf.patch
@@ -167,30 +163,19 @@ rm -f /tmp/koji.conf.patch
 echo -e "# 08. Patching kojihub.conf file" >> ${LOG}
 cp /etc/httpd/conf.d/kojihub.conf /etc/httpd/conf.d/kojihub.conf.orig
 cat > /tmp/kojihub.conf.patch << 'EOF'
---- /etc/httpd/conf.d/kojihub.conf  2014-02-26 14:22:18.000000000 -0500
-+++ /etc/httpd/conf.d/kojihub.conf  2014-04-07 16:17:42.086000014 -0400
-@@ -9,6 +9,7 @@
-     SetHandler wsgi-script
-     Order allow,deny
+--- kojihub.conf.orig   2013-07-31 15:30:59.000000000 +0200
++++ kojihub.conf    2014-04-25 22:38:17.601761215 +0200
+@@ -32,12 +32,12 @@
      Allow from all
-+    # Require all granted # Apache 2.4 Compatibility
  </Directory>
  
- # Support for mod_python is DEPRECATED. If you still need mod_python support,
-@@ -30,14 +31,16 @@
-     AllowOverride None
-     Order allow,deny
-     Allow from all
-+    # Require all granted # Apache 2.4 Compatibility
-+    # AddType application/octet-stream .signature # Apache 2.4 Compatibility
- </Directory>
- 
- # uncomment this to enable authentication via SSL client certificates
+-# uncomment this to enable authentication via SSL client certificates
 -# <Location /kojihub/ssllogin>
 -#         SSLVerifyClient require
 -#         SSLVerifyDepth  10
 -#         SSLOptions +StdEnvVars
 -# </Location>
++# Uncomment this to enable authentication via SSL client certificates
 +<Location /kojihub/ssllogin>
 +        SSLVerifyClient require
 +        SSLVerifyDepth  10
@@ -206,45 +191,6 @@ rm -f /tmp/kojihub.conf.patch
 echo -e "# 09. Patching kojiweb.conf file" >> ${LOG}
 cp /etc/httpd/conf.d/kojiweb.conf /etc/httpd/conf.d/kojiweb.conf.orig
 cat > /tmp/kojiweb.conf.patch << 'EOF'
---- /etc/httpd/conf.d/kojiweb.conf  2014-04-07 16:17:42.096000014 -0400
-+++ /etc/httpd/conf.d/kojiweb.conf  2014-04-07 16:17:42.106000014 -0400
-@@ -1,4 +1,4 @@
--#We use wsgi by default
-+# We use wsgi by default
- Alias /koji "/usr/share/koji-web/scripts/wsgi_publisher.py"
- #(configuration goes in /etc/kojiweb/web.conf)
- 
-@@ -7,6 +7,7 @@
-     SetHandler wsgi-script
-     Order allow,deny
-     Allow from all
-+    # Require all granted # Apache 2.4 Compatibility
- </Directory>
- 
- # Support for mod_python is DEPRECATED. If you still need mod_python support,
-@@ -40,11 +41,11 @@
- # </Location>
- 
- # uncomment this to enable authentication via SSL client certificates
--# <Location /koji/login>
--#     SSLVerifyClient require
--#     SSLVerifyDepth  10
--#     SSLOptions +StdEnvVars
--# </Location>
-+<Location /koji/login>
-+    SSLVerifyClient require
-+    SSLVerifyDepth  10
-+    SSLOptions +StdEnvVars
-+</Location>
- 
- Alias /koji-static/ "/usr/share/koji-web/static/"
- 
-@@ -53,4 +54,5 @@
-     AllowOverride None
-     Order allow,deny
-     Allow from all
-+    # Require all granted # Apache 2.4 Compatibility
- </Directory>
 EOF
 patch -p0 < /tmp/kojiweb.conf.patch 
 rm -f /tmp/kojiweb.conf.patch
@@ -252,8 +198,8 @@ rm -f /tmp/kojiweb.conf.patch
 echo -e "# 10. Patching kojid.conf file" >> ${LOG}
 cp -p /etc/kojid/kojid.conf /etc/kojid/kojid.conf.orig
 cat > /tmp/kojid.conf.patch << 'EOF'
---- /etc/kojid/kojid.conf   2014-02-26 14:22:18.000000000 -0500
-+++ /etc/kojid/kojid.conf   2014-04-07 16:17:42.124000014 -0400
+--- /etc/kojid/kojid.conf.orig  2013-07-31 15:30:59.000000000 +0200
++++ /etc/kojid/kojid.conf   2014-04-25 22:27:23.968183264 +0200
 @@ -3,7 +3,7 @@
  ; sleeptime=15
  
@@ -263,7 +209,7 @@ cat > /tmp/kojid.conf.patch << 'EOF'
  
  ; The minimum amount of free space (in MBs) required for each build root
  ; minspace=8192
-@@ -33,23 +33,24 @@
+@@ -33,23 +33,23 @@
  ; mockhost=koji-linux-gnu
  
  ; The URL for the xmlrpc server
@@ -280,7 +226,6 @@ cat > /tmp/kojid.conf.patch << 'EOF'
  ; a common/ dir when checking out sources from the source control system.  Otherwise, it will attempt to checkout a common/
  ; dir, and will raise an exception if it cannot.
 -allowed_scms=scm.example.com:/cvs/example git.example.org:/example svn.example.org:/users/*:no
-+;allowed_scms=scm.localdomain:/cvs/example git.example.org:/example svn.example.org:/users/*:no
 +allowed_scms=koji.localdomain:/rpms/*:false:rhpkg,sources svn.apache.org:/repos/*:no git.app.eng.bos.redhat.com:*:false:rhpkg,sources git.engineering.redhat.com:*:false:rhpkg,sources github.com:*:false:rhpkg,sources forge.fusesource.com:*:false:rhpkg,sources
  
  ; The mail host to use for sending email notifications
@@ -293,20 +238,20 @@ cat > /tmp/kojid.conf.patch << 'EOF'
  
  ;configuration for Kerberos authentication
  
-@@ -66,10 +67,10 @@
+@@ -66,10 +66,10 @@
  ;configuration for SSL authentication
  
  ;client certificate
 -;cert = /etc/kojid/client.crt
-+cert = /etc/pki/koji/kojibuilder.pem
++cert = /etc/pki/koji/client.pem
  
  ;certificate of the CA that issued the client certificate
 -;ca = /etc/kojid/clientca.crt
-+ca = /etc/pki/koji/koji_ca_cert.crt
++ca = /etc/pki/koji/clientca.crt
  
  ;certificate of the CA that issued the HTTP server certificate
 -;serverca = /etc/kojid/serverca.crt
-+serverca = /etc/pki/koji/koji_ca_cert.crt
++serverca = /etc/pki/koji/serverca.crt
 EOF
 patch -p0 < /tmp/kojid.conf.patch
 rm -f /tmp/kojid.conf.patch
@@ -314,37 +259,30 @@ rm -f /tmp/kojid.conf.patch
 echo -e "# 11. Patching hub.conf file" >> ${LOG}
 cp -p /etc/koji-hub/hub.conf /etc/koji-hub/hub.conf.orig
 cat > /tmp/hub.conf.patch << 'EOF'
---- /etc/koji-hub/hub.conf  2014-02-26 14:22:18.000000000 -0500
-+++ /etc/koji-hub/hub.conf  2014-04-07 16:17:42.144000015 -0400
+--- hub.conf.orig   2013-07-31 15:30:59.000000000 +0200
++++ hub.conf    2014-04-25 22:15:41.218308967 +0200
 @@ -9,8 +9,8 @@
  ## Basic options ##
  DBName = koji
  DBUser = koji
 -#DBHost = db.example.com
 -#DBPass = example_password
-+#DBHost = localhost.localdomain
-+#DBPass = koji
++DBHost = localhost.localdomain
++DBPass = koji
  KojiDir = /mnt/koji
  
  
-@@ -25,7 +25,6 @@
- ## end Kerberos auth configuration
- 
- 
--
- ##  SSL client certificate auth configuration  ##
- #note: ssl auth may also require editing the httpd config (conf.d/kojihub.conf)
- 
-@@ -33,25 +32,25 @@
+@@ -32,7 +32,7 @@
+ ## the client username is the common name of the subject of their client certificate
  # DNUsernameComponent = CN
  ## separate multiple DNs with |
- # ProxyDNs = /C=US/ST=Massachusetts/O=Example Org/OU=Example User/CN=example/emailAddress=example@example.com
+-# ProxyDNs = /C=US/ST=Massachusetts/O=Example Org/OU=Example User/CN=example/emailAddress=example@example.com
 +ProxyDNs = /C=XX/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=kojiweb/emailAddress=koji@localdomain
  
  ## end SSL client certificate auth configuration
  
+@@ -40,18 +40,18 @@
  
--
  ##  Other options  ##
  LoginCreatesUser = On
 -KojiWebURL = http://kojiweb.example.com/koji
@@ -365,11 +303,6 @@ cat > /tmp/hub.conf.patch << 'EOF'
  ## Support Windows builds
  # EnableWin = False
  
-@@ -82,4 +81,3 @@
- ## If ServerOffline is True, the server will always report a ServerOffline fault (with
- ## OfflineMessage as the fault string).
- ## If LockOut is True, the server will report a ServerOffline fault for all non-admin
--## requests.
 EOF
 patch -p0 < /tmp/hub.conf.patch
 rm -f /tmp/hub.conf.patch
@@ -481,36 +414,6 @@ EOF
 patch -p0 < /tmp/ssl.conf.patch
 rm -f /tmp/ssl.conf.patch
 
-echo -e "# 15. Patching kojid file" >> ${LOG}
-cp -p /etc/init.d/kojid /etc/init.d/kojid.orig
-cat > /tmp/kojid.patch << 'EOF'
---- /etc/init.d/kojid   2014-02-26 14:22:18.000000000 -0500
-+++ /etc/init.d/kojid   2014-04-07 16:52:53.252001501 -0400
-@@ -33,13 +33,13 @@
-     cd /
-     ARGS=""
-     [ "$FORCE_LOCK" == "Y" ] && ARGS="$ARGS --force-lock"
--    [ "$KOJID_DEBUG" == "Y" ] && ARGS="$ARGS --debug"
--    [ "$KOJID_VERBOSE" == "Y" ] && ARGS="$ARGS --verbose"
--    # XXX Fix for make download-checks in kernel builds
--    # Remove once we're running the buildSRPMFromSCM task
--    # as an unpriviledged user with their own environment
--    export HOME="/root"
--    daemon /usr/sbin/kojid $ARGS
-+    [ "$KOJIRA_DEBUG" == "Y" ] && ARGS="$ARGS --debug"
-+    [ "$KOJIRA_VERBOSE" == "Y" ] && ARGS="$ARGS --verbose"
-+    if [ -n "$RUNAS" -a "$RUNAS" != "root" ]; then
-+        daemon --user "$RUNAS" /usr/sbin/kojid $ARGS
-+    else
-+        daemon /usr/sbin/kojid $ARGS
-+    fi
-     RETVAL=$?
-     echo
-     [ $RETVAL -eq 0 ] && touch /var/lock/subsys/kojid
-EOF
-patch -p0 < /tmp/kojid.patch
-rm -f /tmp/kojid.patch
-
 # Start the database
 service postgresql initdb
 chkconfig postgresql on
@@ -530,7 +433,7 @@ su -l koji -c "psql koji koji < /tmp/users.sql"
 
 rm /tmp/users.sql
 
-echo -e "# 16. Patching pg_hba.conf file"
+echo -e "# 15. Patching pg_hba.conf file"
 cp -p /var/lib/pgsql/data/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf.orig
 cat > /tmp/pg_hba.conf.patch << 'EOF'
 --- /var/lib/pgsql/data/pg_hba.conf 2014-04-09 07:30:10.925999550 -0400
@@ -565,7 +468,7 @@ fi
 # Fix permissions on database directories
 chown -R postgres:postgres /var/lib/pgsql/data
 
-echo -e "# 17. Patching httpd.conf file"
+echo -e "# 16. Patching httpd.conf file"
 cp -p /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.orig
 cat > /tmp/httpd.conf.patch << 'EOF'
 *** /etc/httpd/conf/httpd.conf  2014-03-20 11:17:58.000000000 +0100
@@ -652,9 +555,9 @@ export CANAME HOSTNAME DOMAINNAME CRTHOME CLCRTHOME CNF
 # Copy the client certficates to the koji users home directory.
 echo -e "Deploying certificates...\n"
 
-cp -f /etc/pki/koji/kojiadmin.pem /home/koji/.koji/client.crt
-cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/clientca.crt
-cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/serverca.crt
+cp -f /etc/pki/koji/kojiadmin.pem /home/koji/.koji/koji.cert
+cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/koji-server-ca.cert
+cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/koji-server-ca.cert
 
 # Set the appropriate permissions
 chown -R koji:apache /home/koji/.koji/
@@ -671,7 +574,8 @@ chkconfig postgresql on
 service postgresql restart
 chkconfig httpd on
 service httpd start
-chkconfig kojid on
-service kojid start
+chkconfig kojid off
+#service kojid start
 chkconfig kojira on
 service kojira start
+
