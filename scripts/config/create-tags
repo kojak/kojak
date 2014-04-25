@@ -7,7 +7,7 @@
 export PROG="koji"
 export USER="koji"
 export PRODUCT="rcm-mw-tools"
-export ARCH="none"
+export ARCH="x86_64"
 
 # Begin Koji configuration
 su -l ${USER} -c "
