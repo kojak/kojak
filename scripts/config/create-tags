@@ -82,7 +82,17 @@ ${PROG} edit-host --capacity 10.0 kojibuilder1.localdomain
 ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} bash binutils
 
 # Update kojibuilder record
-echo -e 'UPDATE host set user_id = '3' where user_id = '5';\q' > ~/kojibuilder.sql
+echo -e 'delete from host_channels where host_id = '1';
+delete from host where name = 'kojibuilder1.localdomain';
+delete from user_perms where user_id = '4';
+delete from users where name = 'kojibuilder1.localdomain';
+insert into host (id, user_id, name, arches) values (1, 5, 'kojibuilder.localdoamin', 'x86_64');
+insert into host_channels (host_id, channel_id) values (1, 1);
+insert into host_channels (host_id, channel_id) values (1, 2);
+insert into host_channels (host_id, channel_id) values (1, 3);
+insert into host_channels (host_id, channel_id) values (1, 4);
+insert into host_channels (host_id, channel_id) values (1, 5);
+insert into host_channels (host_id, channel_id) values (1, 6);' > ~/kojibuilder.sql
 psql koji koji < /tmp/kojibuilder.sql
 rm ~/kojibuilder.sql
 
