@@ -22,9 +22,6 @@ ${PROG} add-host-to-channel kojibuilder1.localdomain vm
 ${PROG} grant-permission repo kojira
 ${PROG} grant-permission build kojibuilder1.localdomain
 
-[koji@koji workspace]$ koji add-tag-inheritance rcm-mw-tools-build rcm-mw-tools-builddeps --priority 5
-
-
 # Add product tags
 ${PROG} add-tag ${PRODUCT} --arches ${ARCH} --maven-support --include-all
 ${PROG} add-tag ${PRODUCT}-candidate --arches ${ARCH} --maven-support --include-all
