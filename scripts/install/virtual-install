@@ -163,7 +163,10 @@ main () {
 main_header
 
 if [ -f "/kojak-ks.cfg" ]; then
-    echo "# Found Kickstart file"
+    echo "# Removing pre-exiting Kickstart file"
+    rm -f /kojak-ks.cfg
+    echo "# Copying Kickstart file"
+    cp kojak-ks.cfg  /
 else
     echo "# Copying Kickstart file"
     cp kojak-ks.cfg  /
@@ -193,7 +196,7 @@ VMDOMAIN=$(virsh list --all | grep ${VMNAME})
 if [ ! "${VMDOMAIN}" ]; then
     echo -e "# No pre-existing Kojak vm"
 else 
-    echo -e "# Removing any pre-existing Kojak vm"
+    echo -e "# Removing pre-existing Kojak vm"
     virsh destroy ${VMNAME} > /dev/null 2>&1
     virsh undefine ${VMNAME} > /dev/null 2>&1
 fi
