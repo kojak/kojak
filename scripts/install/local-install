@@ -535,6 +535,7 @@ cat > /tmp/pg_hba.conf.patch << 'EOF'
 +host    koji        apache              ::1/128                  trust
 +host    koji        koji                192.168.122.2/32         trust
 +host    koji        apache              192.168.122.2/32         trust
++host    koji        koji                192.168.122.1/32         trust
 +
  # "local" is for Unix domain socket connections only
  local   all         all                               ident
