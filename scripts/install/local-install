@@ -659,6 +659,6 @@ service postgresql restart
 chkconfig httpd on
 service httpd start
 chkconfig kojid on
-service kojid start
+service kojid stop
 chkconfig kojira on
 service kojira start
