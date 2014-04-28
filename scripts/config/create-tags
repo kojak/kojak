@@ -22,11 +22,15 @@ ${PROG} add-host-to-channel kojibuilder1.localdomain vm
 ${PROG} grant-permission repo kojira
 ${PROG} grant-permission build kojibuilder1.localdomain
 
+[koji@koji workspace]$ koji add-tag-inheritance rcm-mw-tools-build rcm-mw-tools-builddeps --priority 5
+
+
 # Add product tags
 ${PROG} add-tag ${PRODUCT} --arches ${ARCH} --maven-support --include-all
 ${PROG} add-tag ${PRODUCT}-candidate --arches ${ARCH} --maven-support --include-all
 ${PROG} add-tag ${PRODUCT}-override --arches ${ARCH} --maven-support --include-all
 ${PROG} add-tag ${PRODUCT}-build --arches ${ARCH} --maven-support --include-all
+${PROG} add-tag ${PRODUCT}-builddeps --arches ${ARCH} --maven-support --include-all
 ${PROG} add-tag ${PRODUCT}-todo --arches ${ARCH} --maven-support --include-all
 
 # Add dependency tags
@@ -37,6 +41,7 @@ ${PROG} add-tag mead-import-maven-all --arches none --maven-support --include-al
 ${PROG} add-tag-inheritance ${PRODUCT}-candidate ${PRODUCT} --priority 0
 ${PROG} add-tag-inheritance ${PRODUCT}-override ${PRODUCT}-candidate --priority 0
 ${PROG} add-tag-inheritance ${PRODUCT}-build ${PRODUCT}-override --priority 0
+${PROG} add-tag-inheritance ${PRODUCT}-build ${PRODUCT}-builddeps --priority 5
 ${PROG} add-tag-inheritance ${PRODUCT}-build jb-middleware-imports --priority 10
 ${PROG} add-tag-inheritance ${PRODUCT}-build mead-import-maven-all --priority 20
 ${PROG} add-tag-inheritance ${PRODUCT}-build ${PRODUCT}-todo --priority 40
