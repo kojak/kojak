@@ -26,7 +26,7 @@ export PROG="koji"
 export USER="koji"
 export PRODUCT="rcm-mw-tools"
 export ARCH="x86_64"
-export MAVEN="apache-maven-3.2.1-1.el6"
+export MAVEN="maven3-3.0.3-4"
 
 # Begin Koji configuration
 su -l ${USER} -c "
@@ -83,7 +83,7 @@ ${PROG} add-group-pkg ${PRODUCT}-build appliance-build appliance-tools bash core
 
 # maven-build
 ${PROG} add-group ${PRODUCT}-build maven-build
-${PROG} add-group-pkg ${PRODUCT}-build maven-build bash coreutils java-1.7.0-openjdk-devel apache-maven subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
+${PROG} add-group-pkg ${PRODUCT}-build maven-build bash coreutils java-1.7.0-openjdk-devel maven3 subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
 
 # livecd-build
 ${PROG} add-group ${PRODUCT}-build livecd-build
@@ -100,15 +100,20 @@ ${PROG} edit-host --capacity 10.0 kojibuilder1.localdomain
 ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} bash binutils
 
 # Adding Maven
-cd ~
-wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/SRPMS/${MAVEN}.src.rpm
-wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/x86_64/${MAVEN}.noarch.rpm
-${PROG} import --create-build ${MAVEN}.src.rpm ${MAVEN}.noarch.rpm
-${PROG} add-pkg --owner=kojiadmin ${PRODUCT} apache-maven
-${PROG} tag-build ${PRODUCT}-candidate ${MAVEN}
-rpm -Uvh ${MAVEN}.noarch.rpm
-cd -
+if [ -d "/opt/kojak" ]; then
+    ${PROG} import --create-build /opt/kojak/pkgs/${MAVEN}.src.rpm /opt/kojak/pkgs/${MAVEN}.noarch.rpm
+    ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} maven3
+    ${PROG} tag-build ${PRODUCT}-candidate ${MAVEN}
+else
+    git clone https://github.com/sbadakhc/kojak.git /opt/kojak
+    ${PROG} import --create-build /opt/kojak/pkgs/${MAVEN}.src.rpm /opt/kojak/pkgs/${MAVEN}.noarch.rpm
+    ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} maven3
+    ${PROG} tag-build ${PRODUCT}-candidate ${MAVEN}
+fi
 "
+
+# Install maven locally.
+rpm -Uvh /opt/koji/kojak/pkgs/${MAVEN}.noarch.rpm
 
 # Kojibuilder ssl update
 echo -e "UPDATE users SET name = 'kojibuilder' WHERE name = 'kojibuilder1.localdomain';\q" >> /tmp/kojibuilder.sql
