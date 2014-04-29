@@ -66,7 +66,7 @@ ${PROG} add-group-pkg ${PRODUCT}-build appliance-build appliance-tools bash core
 
 # maven-build
 ${PROG} add-group ${PRODUCT}-build maven-build
-${PROG} add-group-pkg ${PRODUCT}-build maven-build bash coreutils java-1.7.0-openjdk-devel maven3 subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
+${PROG} add-group-pkg ${PRODUCT}-build maven-build bash coreutils java-1.7.0-openjdk-devel maven subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
 
 # livecd-build
 ${PROG} add-group ${PRODUCT}-build livecd-build
