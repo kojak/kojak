@@ -662,4 +662,8 @@ chkconfig httpd on
 service httpd start
 chkconfig kojid off
 chkconfig kojira off
+chkconfig kojid on
+service kojid start
+chkconfig kojira on
+service kojira start
 
