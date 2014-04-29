@@ -51,7 +51,7 @@ menu_msg_01() {
 main_menu() {
 PS3='Please Select installation type: '
 echo
-options=("Virtual" "Local" "Uninstall" "Create Tags" "Quit")
+options=("Vrtual" "Local" "Uninstall" "Configure" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -70,9 +70,9 @@ do
             $SCRIPTS/install/uninstall
             exit
             ;;
-        "Create Tags")
+        "Configure")
             echo -e "\n>> Creating rcm tag base"
-            $SCRIPTS/config/create-tags
+            $SCRIPTS/config/configure
             exit
             ;;
         "Quit")
