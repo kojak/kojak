@@ -51,16 +51,16 @@ menu_msg_01() {
 main_menu() {
 PS3='Please Select installation type: '
 echo
-options=("Virtual" "Local" "Uninstall" "Configure" "Quit")
+options=("Create VM" "Install" "Uninstall" "Configure" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
-        "Virtual")
+        "Create VM")
             echo -e "\n>> Virtual Installation Selected"
             $SCRIPTS/install/virtual-install
             exit
             ;;
-        "Local")
+        "Install")
             echo -e "\n>> Local Installation Selected"
             $SCRIPTS/install/local-install
             exit
