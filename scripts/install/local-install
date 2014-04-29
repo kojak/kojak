@@ -486,20 +486,6 @@ rm -f /tmp/ssl.conf.patch
 service postgresql initdb
 service postgresql start
 
-#/tmp/users.sql
-echo -e "insert into users (name, status, usertype) values ('koji', 0, 0);
-insert into user_perms (user_id, perm_id, creator_id) values (1, 1, 1);
-insert into users (name, status, usertype) values ('kojiadmin', 0, 0);
-insert into user_perms (user_id, perm_id, creator_id) values (2, 1, 1);
-\q" >> /tmp/users.sql
-
-# Create the database tables
-su -l postgres -c "createuser -s -d -r koji; createdb -O koji koji"
-su -l koji -c "psql koji koji < /usr/share/doc/koji-1.8.0/docs/schema.sql"
-su -l koji -c "psql koji koji < /tmp/users.sql"
-
-rm /tmp/users.sql
-
 echo -e "# 15. Patching postgresql.conf file" >> ${LOG}
 cp -p /var/lib/pgsql/data/postgresql.conf /var/lib/pgsql/data/postgresql.conf.orig
 cat > /tmp/postgresql.conf.patch << 'EOF'
@@ -554,7 +540,18 @@ fi
 # Fix permissions on database directories
 chown -R postgres:postgres /var/lib/pgsql/data
 
-echo -e "# 17. Patching httpd.conf file" >> ${LOG}
+ehco -e "# 17. Create the database tables" >> ${LOG} 
+echo -e "insert into users (name, status, usertype) values ('koji', 0, 0);
+insert into user_perms (user_id, perm_id, creator_id) values (1, 1, 1);
+insert into users (name, status, usertype) values ('kojiadmin', 0, 0);
+insert into user_perms (user_id, perm_id, creator_id) values (2, 1, 1);
+\q" >> /tmp/users.sql
+su -l postgres -c "createuser -s -d -r koji; createdb -O koji koji"
+su -l koji -c "psql koji koji < /usr/share/doc/koji-1.8.0/docs/schema.sql"
+su -l koji -c "psql koji koji < /tmp/users.sql"
+rm /tmp/users.sql
+
+echo -e "# 18. Patching httpd.conf file" >> ${LOG}
 cp -p /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.orig
 cat > /tmp/httpd.conf.patch << 'EOF'
 *** /etc/httpd/conf/httpd.conf  2014-03-20 11:17:58.000000000 +0100
