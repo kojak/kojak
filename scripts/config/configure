@@ -8,7 +8,7 @@ export PROG="koji"
 export USER="koji"
 export PRODUCT="rcm-mw-tools"
 export ARCH="x86_64"
-export MAVEN="maven-3.2.1-5.fc21"
+export MAVEN="apache-maven-3.2.1-1.el6"
 
 # Begin Koji configuration
 su -l ${USER} -c "
@@ -65,7 +65,7 @@ ${PROG} add-group-pkg ${PRODUCT}-build appliance-build appliance-tools bash core
 
 # maven-build
 ${PROG} add-group ${PRODUCT}-build maven-build
-${PROG} add-group-pkg ${PRODUCT}-build maven-build bash coreutils java-1.7.0-openjdk-devel maven subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
+${PROG} add-group-pkg ${PRODUCT}-build maven-build bash coreutils java-1.7.0-openjdk-devel apache-maven subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
 
 # livecd-build
 ${PROG} add-group ${PRODUCT}-build livecd-build
@@ -83,10 +83,10 @@ ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} bash binutils
 
 # Adding Maven
 cd ~
-wget http://kojipkgs.fedoraproject.org//packages/maven/3.2.1/5.fc21/src/${MAVEN}.src.rpm
-wget http://kojipkgs.fedoraproject.org//packages/maven/3.2.1/5.fc21/noarch/${MAVEN}.noarch.rpm
+wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/SRPMS/${MAVEN}.src.rpm
+wget http://repos.fedorapeople.org/repos/dchen/apache-maven/epel-6/x86_64/${MAVEN}.noarch.rpm
 ${PROG} import --create-build ${MAVEN}.src.rpm ${MAVEN}.noarch.rpm
-${PROG} add-pkg --owner=kojiadmin ${PRODUCT} maven
+${PROG} add-pkg --owner=kojiadmin ${PRODUCT} apache-maven
 ${PROG} tag-build ${PRODUCT}-candidate ${MAVEN}
 rpm -Uvh ${MAVEN}.noarch.rpm
 cd -
