@@ -14,6 +14,16 @@ fi
 # Remove koji user
 userdel -rf koji
 
+# Stop services
+chkconfig postgresql off
+service postgresql stop
+chkconfig httpd off 
+service httpd stop
+chkconfig kojid off
+service kojid stop
+chkcoonfig kojira off
+service kojira stop
+
 # Remove package
 yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder mock
 
