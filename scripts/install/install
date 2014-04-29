@@ -78,7 +78,6 @@ mkdir -p /home/koji/.koji
 chown koji:apache /home/koji/.koji
 
 echo -e "# 04. Creating koji build directories" >> ${LOG}
-mkdir /root/workspace
 mkdir /mnt/koji
 cd /mnt/koji
 mkdir {packages,repos,work,scratch}

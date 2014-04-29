@@ -57,12 +57,12 @@ do
     case $opt in
         "Create VM")
             echo -e "\n>> Virtual Installation Selected"
-            $SCRIPTS/install/virtual-install
+            $SCRIPTS/install/create_vm
             exit
             ;;
         "Install")
             echo -e "\n>> Local Installation Selected"
-            $SCRIPTS/install/local-install
+            $SCRIPTS/install/install
             exit
             ;;
         "Uninstall")
