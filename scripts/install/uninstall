@@ -37,7 +37,7 @@ chkconfig httpd off
 service httpd stop
 chkconfig kojid off
 service kojid stop
-chkcoonfig kojira off
+chkconfig kojira off
 service kojira stop
 
 # Remove package
