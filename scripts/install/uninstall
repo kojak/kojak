@@ -11,11 +11,6 @@ if [ "${USER}" != "root" ]; then
     exit
 fi
 
-# Remove user koji user
-userdel -rf koji
-userdel -rf kojibuilder
-groupdel mock
-
 # Remove package
 yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder mock
 
