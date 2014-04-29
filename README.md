@@ -38,12 +38,14 @@ The you local host should be configured with the following minimum specification
 Installation Instructions
 ------------------------
 
-1.  Checkout the contents of the Kojak git repository to a suitable directory on your local host e.g /home/user/workspace).
-2.  As root execute kojak script.  You will be prompted about the type of installation you want to conduct.  If you choose to create a virtual machine (Create VM) to install Koji on you will be further prompted to supply some configuration options.  You can simply accept the default options if you have no special requirements.
-3.  Once the virtual machine is created you should login as the root user and execute the Kojak script once again under /opt/kojak.  This time you can select the (Install) option which will install the Koji on the virtual machine
-4.  After the installation is complete you can opt to configure the system with base rcm tagging heirarchy.  This will get you up and running and building packages quickly.
+1.  Checkout the contents of the Kojak git repository to a suitable directory on your host e.g /home/user/workspace.
+2.  As the root user execute kojak script.  You will be prompted about the type of installation you want to conduct.  If you choose to create a virtual machine (Create VM) to install Koji on you will be further prompted to supply some configuration options.  You can simply accept the default options if you have no special requirements.
+3.  Once the virtual machine is created you should login to the virtual machine on address 192.168.122.2 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the (Install) option which will install the Koji on the virtual machine.
+4.  After the installation is complete you can opt to configure the system with base rcm tagging heirarchy.  This will get you up and running and building packages quickly.  Simply execute the Kojak script again and select the (Configure) option from the menu.
 
-See https://fedoraproject.org/wiki/Koji for more details about using Koji.
+For more inforation about using Koji see:
+
+https://fedoraproject.org/wiki/Koji for more details about using Koji.
 
 Configuration Notes
 -------------------
