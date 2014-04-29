@@ -611,7 +611,7 @@ echo -e "Generating component keys and signing certificates\n"
 echo -e "y\ny" > ${CRTHOME}/response.txt
 
 # Create certificates for the koji components.
-for USER in koji kojiadmin kojira kojiweb kojihub kojibuilder
+for USER in koji kojiadmin kojira kojiweb kojihub kojibuilder1.localdomain
 do
     echo "creating certificate for ${USER} ..."
     openssl genrsa -out ${CRTHOME}/certs/${USER}.key 2048

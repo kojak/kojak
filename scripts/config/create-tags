@@ -51,7 +51,6 @@ ${PROG} add-target ${PRODUCT}-candidate ${PRODUCT}-build ${PRODUCT}-candidate
 ${PROG} add-external-repo -t ${PRODUCT}-build centos-mirror http://mirror.centos.org/centos/6/os/x86_64/
 
 # Add groups
-
 # build
 ${PROG} add-group ${PRODUCT}-build build
 ${PROG} add-group-pkg ${PRODUCT}-build build bash bzip2 cpio diffutils fedora-release findutils gawk gcc gcc-c++ info make redhat-rpm-config rpm-build sed shadow-utils unzip util-linux-ng which xz
