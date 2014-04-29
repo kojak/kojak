@@ -76,7 +76,7 @@ do
             exit
             ;;
         "Quit")
-            break
+            exit
             ;;
         *) echo -e "\n>> Invalid Option"
            sleep 1
