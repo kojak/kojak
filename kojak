@@ -51,7 +51,7 @@ menu_msg_01() {
 main_menu() {
 PS3='Please Select installation type: '
 echo
-options=("Vrtual" "Local" "Uninstall" "Configure" "Quit")
+options=("Virtual" "Local" "Uninstall" "Configure" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
