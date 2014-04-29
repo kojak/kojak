@@ -29,6 +29,7 @@ build_src() {
 }
 
 resolve_deps() {
+    SCRIPTS="/opt/kojak/build/"
     WORKSPACE="$HOME/workspace/kojak/scripts/build/"
     TMP="$WORKSPACE/tmp"
     LOG="/mnt/koji/work/tasks/$TASK/$TASK/root.log"
@@ -55,8 +56,8 @@ resolve_deps() {
                 fi
                 cd $TMP
                 # Executes the modified version of these utility scripts specific to Kojak.
-                $WORKSPACE/get-maven-artifacts $REPOS $dep
-                $WORKSPACE/import-maven --tag ${TAG}-builddeps *
+                $SCRIPTS/get-maven-artifacts $REPOS $dep
+                $SCRIPTS/import-maven --tag ${TAG}-builddeps *
                 cd $WORKSPACE
                 rm -rf $TMP
                 RES=$dep
