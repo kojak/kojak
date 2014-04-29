@@ -8,6 +8,7 @@ export PROG="koji"
 export USER="koji"
 export PRODUCT="rcm-mw-tools"
 export ARCH="x86_64"
+export MAVEN="maven-3.2.1-5.fc21"
 
 # Begin Koji configuration
 su -l ${USER} -c "
@@ -98,12 +99,12 @@ rm ~/kojibuilder.sql
 
 # Adding Maven
 cd ~
-wget http://kojipkgs.fedoraproject.org//packages/maven/3.2.1/5.fc21/src/maven-3.2.1-5.fc21.src.rpm
-wget http://kojipkgs.fedoraproject.org//packages/maven/3.2.1/5.fc21/noarch/maven-3.2.1-5.fc21.noarch.rpm
-${PROG} import --create-build maven-3.2.1-5.fc21.src.rpm maven-3.2.1-5.fc21.noarch.rpm
+wget http://kojipkgs.fedoraproject.org//packages/maven/3.2.1/5.fc21/src/${MAVEN}.src.rpm
+wget http://kojipkgs.fedoraproject.org//packages/maven/3.2.1/5.fc21/noarch/${MAVEN}.noarch.rpm
+${PROG} import --create-build ${MAVEN}.src.rpm ${MAVEN}.noarch.rpm
 ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} maven
-${PROG} tag-build ${PRODUCT}-candidate maven-3.2.1-5.fc21
-rm -f *.rpm
+${PROG} tag-build ${PRODUCT}-candidate ${MAVEN}
+rpm -Uvh ${MAVEN}.noarch.rpm
 cd -
 
 # Show config
