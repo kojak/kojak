@@ -29,7 +29,7 @@ build_src() {
 }
 
 resolve_deps() {
-    SCRIPTS="/opt/kojak/build/"
+    SCRIPTS="/opt/kojak/scripts/build/"
     WORKSPACE="$HOME/workspace/"
     TMP="$WORKSPACE/tmp"
     LOG="/mnt/koji/work/tasks/$TASK/$TASK/root.log"
