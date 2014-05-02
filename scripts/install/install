@@ -558,6 +558,25 @@ EOF
 patch -p0 < /tmp/httpd.conf.patch
 rm -f /tmp/httpd.conf.patch
 
+echo -e "# 18. Patching koji" >> ${LOG}
+cp -p /usr/bin/koji /usr/bin/koji.orig
+cat /tmp/koji.patch << 'EOF'
+--- /usr/bin/koji.orig  2014-05-02 08:42:17.775003420 -0400
++++ /usr/bin/koji   2014-05-02 08:43:24.717999263 -0400
+@@ -4145,6 +4145,9 @@
+             continue
+         print "Tag: %(name)s [%(id)d]" %info
+         print "Arches: %(arches)s" %info
++   group_list = [x['name'] for x in session.getTagGroups(info['id'], **event_opts)]
++   group_list.sort()
++   print "Groups: " + ', '.join(group_list)
+         if info.get('locked'):
+             print 'LOCKED'
+         if info.get('perm_id') is not None:
+EOF
+patch -p0 < /tmp/koji.patch
+rm -f /tmp/koji.patch
+
 # SSL certs
 rm -rf /etc/pki/CA/serial*
 rm -rf /etc/pki/CA/index*
