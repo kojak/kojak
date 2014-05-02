@@ -118,6 +118,10 @@ check_task() {
                     echo "Status: $STATUS"
                     build_src
                     ;;
+                "createrepo free")
+                    echo "Status: $STATUS"
+                    wait
+                    ;;
                 "tagBuild open")
                     echo "Status: $STATUS"
                     wait
