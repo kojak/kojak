@@ -84,7 +84,7 @@ mkdir {packages,repos,work,scratch}
 chown apache:apache *
 cd -
 
-echo -e "# 05. Patching hosts file" >> ${LOG}
+echo -e "# 05. Patching hosts" >> ${LOG}
 cp -p /etc/hosts /etc/hosts.orig
 cat > /tmp/hosts.patch << 'EOF'
 --- /etc/hosts  2010-01-12 08:28:22.000000000 -0500
@@ -105,7 +105,7 @@ if [ "${IP_ADDR}" != "192.168.122.2" ] && [ "${IP_ADDR}" != "${DUP_IP_ADDR}" ]; 
     cat /etc/hosts.tmp > /etc/hosts && rm -f /etc/hosts.tmp
 fi
 
-echo -e "# 06. Patching limits file" >> ${LOG} 
+echo -e "# 06. Patching limits" >> ${LOG} 
 cp -p /etc/security/limits.conf /etc/security/limits.conf.orig
 cat > /tmp/limits.conf.patch << 'EOF'
 --- /etc/security/limits.conf.orig  2014-04-26 02:25:52.758402956 +0200
@@ -121,7 +121,7 @@ EOF
 patch -p0 < /tmp/limits.conf.patch
 rm -f /tmp/limits.conf.patch
 
-echo -e "# 07. Patching koji.conf file" >> ${LOG}
+echo -e "# 07. Patching koji.conf" >> ${LOG}
 cp -p /etc/koji.conf /etc/koji.conf.orig
 cat > /tmp/koji.conf.patch << 'EOF'
 --- /etc/koji.conf.orig 2013-07-31 16:13:27.000000000 +0200
@@ -166,7 +166,7 @@ EOF
 patch -p0 < /tmp/koji.conf.patch
 rm -f /tmp/koji.conf.patch
 
-echo -e "# 08. Patching kojihub.conf file" >> ${LOG}
+echo -e "# 08. Patching kojihub.conf" >> ${LOG}
 cp /etc/httpd/conf.d/kojihub.conf /etc/httpd/conf.d/kojihub.conf.orig
 cat > /tmp/kojihub.conf.patch << 'EOF'
 --- /etc/httpd/conf.d/kojihub.conf.orig 2014-04-29 19:22:48.488789753 +0200
@@ -200,7 +200,7 @@ EOF
 patch -p0 < /tmp/kojihub.conf.patch
 rm -f /tmp/kojihub.conf.patch
 
-echo -e "# 09. Patching kojiweb.conf file" >> ${LOG}
+echo -e "# 09. Patching kojiweb.conf" >> ${LOG}
 cp /etc/httpd/conf.d/kojiweb.conf /etc/httpd/conf.d/kojiweb.conf.orig
 cat > /tmp/kojiweb.conf.patch << 'EOF'
 --- /etc/httpd/conf.d/kojiweb.conf.orig 2014-04-26 00:34:40.642976946 +0200
@@ -246,7 +246,7 @@ EOF
 patch -p0 < /tmp/kojiweb.conf.patch 
 rm -f /tmp/kojiweb.conf.patch
 
-echo -e "# 10. Patching kojid.conf file" >> ${LOG}
+echo -e "# 10. Patching kojid.conf" >> ${LOG}
 cp -p /etc/kojid/kojid.conf /etc/kojid/kojid.conf.orig
 cat > /tmp/kojid.conf.patch << 'EOF'
 --- /etc/kojid/kojid.conf   2014-02-26 14:22:18.000000000 -0500
@@ -308,7 +308,7 @@ EOF
 patch -p0 < /tmp/kojid.conf.patch
 rm -f /tmp/kojid.conf.patch
 
-echo -e "# 11. Patching hub.conf file" >> ${LOG}
+echo -e "# 11. Patching hub.conf" >> ${LOG}
 cp -p /etc/koji-hub/hub.conf /etc/koji-hub/hub.conf.orig
 cat > /tmp/hub.conf.patch << 'EOF'
 --- /etc/koji-hub/hub.conf  2014-02-26 14:22:18.000000000 -0500
@@ -371,7 +371,7 @@ EOF
 patch -p0 < /tmp/hub.conf.patch
 rm -f /tmp/hub.conf.patch
 
-echo -e "# 12. Patching kojira.conf file" >> ${LOG}
+echo -e "# 12. Patching kojira.conf" >> ${LOG}
 cp -p /etc/kojira/kojira.conf /etc/kojira/kojira.conf.orig
 cat > /tmp/kojira.conf.patch << 'EOF'
 --- /etc/kojira/kojira.conf 2014-02-26 14:22:18.000000000 -0500
@@ -403,7 +403,7 @@ EOF
 patch -p0 < /tmp/kojira.conf.patch 
 rm -f /tmp/kojira.conf.patch
 
-echo -e "# 13. Patching web.conf file" >> ${LOG}
+echo -e "# 13. Patching web.conf" >> ${LOG}
 cp /etc/kojiweb/web.conf /etc/kojiweb/web.conf.orig
 cat > /tmp/web.conf.patch << 'EOF'
 --- /etc/kojiweb/web.conf.orig  2013-07-31 15:30:59.000000000 +0200
@@ -435,7 +435,7 @@ EOF
 patch -p0 < /tmp/web.conf.patch
 rm -f /tmp/web.conf.patch
 
-echo -e "# 14. Patching ssl.conf file" >> ${LOG}
+echo -e "# 14. Patching ssl.conf" >> ${LOG}
 cp -p /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/ssl.conf.orig
 cat > /tmp/ssl.conf.patch << 'EOF'
 --- /etc/httpd/conf.d/ssl.conf  2014-03-20 06:17:58.000000000 -0400
@@ -481,7 +481,7 @@ rm -f /tmp/ssl.conf.patch
 service postgresql initdb
 service postgresql start
 
-echo -e "# 15. Editing postgresql.conf file" >> ${LOG}
+echo -e "# 15. Editing postgresql.conf" >> ${LOG}
 cp -p /var/lib/pgsql/data/postgresql.conf /var/lib/pgsql/data/postgresql.conf.orig
 sed -i -e "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /var/lib/pgsql/data/postgresql.conf
 
@@ -532,7 +532,7 @@ su -l koji -c "psql koji koji < /usr/share/doc/koji-1.8.0/docs/schema.sql"
 su -l koji -c "psql koji koji < /tmp/users.sql"
 rm /tmp/users.sql
 
-echo -e "# 18. Patching httpd.conf file" >> ${LOG}
+echo -e "# 18. Patching httpd.conf" >> ${LOG}
 cp -p /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.orig
 cat > /tmp/httpd.conf.patch << 'EOF'
 *** /etc/httpd/conf/httpd.conf  2014-03-20 11:17:58.000000000 +0100
@@ -560,9 +560,9 @@ rm -f /tmp/httpd.conf.patch
 
 echo -e "# 19. Patching koji" >> ${LOG}
 cp -p /usr/bin/koji /usr/bin/koji.orig
-cat /tmp/koji.patch << 'EOF'
+cat > /tmp/koji.patch << 'EOF'
 --- /usr/bin/koji.orig  2014-05-02 08:42:17.775003420 -0400
-+++ /usr/bin/koji   2014-05-02 08:43:24.717999263 -0400
++++ /usr/bin/koji       2014-05-02 08:43:24.717999263 -0400
 @@ -4145,6 +4145,9 @@
              continue
          print "Tag: %(name)s [%(id)d]" %info
