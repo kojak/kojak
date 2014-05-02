@@ -112,8 +112,13 @@ else
 fi
 "
 
-# Install maven locally.
-rpm -Uvh /opt/koji/kojak/pkgs/${MAVEN}.noarch.rpm
+# Install Maven3
+MVNRPM=$(rpm -q maven3)
+if [ ! -z ${MVNRPM} ]; then
+        echo -e "${MVNRPM} already installed"
+else
+        yum localinstall /opt/kojak/pkgs/maven3-3.0.3-4.noarch.rpm 
+fi
 
 # Kojibuilder ssl update
 echo -e "UPDATE users SET name = 'kojibuilder' WHERE name = 'kojibuilder1.localdomain';\q" >> /tmp/kojibuilder.sql
