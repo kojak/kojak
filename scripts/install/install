@@ -558,7 +558,7 @@ EOF
 patch -p0 < /tmp/httpd.conf.patch
 rm -f /tmp/httpd.conf.patch
 
-echo -e "# 18. Patching koji" >> ${LOG}
+echo -e "# 19. Patching koji" >> ${LOG}
 cp -p /usr/bin/koji /usr/bin/koji.orig
 cat /tmp/koji.patch << 'EOF'
 --- /usr/bin/koji.orig  2014-05-02 08:42:17.775003420 -0400
