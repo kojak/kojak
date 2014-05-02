@@ -51,7 +51,7 @@ menu_msg_01() {
 main_menu() {
 PS3='Please Select installation type: '
 echo
-options=("Create VM" "Install" "Uninstall" "Configure" "Quit")
+options=("Create VM" "Install" "Configure" "Uninstall" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -65,14 +65,14 @@ do
             $SCRIPTS/install/install
             exit
             ;;
-        "Uninstall")
-            echo -e "\n>> Removing Installation"
-            $SCRIPTS/install/uninstall
-            exit
-            ;;
         "Configure")
             echo -e "\n>> Creating rcm tag base"
             $SCRIPTS/config/configure
+            exit
+            ;;
+        "Uninstall")
+            echo -e "\n>> Removing Installation"
+            $SCRIPTS/install/uninstall
             exit
             ;;
         "Quit")
