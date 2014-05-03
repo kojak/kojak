@@ -204,3 +204,6 @@ service postgresql restart
 service httpd restart
 service kojid restart
 service kojira restart
+
+echo -e "\nConfiguration complete...See http://koji.localdomain."
+sleep 1
