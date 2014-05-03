@@ -110,6 +110,10 @@ check_task() {
                         fi
                     fi
                     ;;
+                "newrepo free")
+                    echo "Status: $STATUS"
+                    build_src
+                    ;;
                 "createrepo open")
                     echo "Status: $STATUS"
                     wait
