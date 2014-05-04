@@ -46,21 +46,11 @@ ${PROG} add-tag ${PRODUCT} --arches ${ARCH} --maven-support --include-all
 ${PROG} add-tag ${PRODUCT}-candidate --arches ${ARCH} --maven-support --include-all
 ${PROG} add-tag ${PRODUCT}-override --arches ${ARCH} --maven-support --include-all
 ${PROG} add-tag ${PRODUCT}-build --arches ${ARCH} --maven-support --include-all
-${PROG} add-tag ${PRODUCT}-builddeps --arches ${ARCH} --maven-support --include-all
-${PROG} add-tag ${PRODUCT}-todo --arches ${ARCH} --maven-support --include-all
-
-# Add dependency tags
-${PROG} add-tag jb-middleware-imports --arches none --maven-support --include-all
-${PROG} add-tag mead-import-maven-all --arches none --maven-support --include-all
 
 # Add tag inheritance
 ${PROG} add-tag-inheritance ${PRODUCT}-candidate ${PRODUCT} --priority 0
 ${PROG} add-tag-inheritance ${PRODUCT}-override ${PRODUCT}-candidate --priority 0
 ${PROG} add-tag-inheritance ${PRODUCT}-build ${PRODUCT}-override --priority 0
-${PROG} add-tag-inheritance ${PRODUCT}-build ${PRODUCT}-builddeps --priority 5
-${PROG} add-tag-inheritance ${PRODUCT}-build jb-middleware-imports --priority 10
-${PROG} add-tag-inheritance ${PRODUCT}-build mead-import-maven-all --priority 20
-${PROG} add-tag-inheritance ${PRODUCT}-build ${PRODUCT}-todo --priority 40
 
 # Add target
 ${PROG} add-target ${PRODUCT}-candidate ${PRODUCT}-build ${PRODUCT}-candidate
