@@ -115,9 +115,17 @@ check_task() {
                         fi
                     fi
                     ;;
-                "newrepo free")
+                "newRepo open")
+                    echo "Status: $STATUS"
+                    wait
+                    ;;
+                "newRepo closed")
                     echo "Status: $STATUS"
                     build_src
+                    ;;
+                "newRepo free")
+                    echo "Status: $STATUS"
+                    wait
                     ;;
                 "createrepo open")
                     echo "Status: $STATUS"
