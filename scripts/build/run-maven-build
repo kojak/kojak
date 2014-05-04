@@ -160,7 +160,7 @@ check_task() {
 }
 
 if [ -e "${HOME}/workspace/buildmetadata-maven-plugin/build.log" ]; then
-    koji maven-build -Dmaven.test.skip=true --scratch ${TAG}-candidate $SRC
+    check_task
 else
     cd ~/workspace
     git clone ${SCM}/${APP}.git
