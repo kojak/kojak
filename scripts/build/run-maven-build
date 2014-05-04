@@ -62,7 +62,7 @@ resolve_deps() {
                 cd $TMP
                 # Executes the modified version of these utility scripts specific to Kojak.
                 $SCRIPTS/get-maven-artifacts $REPOS $dep
-                $SCRIPTS/import-maven --tag ${TAG}-builddeps *
+                $SCRIPTS/import-maven *
                 cd $WORKSPACE
                 rm -rf $TMP
                 RES=$dep
