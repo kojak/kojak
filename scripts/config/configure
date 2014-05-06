@@ -198,4 +198,3 @@ service kojid restart
 service kojira restart
 
 echo -e "\nConfiguration complete...See http://koji.localdomain."
-sleep 
