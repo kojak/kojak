@@ -105,7 +105,7 @@ MVNRPM=$(rpm -q maven3)
 if [ ! -z ${MVNRPM} ]; then
         echo -e "${MVNRPM} already installed"
 else
-        yum localinstall /opt/kojak/pkgs/maven3-3.0.3-4.noarch.rpm 
+        yum -y localinstall /opt/kojak/pkgs/maven3-3.0.3-4.noarch.rpm 
 fi
 
 # Kojibuilder ssl update
