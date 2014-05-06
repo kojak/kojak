@@ -41,13 +41,17 @@ ${PROG} add-host-to-channel kojibuilder1.localdomain vm
 ${PROG} grant-permission repo kojira
 ${PROG} grant-permission build kojibuilder1.localdomain
 
-# Add tags
-${PROG} add-tag ${PRODUCT} --maven-support --include-all --arches ${ARCH}
-${PROG} add-tag ${PRODUCT}-candidate --maven-support --include-all --parent ${PRODUCT} --arches ${ARCH}
-${PROG} add-tag ${PRODUCT}-build --maven-support --include-all --parent ${PRODUCT} --arches ${ARCH}
-${PROG} add-tag mead-import-maven-all --maven-support --include-all --arches none
+# Add product tags
+${PROG} add-tag ${PRODUCT} --arches ${ARCH} --maven-support --include-all
+${PROG} add-tag ${PRODUCT}-candidate --arches ${ARCH} --maven-support --include-all
+${PROG} add-tag ${PRODUCT}-build --arches ${ARCH} --maven-support --include-all
+
+# Add dependency tags
+${PROG} add-tag mead-import-maven-all --arches none --maven-support --include-all
 
 # Add tag inheritance
+${PROG} add-tag-inheritance ${PRODUCT}-candidate ${PRODUCT} --priority 0
+${PROG} add-tag-inheritance ${PRODUCT}-build ${PRODUCT}-candidate --priority 0
 ${PROG} add-tag-inheritance ${PRODUCT}-build mead-import-maven-all --priority 10
 
 # Add target
@@ -194,4 +198,4 @@ service kojid restart
 service kojira restart
 
 echo -e "\nConfiguration complete...See http://koji.localdomain."
-sleep 1
+sleep 
