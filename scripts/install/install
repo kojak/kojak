@@ -532,6 +532,9 @@ su -l koji -c "psql koji koji < /usr/share/doc/koji-1.8.0/docs/schema.sql"
 su -l koji -c "psql koji koji < /tmp/users.sql"
 rm /tmp/users.sql
 
+# Restart the database
+service postgresql restart
+
 echo -e "# 18. Patching httpd.conf" >> ${LOG}
 cp -p /etc/httpd/conf/httpd.conf /etc/httpd/conf/httpd.conf.orig
 cat > /tmp/httpd.conf.patch << 'EOF'
