@@ -1,0 +1,45 @@
+#!/bin/bash
+# 
+# Copyright (C) 2013 Red Hat Inc.
+# Author: Salim Badakhchani <sal@redhat.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+#
+########################################################################
+
+# Uncomment to debug script
+set -x
+
+PRO="git+"
+SCM="https://github.com/sbadakhc"
+APP="buildmetadata-maven-plugin"
+CHK="#ce68bfc08000ada70a3aa04d92d7c88271ac5b5e"
+SRC="${PRO}${SCM}/${APP}.git${CHK}"
+TAG="rcm-mw-tools"
+TARGET="rcm-mw-tools-candidate"
+PKG="com.redhat.rcm.maven.plugin.buildmetadata-maven-plugin"
+
+if [ -e "${HOME}/workspace/${APP}/build.log" ]; then
+    koji maven-build -Dmaven.test.skip=true --scratch $TARGET ${SRC}
+else
+    koji add-pkg --owner=koji rcm-mw-tools com.redhat.rcm.maven.plugin.buildmetadata-maven-plugin
+    cd ~/workspace
+    git clone https://github.com/sbadakhc/${APP}.git
+    cd ${APP}
+    mvn -B dependency:resolve-plugins clean install -Dmaven.test.skip=true | tee build.log
+    /opt/kojak/scripts/build/mead-load-build-dependencies build.log
+    koji add-pkg --owner=koji ${TAG} com.redhat.rcm.HelloWorld
+    koji maven-build -Dmaven.test.skip=true --scratch ${TARGET} ${SRC}
+fi
+
