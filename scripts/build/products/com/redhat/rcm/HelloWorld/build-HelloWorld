@@ -33,12 +33,11 @@ PKG="com.redhat.rcm.maven.HelloWorld"
 if [ -e "${HOME}/workspace/${APP}/build.log" ]; then
     koji maven-build -Dmaven.test.skip=true --scratch $TARGET ${SRC}
 else
-    koji add-pkg --owner=koji rcm-mw-tools com.redhat.rcm.HelloWorld
     cd ~/workspace
     git clone https://github.com/sbadakhc/${APP}.git
     cd ${APP}
     mvn -B dependency:resolve-plugins clean install -Dmaven.test.skip=true | tee build.log
     /opt/kojak/scripts/build/mead-load-build-dependencies build.log
-    koji add-pkg --owner=koji ${TAG} com.redhat.rcm.HelloWorld
+    koji add-pkg --owner=koji ${TAG} ${PKG}
     koji maven-build -Dmaven.test.skip=true --scratch ${TARGET} ${SRC}
 fi
