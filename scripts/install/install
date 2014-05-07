@@ -646,6 +646,12 @@ cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/serverca.crt
 chown -R koji:apache /home/koji/.koji/
 cd -
 
+# Kojibuilder ssl update
+echo -e "UPDATE users SET name = 'kojibuilder' WHERE name = 'kojibuilder1.localdomain';\q" >> /tmp/kojibuilder.sql
+su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
+rm -rf /tmp/kojibuilder.sql
+rm -rf /tmp/koji
+
 # Stop firewall
 service iptables stop
 chkconfig iptables off
@@ -663,4 +669,3 @@ chkconfig kojira on
 service kojira start
 
 echo -e "\nInstallation complete...System ready for configuration."
-sleep 1

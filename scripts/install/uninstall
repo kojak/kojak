@@ -62,4 +62,3 @@ for file in ${ORIG_FILES}; do cat $file > $(echo $file | sed "s/\.orig$//") && r
 
 updatedb
 echo -e "\nKojak uninstalled...exiting menu."
-sleep 1
