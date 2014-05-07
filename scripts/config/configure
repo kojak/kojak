@@ -191,4 +191,20 @@ service httpd restart
 service kojid restart
 service kojira restart
 
+echo -e "Updating permissions..."
+echo -e "UPDATE user_perms SET user_id = '5' where user_id = '4';\
+UPDATE host SET user_id = '5' where user_id = '4';\
+DELETE from users where name = 'kojibuilder1.localdomain';\q" >> /tmp/kojibuilder.sql
+su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
+rm /tmp/kojibuilder.sql
+
+service postgresql restart
+service httpd restart
+service kojid restart
+service kojira restart
+
+echo -e "\nService status...\n"
+service kojid status
+service kojira status
+
 echo -e "\nConfiguration complete...See http://koji.localdomain."
