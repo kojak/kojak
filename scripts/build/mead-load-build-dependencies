@@ -76,9 +76,9 @@ parser.add_option('--urls', action='store_true',
 parser.add_option('--print-only', action='store_true',
                   help='Print the list of urls and exit')
 parser.add_option('--print-missing', action='store_true',
-                  help='Print artifacts that are missing from Brew')
+                  help='Print artifacts that are missing from Koji')
 parser.add_option('--check-tag',
-                  help='For artifacts that are in Brew, check that they are in the given tag')
+                  help='For artifacts that are in Koji, check that they are in the given tag')
 parser.add_option('--tag',
                   help='Tag imports into this tag, as well as the default')
 parser.add_option('--exclude', action='append', default=[],
@@ -208,7 +208,7 @@ for baseurl in urls:
             # print 'Maven archives for %s:' % koji.mavenLabel(maven_info), maven_archives
             if not maven_archives:
                 maven_info['baseurl'] = baseurl
-                print '\n%(group_id)s:%(artifact_id)s:%(version)s from %(baseurl)s has no versions in Brew, downloading and importing' % maven_info
+                print '\n%(group_id)s:%(artifact_id)s:%(version)s from %(baseurl)s has no versions in Koji, downloading and importing' % maven_info
                 download = True
             else:
                 for link in links:
