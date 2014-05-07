@@ -481,6 +481,8 @@ rm -f /tmp/ssl.conf.patch
 service postgresql initdb
 service postgresql start
 
+sleep 10
+
 echo -e "# 15. Editing postgresql.conf" >> ${LOG}
 cp -p /var/lib/pgsql/data/postgresql.conf /var/lib/pgsql/data/postgresql.conf.orig
 sed -i -e "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /var/lib/pgsql/data/postgresql.conf
