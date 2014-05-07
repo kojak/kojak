@@ -20,7 +20,7 @@ session = koji.ClientSession(KOJI_HUB)
 
 parser = optparse.OptionParser(usage='%prog [options] artifact [artifact...]')
 parser.add_option('--tag', dest='tags', action='append',
-                  default=['mead-import-maven-all'], help='Additional tags to import into')
+                  default=['rcm-mw-tools-deps'], help='Additional tags to import into')
 parser.add_option('--owner', default=os.environ['USER'], help='Owner of the package')
 parser.add_option('--release', default='1', help='Release of the build to create')
 options, args = parser.parse_args()

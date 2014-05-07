@@ -45,14 +45,12 @@ ${PROG} grant-permission build kojibuilder1.localdomain
 ${PROG} add-tag ${PRODUCT} --arches ${ARCH} --maven-support --include-all
 ${PROG} add-tag ${PRODUCT}-candidate --arches ${ARCH} --maven-support --include-all
 ${PROG} add-tag ${PRODUCT}-build --arches ${ARCH} --maven-support --include-all
-
-# Add dependency tags
-${PROG} add-tag mead-import-maven-all --arches none --maven-support --include-all
+${PROG} add-tag ${PRODUCT}-deps --arches none --maven-support --include-all
 
 # Add tag inheritance
 ${PROG} add-tag-inheritance ${PRODUCT}-candidate ${PRODUCT} --priority 0
-${PROG} add-tag-inheritance ${PRODUCT}-build ${PRODUCT}-candidate --priority 0
-${PROG} add-tag-inheritance ${PRODUCT}-build mead-import-maven-all --priority 10
+${PROG} add-tag-inheritance ${PRODUCT}-build ${PRODUCT}-candidate --priority 5
+${PROG} add-tag-inheritance ${PRODUCT}-build ${PRODUCT}-deps --priority 10
 
 # Add target
 ${PROG} add-target ${PRODUCT}-candidate ${PRODUCT}-build ${PRODUCT}-candidate
