@@ -39,5 +39,7 @@ else
     mvn -B dependency:resolve-plugins clean install -Dmaven.test.skip=true | tee build.log
     /opt/kojak/scripts/build/mead-load-build-dependencies build.log
     koji add-pkg --owner=koji ${TAG} ${PKG}
+    echo -e "Please confirm there are no more tasks pending before pressing any key to continue"
+    read
     koji maven-build -Dmaven.test.skip=true --scratch ${TARGET} ${SRC}
 fi
