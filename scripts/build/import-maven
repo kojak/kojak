@@ -20,7 +20,7 @@ session = koji.ClientSession(KOJI_HUB)
 
 parser = optparse.OptionParser(usage='%prog [options] artifact [artifact...]')
 parser.add_option('--tag', dest='tags', action='append',
-                  default=['rcm-mw-tools-deps'], help='Additional tags to import into')
+                  default=['rcm-mw-tools'], help='Additional tags to import into')
 parser.add_option('--owner', default=os.environ['USER'], help='Owner of the package')
 parser.add_option('--release', default='1', help='Release of the build to create')
 options, args = parser.parse_args()
@@ -63,6 +63,7 @@ else:
 for tagname in set(options.tags):
     tag = session.getTag(tagname, strict=True)
     package = session.getPackage(build_info['name'])
+    target = (tag['name'] +'-candidate')
     tag_pkgs = []
     if package:
         tag_pkgs = session.listPackages(tagID=tag['id'], pkgID=package['id'], inherited=True)
@@ -76,7 +77,7 @@ for tagname in set(options.tags):
     if tag['name'] in [t['name'] for t in session.listTags(build=koji.buildLabel(build_info))]:
         print '%s already tagged with %s, skipping...' % (koji.buildLabel(build_info), tag['name'])
     else:
-        cmd = KOJI_CMD + ' tag-pkg --nowait %s %s' % (tag['name'], koji.buildLabel(build_info))
+        cmd = KOJI_CMD + ' tag-build --nowait %s %s' % (target, koji.buildLabel(build_info))
         run(cmd)
 
 print 'Imported and tagged %s' % koji.buildLabel(build_info)
