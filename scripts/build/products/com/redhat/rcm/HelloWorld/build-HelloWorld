@@ -36,7 +36,7 @@ else
     cd ~/workspace
     git clone ${URL}/${APP}.git
     cd ${APP}
-    mvn clean install C -B dependency:resolve-plugins -Dmaven.test.skip=true | tee build.log
+    mvn clean install -C -B dependency:resolve-plugins -Dmaven.test.skip=true | tee build.log
     /opt/kojak/scripts/build/mead-load-build-dependencies ${HOME}/workspace/${APP}/build.log
     koji add-pkg --owner=koji ${TAG} ${PKG}
     echo -e "Please confirm there are no more tasks pending before pressing any key to continue"
