@@ -42,6 +42,6 @@ else
     koji add-pkg --owner=koji ${TAG} ${PKG}
     echo -e "Please confirm there are no more tasks pending before pressing any key to continue"
     read
-    koji maven-build -Dmaven.test.skip=true --scratch ${TARGET} ${SRC}
+    koji maven-build -Dmaven.test.skip=true --scratch ${TGT} ${SRC}
 fi
 
