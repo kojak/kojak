@@ -21,22 +21,22 @@
 # Uncomment to debug script
 set -x
 
-PRO="git+"
-SCM="https://github.com/sbadakhc"
+SCM="git+"
+URL="https://github.com/sbadakhc"
 APP="HelloWorld"
 CHK="#HEAD"
-SRC="${PRO}${SCM}/${APP}.git${CHK}"
+SRC="${SCM}${GIT}/${APP}.git${CHK}"
 TAG="rcm-mw-tools"
-TARGET="rcm-mw-tools-candidate"
+TGT="rcm-mw-tools-candidate"
 PKG="com.redhat.rcm.maven.HelloWorld"
 
 if [ -e "${HOME}/workspace/${APP}/build.log" ]; then
-    koji maven-build -Dmaven.test.skip=true --scratch $TARGET ${SRC}
+    koji maven-build -Dmaven.test.skip=true --scratch ${TGT} ${SRC}
 else
     cd ~/workspace
-    git clone https://github.com/sbadakhc/${APP}.git
+    git clone ${URL}/${APP}.git
     cd ${APP}
-    mvn -B dependency:resolve-plugins clean install -Dmaven.test.skip=true | tee build.log
+    mvn clean install C -B dependency:resolve-plugins -Dmaven.test.skip=true | tee build.log
     /opt/kojak/scripts/build/mead-load-build-dependencies build.log
     koji add-pkg --owner=koji ${TAG} ${PKG}
     echo -e "Please confirm there are no more tasks pending before pressing any key to continue"
