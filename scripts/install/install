@@ -21,13 +21,18 @@
 # Uncomment to debug script
 #set -x
 
-# Check to see if user is root
+# Check user
 if [ "${USER}" != "root" ]; then
     echo -e "\n# This script requires root priviledges to run"
     exit
 fi
 
-RELEASE=$(cat /etc/redhat-release)
+# Check OS
+if [ ! -f "/etc/centos-release" ]; then
+    echo -e "\n# Unsupported OS...installation requires CentOS"
+    echo
+fi
+
 LOG="/root/kojak.log"
 TSTAMP=$(date '+_%Y%m%d%H%M%S')
 
