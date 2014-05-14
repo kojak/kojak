@@ -31,7 +31,7 @@ TGT="rcm-mw-tools-candidate"
 PKG="com.redhat.rcm.HelloWorld"
 
 if [ -e "${HOME}/workspace/${APP}/build.log" ]; then
-    koji maven-build -Dmaven.test.skip=true --scratch ${TGT} ${SRC}
+    koji maven-build -Dmaven.test.skip=true ${TGT} ${SRC}
 else
     cd ~/workspace
     git clone https://github.com/sbadakhc/${APP}.git
