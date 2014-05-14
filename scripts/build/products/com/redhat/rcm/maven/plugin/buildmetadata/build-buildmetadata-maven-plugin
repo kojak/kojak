@@ -24,7 +24,7 @@ set -x
 SCM="git+"
 URL="https://github.com/sbadakhc"
 APP="buildmetadata-maven-plugin"
-CHK="#ce68bfc08000ada70a3aa04d92d7c88271ac5b5e"
+CHK="#7130058036a80c727810f0beb55488ee0ff7ba15"
 SRC="${SCM}${URL}/${APP}.git${CHK}"
 TAG="rcm-mw-tools"
 TGT="rcm-mw-tools-candidate"
