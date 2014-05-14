@@ -24,7 +24,7 @@ set -x
 SCM="git+"
 URL="https://github.com/sbadakhc"
 APP="HelloWorld"
-CHK="#117b1d1fd4ed9d09be194743dbed985759db0d73"
+CHK="#HEAD"
 SRC="${SCM}${URL}/${APP}.git${CHK}"
 TAG="rcm-mw-tools"
 TGT="rcm-mw-tools-candidate"
