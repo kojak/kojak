@@ -21,17 +21,17 @@
 # Uncomment to debug script
 set -x
 
-SCM="git+"
-URL="https://github.com/sbadakhc"
-APP="HelloWorld"
-CHK="#HEAD"
-SRC="${SCM}${URL}/${APP}.git${CHK}"
-TAG="rcm-mw-tools"
-BLD="rcm-mw-tools-build"
-TGT="rcm-mw-tools-candidate"
-PKG="com.redhat.rcm.HelloWorld"
+SCM='git+'
+URL='https://github.com/sbadakhc'
+APP='HelloWorld'
+CHK='#HEAD'
+SRC='${SCM}${URL}/${APP}.git${CHK}'
+TAG='rcm-mw-tools'
+BLD='rcm-mw-tools-build'
+TGT='rcm-mw-tools-candidate'
+PKG='com.redhat.rcm.HelloWorld'
 
-if [ -e "${HOME}/workspace/${APP}/build.log" ]; then
+if [ -e '${HOME}/workspace/${APP}/build.log' ]; then
     koji maven-build -Dmaven.test.skip=true ${TGT} ${SRC}
 else
     cd ~/workspace

@@ -21,15 +21,15 @@
 # Uncomment to debug script
 set -x
 
-SCM="git+"
-URL="https://github.com/sbadakhc"
-APP="buildmetadata-maven-plugin"
-CHK="#7130058036a80c727810f0beb55488ee0ff7ba15"
-SRC="${SCM}${URL}/${APP}.git${CHK}"
-TAG="rcm-mw-tools"
-BLD="rcm-mw-tools-build"
-TGT="rcm-mw-tools-candidate"
-PKG="com.redhat.rcm.maven.plugin.buildmetadata-maven-plugin"
+SCM='git+'
+URL='https://github.com/sbadakhc'
+APP='buildmetadata-maven-plugin'
+CHK='#7130058036a80c727810f0beb55488ee0ff7ba15'
+SRC="${SCM}${URL}/${APP}.git${CHK}'
+TAG='rcm-mw-tools'
+BLD='rcm-mw-tools-build'
+TGT='rcm-mw-tools-candidate'
+PKG='com.redhat.rcm.maven.plugin.buildmetadata-maven-plugin'
 
 if [ -e "${HOME}/workspace/${APP}/build.log" ]; then
     koji maven-build -Dmaven.test.skip=true ${TGT} ${SRC}
