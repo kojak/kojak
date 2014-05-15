@@ -27,6 +27,7 @@ APP="buildmetadata-maven-plugin"
 CHK="#7130058036a80c727810f0beb55488ee0ff7ba15"
 SRC="${SCM}${URL}/${APP}.git${CHK}"
 TAG="rcm-mw-tools"
+BLD="rcm-mw-tools-build"
 TGT="rcm-mw-tools-candidate"
 PKG="com.redhat.rcm.maven.plugin.buildmetadata-maven-plugin"
 
@@ -42,5 +43,6 @@ else
     echo -e "Please confirm there are no more tasks pending before pressing any key to continue"
     read
     koji add-pkg ${TAG} ${PKG} --owner ${USER}
+    koji regen-repo ${BLD}
     koji maven-build -Dmaven.test.skip=true ${TGT} ${SRC}
 fi
