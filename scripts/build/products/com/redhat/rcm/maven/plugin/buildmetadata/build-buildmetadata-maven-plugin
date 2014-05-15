@@ -29,7 +29,7 @@ SRC="${SCM}${URL}/${APP}.git${CHK}"
 TAG='rcm-mw-tools'
 BLD='rcm-mw-tools-build'
 TGT='rcm-mw-tools-candidate'
-PKG='com.redhat.rcm.maven.plugin.buildmetadata-maven-plugin'
+PKG='com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin'
 
 if [ -e "${HOME}/workspace/${APP}/build.log" ]; then
     koji maven-build -Dmaven.test.skip=true ${TGT} ${SRC}
