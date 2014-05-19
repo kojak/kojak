@@ -45,5 +45,5 @@ else
     echo -e "Please confirm there are no more tasks pending before pressing any key to continue"
     read
     koji add-pkg ${TAG} ${PKG} --owner ${USER}
-    koji maven-build -Dmaven.test.skip=true ${OPT} ${TGT} ${SRC}
+    koji maven-build ${OPT} ${TGT} ${SRC}
 fi
