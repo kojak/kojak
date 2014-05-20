@@ -485,7 +485,7 @@ rm -f /tmp/ssl.conf.patch
 # Start the database
 service postgresql initdb
 service postgresql start
-service postgreslq status
+service postgresql status
 
 echo -e "# 15. Editing postgresql.conf" >> ${LOG}
 cp -p /var/lib/pgsql/data/postgresql.conf /var/lib/pgsql/data/postgresql.conf.orig
