@@ -184,7 +184,7 @@ chown -R koji:apache /home/koji/.koji/
 # Restart the services
 service postgresql restart
 service httpd restart
-service kojid restart
+service kojid start
 service kojira restart
 
 echo -e "Updating permissions..."
@@ -193,10 +193,11 @@ UPDATE host SET user_id = '5' where user_id = '4';\
 DELETE from users where name = 'kojibuilder1.localdomain';\q" >> /tmp/kojibuilder.sql
 su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm /tmp/kojibuilder.sql
+echo -e "Bringing the system up..."
 
 service postgresql restart
 service httpd restart
-service kojid restart
+service kojid start
 service kojira restart
 
 echo -e "\nService status...\n"
