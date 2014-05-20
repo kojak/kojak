@@ -47,7 +47,7 @@ else
     /opt/kojak/scripts/build/mead-load-build-dependencies ${HOME}/workspace/${APP}/build.log
     koji add-pkg ${TAG} ${PKG} --owner ${USER}
     while true; do
-        STATUS="$(koji list-tasks | sort -n | awk {'print $4'} | tail -1 | grep CLOSED)"
+        STATUS="$(koji list-tasks --quiet | sort -n | grep createrepo | awk {'print $4'} | tail -1 | grep CLOSED)"
         if [ "${STATUS}" == "CLOSED" ]; then 
             echo "Tasks Closed"
             koji maven-build ${OPT} ${TGT} ${SRC}
