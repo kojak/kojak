@@ -184,7 +184,7 @@ chown -R koji:apache /home/koji/.koji/
 # Restart the services
 service postgresql restart
 service httpd restart
-service kojid restart > 2&>1 > /dev/null
+service kojid restart
 service kojira restart
 
 echo -e "Updating permissions..."
@@ -197,7 +197,7 @@ echo -e "Bringing the system up..."
 
 service postgresql restart
 service httpd restart
-service kojid restart > 2&>1 > /dev/null
+service kojid restart
 service kojira restart
 
 echo -e "\nService status...\n"
