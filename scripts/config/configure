@@ -181,20 +181,20 @@ cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/serverca.crt
 # Set the appropriate permissions
 chown -R koji:apache /home/koji/.koji/
 
-# Restart the services
+echo -e "Restart services...\n"
 service postgresql restart
 service httpd restart
 service kojid start
 service kojira restart
 
-echo -e "Updating permissions..."
+echo -e "Updating permissions...\n"
 echo -e "UPDATE user_perms SET user_id = '5' where user_id = '4';\
 UPDATE host SET user_id = '5' where user_id = '4';\
 DELETE from users where name = 'kojibuilder1.localdomain';\q" >> /tmp/kojibuilder.sql
 su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm /tmp/kojibuilder.sql
-echo -e "Bringing the system up..."
 
+echo -e "Bringing the system up...\n"
 service postgresql restart
 service httpd restart
 service kojid start
@@ -204,4 +204,4 @@ echo -e "\nService status...\n"
 service kojid status
 service kojira status
 
-echo -e "\nConfiguration complete...See http://koji.localdomain.com"
+echo -e "\nConfiguration complete...Kojak installed."
