@@ -30,11 +30,7 @@ TAG='rcm-mw-tools'
 BLD='rcm-mw-tools-build'
 TGT='rcm-mw-tools-candidate'
 PKG='com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin'
-#OPT="-B dependency:resolve-plugins -Dmaven.test.skip=true"
-
-# For build metadata use the following options.
-OPT="-B dependency:resolve-plugins -Dmaven.test.skip=true -Gcom.redhat.rcm.maven.plugin:buildmetadata-maven-plugin:1.3.1:provide-buildmetadata -DbuildMetaData:createPropertiesReport=false -DbuildMetaData:xmlOutputFile=project.build.outputDirectory/META-INF/buildmetadata.xml -DbuildMetaData:hideCommandLineInfo=false -DbuildMetaData:hideMavenOptsInfo=false -DbuildMetaData:hideJavaOptsInfo=false -DbuildMetaData:addScminfo=true -Dmaven.test.skip=true"
-
+OPT="clean install -Dmaven.test.skip=true"
 
 if [ -e "${HOME}/workspace/${APP}/build.log" ]; then
     koji maven-build ${OPT} ${TGT} ${SRC}
