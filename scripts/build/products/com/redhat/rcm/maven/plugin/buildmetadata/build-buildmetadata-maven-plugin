@@ -30,7 +30,7 @@ TAG='rcm-mw-tools'
 BLD='rcm-mw-tools-build'
 TGT='rcm-mw-tools-candidate'
 PKG='com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin'
-OPT="clean install -Dmaven.test.skip=true"
+OPT="-Dmaven.test.skip=true"
 
 if [ -e "${HOME}/workspace/${APP}/build.log" ]; then
     koji maven-build ${OPT} ${TGT} ${SRC}
