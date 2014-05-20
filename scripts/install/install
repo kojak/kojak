@@ -673,7 +673,7 @@ service postgresql restart
 chkconfig httpd on
 service httpd start
 chkconfig kojid on
-service kojid start
+service kojid start > 2&>1 > /dev/null
 chkconfig kojira on
 service kojira start
 
