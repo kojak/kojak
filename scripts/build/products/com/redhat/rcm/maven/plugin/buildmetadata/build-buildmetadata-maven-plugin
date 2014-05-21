@@ -40,7 +40,7 @@ else
     git clone ${URL}/${APP}.git
     cd ${APP}
     git checkout ${APP}-${VSN}
-    mvn clean install -C -B dependency:resolve-plugins -Dmaven.test.skip=true | tee build.log
+    mvn clean install -C -Dmaven.test.skip=true | tee build.log
     /opt/kojak/scripts/build/mead-load-build-dependencies ${HOME}/workspace/${APP}/build.log
     koji add-pkg ${TAG} ${PKG} --owner ${USER}
     koji maven-build ${OPT} ${TGT} ${SRC}
