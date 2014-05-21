@@ -187,21 +187,21 @@ service httpd restart
 service kojid start
 service kojira restart
 
-echo -e "Updating permissions...\n"
+echo -e "\nUpdating permissions..."
 echo -e "UPDATE user_perms SET user_id = '5' where user_id = '4';\
 UPDATE host SET user_id = '5' where user_id = '4';\
 DELETE from users where name = 'kojibuilder1.localdomain';\q" >> /tmp/kojibuilder.sql
 su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm /tmp/kojibuilder.sql
 
-echo -e "Bringing the system up...\n"
+echo -e "\nBringing the system up..."
 service postgresql restart
 service httpd restart
 service kojid start
 service kojira restart
 
-echo -e "\nService status...\n"
+echo -e "\nService status..."
 service kojid status
 service kojira status
 
-echo -e "\nConfiguration complete...Kojak installed."
+echo -e "\nConfiguration complete...Kojak is OK"
