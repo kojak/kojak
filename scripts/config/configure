@@ -180,8 +180,6 @@ cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/serverca.crt
 
 # Set the appropriate permissions
 chown -R koji:apache /home/koji/.koji/
-
-echo -e "Restart services...\n"
 service postgresql restart
 service httpd restart
 service kojid start
