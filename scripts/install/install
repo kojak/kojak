@@ -661,13 +661,11 @@ su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm -rf /tmp/kojibuilder.sql
 rm -rf /tmp/koji
 
-echo -e "Disabling firewall...\n"
+echo -e "Initialising services...\n"
 service iptables stop
 chkconfig iptables off
 service ip6tables stop
 chkconfig ip6tables off
-
-echo -e "Initialising services...\n"
 chkconfig postgresql on
 service postgresql restart
 chkconfig httpd on
