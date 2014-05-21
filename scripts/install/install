@@ -645,8 +645,6 @@ cd $CRTHOME
 export CANAME HOSTNAME DOMAINNAME CRTHOME CLCRTHOME CNF
 
 # Copy the client certficates to the koji users home directory.
-echo -e "Deploying certificates..."
-
 cp -f /etc/pki/koji/kojiadmin.pem /home/koji/.koji/client.crt
 cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/clientca.crt
 cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/serverca.crt
@@ -661,7 +659,7 @@ su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm -rf /tmp/kojibuilder.sql
 rm -rf /tmp/koji
 
-echo -e "Initialising services...\n"
+echo -e "\nInitialising services...\n"
 service iptables stop
 chkconfig iptables off
 service ip6tables stop
