@@ -1,0 +1,93 @@
+#!/bin/bash
+#
+# Copyright (C) 2013 Red Hat Inc.
+# Author: Salim Badakhchani <sal@redhat.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+########################################################################
+
+# Uncomment to debug script
+#set -x
+
+# Check to see if user is root
+if [ "$USER" != "root" ]; then
+echo -e "\n# This script requires root priviledges to run"
+    exit
+fi
+
+# Reset the terminal
+reset
+
+# Delcare the scripts directory
+SCRIPTS="`pwd`/scripts"
+
+# The menu header
+welcome_header() {
+    clear
+    echo -e "\n################################################################################"
+    echo -e "# #"
+    echo -e "# !!! Welcome to Kojak...Koji in a box !!! #"
+    echo -e "# #\n"
+}
+
+# Menu message
+menu_msg_01() {
+    echo -e ">> Select from the menu options below."
+}
+
+# The main menu
+main_menu() {
+PS3='Please Select installation type: '
+echo
+options=("Create VM" "Install" "Configure" "Uninstall" "Quit")
+select opt in "${options[@]}"
+do
+case $opt in
+        "Create VM")
+            echo -e "\n>> Virtual Installation Selected"
+            $SCRIPTS/install/create_vm
+            exit
+            ;;
+        "Install")
+            echo -e "\n>> Local Installation Selected"
+            $SCRIPTS/install/install
+            exit
+            ;;
+        "Configure")
+            echo -e "\n>> Configuring System"
+            $SCRIPTS/config/configure
+            exit
+            ;;
+        "Uninstall")
+            echo -e "\n>> Removing Installation"
+            $SCRIPTS/install/uninstall
+            exit
+            ;;
+        "Quit")
+            exit
+            ;;
+        *) echo -e "\n>> Invalid Option"
+           sleep 1
+           welcome_header
+           menu_msg_01
+           main_menu
+            ;;
+    esac
+done
+}
+
+welcome_header
+menu_msg_01
+main_menu
