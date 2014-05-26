@@ -55,10 +55,10 @@ ${HOME}/kojak.log
 for file in ${LOG_FILES}; do rm -f $file || echo "$file not found"; done
 
 # Update mlocate database
+echo -e "\nUpdating file datatabse...please be paitient."
 cd /
 updatedb
 ORIG_FILES=$(locate *.orig)
 for file in ${ORIG_FILES}; do cat $file > $(echo $file | sed "s/\.orig$//") && rm -f $file || echo "$file not found"; done
-
-echo -e "\nUpdating file datatabse...please be paitient."
 updatedb
+echo -e "Uninstalltion complete."
