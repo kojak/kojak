@@ -47,7 +47,7 @@ yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub
 rm -f /etc/yum.repos.d/jenkins.repo
 
 # Remove configuration files
-CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /home/koji /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql"
+CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /home/koji /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql /var/lib/mock"
 for dir in ${CFG_DIRS}; do rm -rf $dir || echo "$dir not found"; done
 
 # Remove log files
