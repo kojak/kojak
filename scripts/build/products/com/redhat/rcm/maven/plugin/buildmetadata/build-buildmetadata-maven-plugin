@@ -63,14 +63,17 @@ if ( not os.path.isfile(LOG)):
     CMD = SCM_CMD + ' clone %s/%s' % (URL, APP)
     run(CMD)
     os.chdir(os.path.join(os.getenv('HOME'),'%s/%s' % (WRK, APP)))
+    CMD = SCM_CMD + ' checkout %s-%s' % (APP, VER)
+    run(CMD)
     CMD = MVN_CMD + ' clean install -C -B dependency:resolve-plugins %s | tee build.log' % (OPT)
     run(CMD)
     CMD = '/opt/kojak/scripts/build/mead-load-build-dependencies %s' % (LOG)
     run(CMD)
-    KOJI_CMD + ' add-pkg %s %s --owner %s' % (TAG, PKG, os.getenv('USER'))
-    if STATE == koji.TASK_STATES['CLOSED']:
-        CMD = KOJI_CMD + ' maven-build %s %s %s' % (OPT, TGT, SRC)
-        run(CMD)
+    subprocess.call(['koji', 'add-pkg', 'rcm-mw-tools', 'com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin', '--owner', 'koji'])
+    CMD = KOJI_CMD + ' maven-build %s %s %s' % (OPT, TGT, SRC)
+    run(CMD)
 else:
     CMD = KOJI_CMD + ' maven-build %s %s %s' % (OPT, TGT, SRC)
     run(CMD)
+
+
