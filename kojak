@@ -67,7 +67,7 @@ case $opt in
             ;;
         "Configure")
             echo -e "\n>> Configuring System"
-            $SCRIPTS/config/configure
+            $SCRIPTS/config/config
             exit
             ;;
         "Uninstall")

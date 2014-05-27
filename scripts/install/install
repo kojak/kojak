@@ -72,7 +72,8 @@ yum-utils rpm-build mock createrepo git cvs svn pigz \
 libvirt virt-install qemu-img postgresql-server \
 wget screen vim tree links dos2unix mlocate htop iftop \
 postgresql-python pyOpenSSL python-krbV python-cheetah python-qpid libvirt-python python-virtinst \
-koji koji-builder koji-hub koji-hub-plugins koji-utils koji-vm koji-web
+koji koji-builder koji-hub koji-hub-plugins koji-utils koji-vm koji-web \
+http://pkg.jenkins-ci.org/redhat/jenkins-1.565-1.1.noarch.rpm
 
 echo -e "# 03. Creating Koji user directories" >> ${LOG}
 useradd koji
