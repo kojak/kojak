@@ -66,6 +66,10 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
 gpgcheck=1
 EOF
 
+# Include Jenkins repo 
+wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+
 echo -e "# 02. Installing packages" >> ${LOG}
 yum -y install httpd mod_ssl openssl mod_auth_kerb mod_wsgi \
 yum-utils rpm-build mock createrepo git cvs svn pigz \
@@ -73,7 +77,7 @@ libvirt virt-install qemu-img postgresql-server \
 wget screen vim tree links dos2unix mlocate htop iftop \
 postgresql-python pyOpenSSL python-krbV python-cheetah python-qpid libvirt-python python-virtinst \
 koji koji-builder koji-hub koji-hub-plugins koji-utils koji-vm koji-web \
-http://pkg.jenkins-ci.org/redhat/jenkins-1.565-1.1.noarch.rpm
+jenkins
 
 echo -e "# 03. Creating Koji user directories" >> ${LOG}
 useradd koji
