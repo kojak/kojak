@@ -43,9 +43,14 @@ service kojira stop
 # Remove package
 yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder mock jenkins
 
+# Remove Jenkins repo
+rm -f /etc/yum.repos.d/jenkins.repo
+
+# Remove configuration files
 CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /home/koji /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql"
 for dir in ${CFG_DIRS}; do rm -rf $dir || echo "$dir not found"; done
 
+# Remove log files
 LOG_FILES="/var/log/kojira.log
 /var/log/kojid.log
 ${HOME}/kickstart.log
