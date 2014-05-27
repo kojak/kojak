@@ -37,9 +37,9 @@ SCRIPTS="`pwd`/scripts"
 welcome_header() {
     clear
     echo -e "\n################################################################################"
-    echo -e "#                                                                                #"
-    echo -e "#                    !!! Welcome to Kojak...Koji in a box !!!                    #"
-    echo -e "#                                                                                #\n"
+    echo -e "#                                                                              #"
+    echo -e "#                    !!! Welcome to Kojak...Koji in a box !!!                  #"
+    echo -e "#                                                                              #\n"
 }
 
 # Menu message
