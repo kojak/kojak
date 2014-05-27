@@ -1,5 +1,5 @@
-#!/usr/bin/python
-# 
+#!/bin/bash
+#
 # Copyright (C) 2013 Red Hat Inc.
 # Author: Salim Badakhchani <sal@redhat.com>
 #
@@ -10,70 +10,40 @@
 #
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>. 
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 ########################################################################
 
-import koji
-import re
-import os
-import sys
-import time
-import subprocess
+# Uncomment to debug script
+set -x
 
-SESSION = koji.ClientSession('http://koji.localdomain/kojihub', {})
+SCM='git+'
+URL='https://github.com/sbadakhc'
+APP='buildmetadata-maven-plugin'
+CHK='#7130058036a80c727810f0beb55488ee0ff7ba15'
+SRC="${SCM}${URL}/${APP}.git${CHK}"
+TAG='rcm-mw-tools'
+BLD='rcm-mw-tools-build'
+TGT='rcm-mw-tools-candidate'
+PKG='com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin'
+VER="1.3.1"
+OPT="-Dmaven.test.skip=true"
 
-SCM = 'git+'
-URL = 'https://github.com/sbadakhc'
-APP = 'buildmetadata-maven-plugin'
-CHK = '7130058036a80c727810f0beb55488ee0ff7ba15'
-SRC = '%s%s/%s.git#%s' % (SCM, URL, APP, CHK)
-TAG = 'rcm-mw-tools'
-BLD = 'rcm-mw-tools-build'
-TGT = 'rcm-mw-tools-candidate'
-PKG = 'com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin'
-VER = '1.3.1'
-WRK = 'workspace'
-BLOG = 'build.log'
-OPT = '-Dmaven.test.skip=true'
-TASKS = SESSION.listTasks()
-TASK_ID = TASKS[-1]['id']
-TASK = SESSION.getTaskInfo(TASK_ID, request=True)
-STATE = TASK['state']
-KOJI_CMD = 'koji'
-SCM_CMD = 'git'
-MVN_CMD = 'mvn'
-LOG = os.path.join(os.getenv('HOME'),'%s/%s/%s') % (WRK, APP, BLOG)
-
-# Function to run shell commands.
-def run(CMD, fail=True):
-    print CMD 
-    ret = os.system(CMD)
-    if ret != 0:
-        print 'Error running command'
-        if fail:
-            sys.exit(1)
- 
-if ( not os.path.isfile(LOG)):
-    os.chdir(os.path.join(os.getenv('HOME'),'%s/' % (WRK)))
-    CMD = SCM_CMD + ' clone %s/%s' % (URL, APP)
-    run(CMD)
-    os.chdir(os.path.join(os.getenv('HOME'),'%s/%s' % (WRK, APP)))
-    CMD = SCM_CMD + ' checkout %s-%s' % (APP, VER)
-    run(CMD)
-    CMD = MVN_CMD + ' clean install -C -B dependency:resolve-plugins %s | tee build.log' % (OPT)
-    run(CMD)
-    CMD = '/opt/kojak/scripts/build/mead-load-build-dependencies %s' % (LOG)
-    run(CMD)
-    subprocess.call(['koji', 'add-pkg', 'rcm-mw-tools', 'com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin', '--owner', 'koji'])
-    CMD = KOJI_CMD + ' maven-build %s %s %s' % (OPT, TGT, SRC)
-    run(CMD)
-else:
-    CMD = KOJI_CMD + ' maven-build %s %s %s' % (OPT, TGT, SRC)
-    run(CMD)
-
-
+if [ -e "${HOME}/workspace/${APP}/build.log" ]; then
+koji maven-build ${OPT} ${TGT} ${SRC}
+else
+cd ~/workspace
+    git clone ${URL}/${APP}.git
+    cd ${APP}
+    git checkout ${APP}-${VER}
+    mvn clean install -C -B dependency:resolve-plugins ${OPT} | tee build.log
+    /opt/kojak/scripts/build/mead-load-build-dependencies ${HOME}/workspace/${APP}/build.log
+    koji add-pkg ${TAG} ${PKG} --owner ${USER}
+    /opt/kojak/scripts/build/check_task &
+    wait
+    koji maven-build ${OPT} ${TGT} ${SRC}
+fi
