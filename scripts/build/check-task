@@ -21,9 +21,10 @@
 import koji
 import os
 import sys
+import time
 
 SESSION = koji.ClientSession('http://koji.localdomain/kojihub', {})
-
+TIMEOUT=5
 TASKS = SESSION.listTasks()
 TASK_ID = TASKS[-1]['id']
 TASK = SESSION.getTaskInfo(TASK_ID, request=True)
@@ -32,4 +33,6 @@ KOJI_CMD = 'koji'
 
 while STATE != koji.TASK_STATES['CLOSED']:
    print 'Jobs Pending'
+   time.sleep(TIMEOUT)
+
 print 'Job completed successfully'
