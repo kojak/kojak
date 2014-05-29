@@ -27,12 +27,14 @@ SESSION = koji.ClientSession('http://koji.localdomain/kojihub', {})
 TIMEOUT=5
 TASKS = SESSION.listTasks()
 TASK_ID = TASKS[-1]['id']
+TASK_METHOD = TASKS[-1]['method']
 TASK = SESSION.getTaskInfo(TASK_ID, request=True)
 STATE = TASK['state']
 KOJI_CMD = 'koji'
 
-while STATE != koji.TASK_STATES['CLOSED']:
+while STATE != koji.TASK_STATES['CLOSED'] and koji.TASK_METHOD['createrepo']:
    print 'Jobs Pending'
    time.sleep(TIMEOUT)
 
 print 'Job completed successfully'
+
