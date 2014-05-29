@@ -70,6 +70,11 @@ EOF
 wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
 rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
 
+# Include Aprox
+wget http://central.maven.org/maven2/org/commonjava/aprox/launch/aprox-launcher-easyprox/0.12.2/aprox-launcher-easyprox-0.12.2-launcher.tar.gz -P /opt  
+tar zxfv /opt/aprox-launcher-easyprox-0.12.2-launcher.tar.gz -C /opt/
+rm -f /opt/aprox-launcher-easyprox-0.12.2-launcher.tar.gz
+
 echo -e "# 02. Installing packages" >> ${LOG}
 yum -y install httpd mod_ssl openssl mod_auth_kerb mod_wsgi \
 yum-utils rpm-build mock createrepo git cvs svn pigz \
