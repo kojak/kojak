@@ -66,23 +66,29 @@ gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
 gpgcheck=1
 EOF
 
-# Include Jenkins repo 
+echo -e "# 02. Installing packages" >> ${LOG}
+
+# Install Jenkins repo
 wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
 rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
 
-# Include Aprox
+# Install AProx
 wget http://central.maven.org/maven2/org/commonjava/aprox/launch/aprox-launcher-easyprox/0.12.2/aprox-launcher-easyprox-0.12.2-launcher.tar.gz -P /opt  
 tar zxfv /opt/aprox-launcher-easyprox-0.12.2-launcher.tar.gz -C /opt/
 rm -f /opt/aprox-launcher-easyprox-0.12.2-launcher.tar.gz
 
-echo -e "# 02. Installing packages" >> ${LOG}
+# Install RPMS
 yum -y install httpd mod_ssl openssl mod_auth_kerb mod_wsgi \
 yum-utils rpm-build mock createrepo git cvs svn pigz \
 libvirt virt-install qemu-img postgresql-server \
 wget screen vim tree links dos2unix mlocate htop iftop \
 postgresql-python pyOpenSSL python-krbV python-cheetah python-qpid libvirt-python python-virtinst \
 koji koji-builder koji-hub koji-hub-plugins koji-utils koji-vm koji-web \
-jenkins
+java-1.7.0-openjdk-devel jenkins
+
+# Configrue Java
+JDK=$(rpm -qa | grep openjdk | sort -n | tail -1)
+alternatives --install /usr/bin/java java /usr/lib/jvm/${JDK}/bin/java 0
 
 echo -e "# 03. Creating Koji user directories" >> ${LOG}
 useradd koji
