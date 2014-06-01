@@ -75,7 +75,7 @@ rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
 wget http://central.maven.org/maven2/org/commonjava/aprox/launch/aprox-launcher-easyprox/0.12.2/aprox-launcher-easyprox-0.12.2-launcher.tar.gz -P /opt  
 tar zxfv /opt/aprox-launcher-easyprox-0.12.2-launcher.tar.gz -C /opt/
 rm -f /opt/aprox-launcher-easyprox-0.12.2-launcher.tar.gz
-wget https://github.com/sbadakhc/kojak/blob/master/scripts/contrib/aprox/aprox -P /etc/init.d
+wget https://raw.githubusercontent.com/sbadakhc/kojak/master/scripts/contrib/aprox/aprox -P /etc/init.d
 
 # Install RPMS
 yum -y install httpd mod_ssl openssl mod_auth_kerb mod_wsgi \
