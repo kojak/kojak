@@ -2,7 +2,7 @@
 #
 # Aprox        Startup script for Aprox
 #
-# chkconfig: - 85 15
+# chkconfig: - 86 14
 # description: AProx is a simple repository manager and tooling platform.
 #              It is designed for use with Apache Maven and other applications
 #              that use the Maven repository format.
