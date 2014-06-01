@@ -703,7 +703,7 @@ chkconfig postgresql on
 service postgresql restart
 chkconfig httpd on
 service httpd start
-chkconfig Aprox on
+chkconfig aprox on
 service aprox start
 chkconfig jenkins on
 service jenkins start

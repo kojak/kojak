@@ -22,7 +22,7 @@ EXEC=/opt/aprox-launcher-easyprox/bin/aprox.sh
 RETVAL=0
 
 start() {
-    echo -n $"Starting ($PROG): "
+    echo -n $"Starting $PROG: "
     $EXEC > /dev/null 2>&1 &
     [ $RETVAL -eq 0 ] && success || failure
     echo
