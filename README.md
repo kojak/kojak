@@ -52,11 +52,13 @@ cd /opt/kojak
 to install Koji on you will be further prompted to supply some configuration options.  You can simply accept the default options if you have no special requirements.
 3.  Once the virtual machine is created you should login to the virtual machine on address 192.168.122.2 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the
 ```
+./kojak
 2. Install
 ```
 option which will install the Koji on the virtual machine.
 4.  After the installation is complete you can opt to configure the system with base rcm tagging heirarchy.  This will get you up and running and building packages quickly.  Simply execute the Kojak script again and select the
 ```
+./kojak
 3. Configure
 ```
 option from the menu.
