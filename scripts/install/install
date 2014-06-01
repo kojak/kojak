@@ -684,8 +684,8 @@ diff -u /etc/sysconfig/jenkins /etc/sysconfig/jenkins.orig
  # Port Jenkins is listening on.
  # Set to -1 to disable
  #
--JENKINS_PORT="8090"
-+JENKINS_PORT="8080"
+-JENKINS_PORT="8080"
++JENKINS_PORT="8090"
  
  ## Type:        string
  ## Default:     ""
