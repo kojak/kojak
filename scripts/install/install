@@ -702,6 +702,10 @@ chkconfig postgresql on
 service postgresql restart
 chkconfig httpd on
 service httpd start
+chkconfig Aprox on
+service aprox start
+chkconfig jenkins on
+service jenkins start
 chkconfig kojid on
 service kojid start > 2&>1 > /dev/null
 chkconfig kojira on
