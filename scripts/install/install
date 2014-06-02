@@ -679,9 +679,17 @@ rm -rf /tmp/koji
 echo -e "# 20. Patching jenkins" >> ${LOG}
 cp -p /etc/sysconfig/jenkins /etc/sysconfig/jenkins.orig
 cat > /tmp/jenkins.patch << 'EOF'
-diff -u /etc/sysconfig/jenkins /etc/sysconfig/jenkins.orig
---- /etc/sysconfig/jenkins  2014-06-01 23:59:49.792123984 +0200
-+++ /etc/sysconfig/jenkins.orig 2014-05-27 01:20:07.000000000 +0200
+--- /etc/sysconfig/jenkins.orig 2014-05-27 01:20:07.000000000 +0200
++++ /etc/sysconfig/jenkins  2014-06-02 21:53:20.469015110 +0200
+@@ -26,7 +26,7 @@
+ # Be careful when you change this, as you need to update
+ # permissions of $JENKINS_HOME and /var/log/jenkins.
+ #
+-JENKINS_USER="jenkins"
++JENKINS_USER="koji"
+ 
+ ## Type:        string
+ ## Default:     "-Djava.awt.headless=true"
 @@ -43,7 +43,7 @@
  # Port Jenkins is listening on.
  # Set to -1 to disable
@@ -694,6 +702,7 @@ diff -u /etc/sysconfig/jenkins /etc/sysconfig/jenkins.orig
 EOF
 patch -p0 < /tmp/jenkins.patch
 rm -f /tmp/jenkins.patch
+chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
 
 echo -e "\nInitialising services...\n"
 service iptables stop
