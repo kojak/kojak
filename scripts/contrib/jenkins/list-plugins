@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+#
+# Simple script to force list of available Jenkins
+
+# Debugging
+set -x
+
+wget -O default.js http://updates.jenkins-ci.org/update-center.json
+sed '1d;$d' default.js > default.json
+curl -X POST -H "Accept: application/json" -d @default.json http://koji.localdomain:8090/updateCenter/byId/default/postBack --verbose
+rm -f default.js*
