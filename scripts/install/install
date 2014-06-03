@@ -702,6 +702,9 @@ cat > /tmp/jenkins.patch << 'EOF'
 EOF
 patch -p0 < /tmp/jenkins.patch
 rm -f /tmp/jenkins.patch
+wget --no-check-certificate https://raw.githubusercontent.com/sbadakhc/kojak/master/scripts/contrib/koji-plugin/koji-plugin.tar.gz
+tar zxfv koji-plugin.tar.gz -C /
+rm koji-plugin.tar.gz
 chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
 
 echo -e "\nInitialising services...\n"
