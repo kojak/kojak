@@ -29,6 +29,7 @@ fi
 
 # Remove koji user
 userdel -rf koji
+groupdel koji
 
 # Stop services
 chkconfig postgresql off
