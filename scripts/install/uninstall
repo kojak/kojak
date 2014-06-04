@@ -27,9 +27,9 @@ if [ "${USER}" != "root" ]; then
     exit
 fi
 
-# Remove koji user
-userdel -rf koji
-groupdel koji
+# Remove users and groups
+USERS="koji mock kojibuilder jenkins"
+for user in ${USERS}; do userdel -rf $user && groupdel $user; done
 
 # Stop services
 chkconfig postgresql off
@@ -46,6 +46,7 @@ yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub
 
 # Remove Jenkins repo
 rm -f /etc/yum.repos.d/jenkins.repo.*
+rm -rf /var/lib/jenkins.orig /var/cache/jenkins.orig
 
 # Remove configuration files
 CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /home/koji /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql /var/lib/mock /var/lib/jenkins /var/cache/jenkins /etc/init.d/aprox"
