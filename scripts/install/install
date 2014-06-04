@@ -702,6 +702,10 @@ cat > /tmp/jenkins.patch << 'EOF'
 EOF
 patch -p0 < /tmp/jenkins.patch
 rm -f /tmp/jenkins.patch
+wget -O default.js http://updates.jenkins-ci.org/update-center.json
+sed '1d;$d' default.js > default.json
+curl -X POST -H "Accept: application/json" -d @default.json http://koji.localdomain:8090/updateCenter/byId/default/postBack --verbose
+rm -f default.js*
 wget --no-check-certificate https://raw.githubusercontent.com/sbadakhc/kojak/master/scripts/contrib/koji-plugin/koji-plugin.tar.gz
 tar zxfv koji-plugin.tar.gz -C /
 rm koji-plugin.tar.gz
