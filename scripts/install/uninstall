@@ -28,14 +28,18 @@ if [ "${USER}" != "root" ]; then
 fi
 
 # Remove users and groups
-USERS="koji mock kojibuilder jenkins"
-for user in ${USERS}; do userdel -rf $user && groupdel $user; done
+USERS="koji mock kojibuilder jenkins postgres apache"
+for user in ${USERS}; do userdel -rf $user; groupdel $user; done
 
 # Stop services
 chkconfig postgresql off
 service postgresql stop
 chkconfig httpd off 
 service httpd stop
+chkconfig aprox off
+service aprox stop
+chkconfig jenkins off
+service jenkins stop
 chkconfig kojid off
 service kojid stop
 chkconfig kojira off
@@ -49,7 +53,7 @@ rm -f /etc/yum.repos.d/jenkins.repo.*
 rm -rf /var/lib/jenkins.orig /var/cache/jenkins.orig
 
 # Remove configuration files
-CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /home/koji /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql /var/lib/mock /var/lib/jenkins /var/cache/jenkins /etc/init.d/aprox"
+CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /home/koji /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql /var/lib/mock /var/lib/jenkins /var/cache/jenkins /etc/sysconfig/jenkins*"
 for dir in ${CFG_DIRS}; do rm -rf $dir || echo "$dir not found"; done
 
 # Remove log files
@@ -57,7 +61,6 @@ LOG_FILES="/var/log/kojira.log
 /var/log/kojid.log
 ${HOME}/kickstart.log
 ${HOME}/kojak.log
-/etc/profile.d/custom.sh
 /etc/yum.repos.d/epel.repo"
 for file in ${LOG_FILES}; do rm -f $file || echo "$file not found"; done
 
