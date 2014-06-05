@@ -1,4 +1,4 @@
-#!/bin/bash
+#p!/bin/bash
 # 
 # Copyright (C) 2013 Red Hat Inc.
 # Author: Salim Badakhchani <sal@redhat.com>
@@ -70,13 +70,6 @@ echo -e "# 02. Installing packages" >> ${LOG}
 # Install Jenkins repo
 wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
 rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
-
-# Install AProx
-wget http://central.maven.org/maven2/org/commonjava/aprox/launch/aprox-launcher-easyprox/0.12.2/aprox-launcher-easyprox-0.12.2-launcher.tar.gz -P /opt  
-tar zxfv /opt/aprox-launcher-easyprox-0.12.2-launcher.tar.gz -C /opt/
-rm -f /opt/aprox-launcher-easyprox-0.12.2-launcher.tar.gz
-wget --no-check-certificate https://raw.githubusercontent.com/sbadakhc/kojak/master/scripts/contrib/aprox/aprox -P /etc/init.d
-chmod +x /etc/init.d/aprox
 
 # Install RPMS
 yum -y install httpd mod_ssl openssl mod_auth_kerb mod_wsgi \
@@ -676,41 +669,6 @@ su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm -rf /tmp/kojibuilder.sql
 rm -rf /tmp/koji
 
-echo -e "# 20. Patching jenkins" >> ${LOG}
-cp -p /etc/sysconfig/jenkins /etc/sysconfig/jenkins.orig
-cat > /tmp/jenkins.patch << 'EOF'
---- /etc/sysconfig/jenkins.orig 2014-05-27 01:20:07.000000000 +0200
-+++ /etc/sysconfig/jenkins  2014-06-02 21:53:20.469015110 +0200
-@@ -26,7 +26,7 @@
- # Be careful when you change this, as you need to update
- # permissions of $JENKINS_HOME and /var/log/jenkins.
- #
--JENKINS_USER="jenkins"
-+JENKINS_USER="koji"
- 
- ## Type:        string
- ## Default:     "-Djava.awt.headless=true"
-@@ -43,7 +43,7 @@
- # Port Jenkins is listening on.
- # Set to -1 to disable
- #
--JENKINS_PORT="8080"
-+JENKINS_PORT="8090"
- 
- ## Type:        string
- ## Default:     ""
-EOF
-patch -p0 < /tmp/jenkins.patch
-rm -f /tmp/jenkins.patch
-wget -O default.js http://updates.jenkins-ci.org/update-center.json
-sed '1d;$d' default.js > default.json
-curl -X POST -H "Accept: application/json" -d @default.json http://koji.localdomain:8090/updateCenter/byId/default/postBack --verbose
-rm -f default.js*
-wget --no-check-certificate https://raw.githubusercontent.com/sbadakhc/kojak/master/scripts/contrib/koji-plugin/koji-plugin.tar.gz
-tar zxfv koji-plugin.tar.gz -C /
-rm koji-plugin.tar.gz
-chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
-
 echo -e "\nInitialising services...\n"
 service iptables stop
 chkconfig iptables off
@@ -720,9 +678,6 @@ chkconfig postgresql on
 service postgresql restart
 chkconfig httpd on
 service httpd start
-chkconfig --add aprox
-chkconfig aprox on
-service aprox start
 chkconfig jenkins on
 service jenkins start
 chkconfig kojid on
