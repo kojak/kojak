@@ -27,10 +27,6 @@ if [ "${USER}" != "root" ]; then
     exit
 fi
 
-# Remove users and groups
-USERS="koji mock kojibuilder jenkins postgres apache"
-for user in ${USERS}; do userdel -rf $user; groupdel $user; done
-
 # Stop services
 chkconfig postgresql off
 service postgresql stop
@@ -63,6 +59,10 @@ ${HOME}/kickstart.log
 ${HOME}/kojak.log
 /etc/yum.repos.d/epel.repo"
 for file in ${LOG_FILES}; do rm -f $file || echo "$file not found"; done
+
+# Remove users and groups
+USERS="koji mock kojibuilder jenkins postgres apache"
+for user in ${USERS}; do userdel -rf $user; groupdel $user; done
 
 # Update mlocate database
 echo -e "\nUpdating file datatabse...please be paitient."
