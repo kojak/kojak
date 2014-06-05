@@ -193,33 +193,34 @@ DELETE from users where name = 'kojibuilder1.localdomain';\q" >> /tmp/kojibuilde
 su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm /tmp/kojibuilder.sql
 
-echo -e "\nBringing the system up..."
-service postgresql restart
-service httpd restart
-service kojid start
-service kojira restart
-
-echo -e "\nService status..."
-service kojid status
-service kojira status
-
 # Installing Jenkins Koji Plugin"
 cp -p /etc/sysconfig/jenkins /etc/sysconfig/jenkins.orig
 cat > /tmp/jenkins.patch << 'EOF'
---- /etc/sysconfig/jenkins.orig	2014-06-02 17:19:23.000000000 +0200
-+++ /etc/sysconfig/jenkins	2014-06-05 15:22:00.665823455 +0200
+--- /etc/sysconfig/jenkins.orig 2014-06-02 17:19:23.000000000 +0200
++++ /etc/sysconfig/jenkins  2014-06-05 15:22:00.665823455 +0200
 @@ -26,7 +26,7 @@
  # Be careful when you change this, as you need to update
  # permissions of $JENKINS_HOME and /var/log/jenkins.
  #
 -JENKINS_USER="jenkins"
 +JENKINS_USER="koji"
- 
+
  ## Type:        string
  ## Default:     "-Djava.awt.headless=true"
 EOF
 patch -p0 < /tmp/jenkins.patch
 rm -f /tmp/jenkins.patch
 chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
+
+echo -e "\nBringing the system up..."
+service postgresql restart
+service httpd restart
+service kojid start
+service kojira restart
+service jenkins restart
+
+echo -e "\nService status..."
+service kojid status
+service kojira status
 
 echo -e "\nConfiguration complete...Kojak is OK"
