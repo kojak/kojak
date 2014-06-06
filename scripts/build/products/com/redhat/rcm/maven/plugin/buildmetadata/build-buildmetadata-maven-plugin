@@ -43,5 +43,7 @@ cd ~/workspace
     mvn clean install -C -B dependency:resolve-plugins ${OPT} | tee build.log
     /opt/kojak/scripts/build/mead-load-build-dependencies ${HOME}/workspace/${APP}/build.log
     koji add-pkg ${TAG} ${PKG} --owner ${USER}
+    
+    # Uncomment the line below so submit the maven-build if your not building using Jenkins
     #koji maven-build ${OPT} ${TGT} ${SRC}
 fi
