@@ -211,6 +211,7 @@ EOF
 patch -p0 < /tmp/jenkins.patch
 rm -f /tmp/jenkins.patch
 tar zxfv /opt/kojak/scripts/contrib/jenkins/jenkins.tar.gz -C /var/lib
+wget http://http://updates.jenkins-ci.org/latest/ssh-credentials.hpi /var/lib/jenkins/plugins
 wget http://updates.jenkins-ci.org/latest/git-client.hpi /var/lib/jenkins/plugins
 wget http://updates.jenkins-ci.org/latest/scm-api.hpi /var/lib/jenkins/plugins
 wget http://updates.jenkins-ci.org/latest/credentials.hpi /var/lib/jenkins/plugins
