@@ -53,6 +53,8 @@ cd /opt/kojak
 
 Once the virtual machine is created you should login to the virtual machine on address 192.168.122.2 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the "Install" option from the menu.
 ```
+ssh root@192.168.122.2
+cd /opt/kojak
 ./kojak
 2. Install
 ```
@@ -81,9 +83,7 @@ Currently Kojak uses SSL certificates as the preferred method of authentication.
 
 The Koji web interface is accessible via http://koji.localdomain/koji
 
-Kojak ships with the AProx repository manager to speed up build times and allows better control of artefact repositories. You can access on AProx http://koji.localdomain:8080
-
-Jenkins configured with the Koji plugin can be configured via the Jenkins GUI via http://koji.localdomain:8090
+Jenkins configured with the Koji plugin can be configured via the Jenkins GUI via http://koji.localdomain:8080
 
 Known Issues
 ------------
