@@ -210,6 +210,8 @@ cat > /tmp/jenkins.patch << 'EOF'
 EOF
 patch -p0 < /tmp/jenkins.patch
 rm -f /tmp/jenkins.patch
+wget http://updates.jenkins-ci.org/latest/koji-plugin.hpi -P /var/lib/jenkins/plugin
+wget http://updates.jenkins-ci.org/latest/git.hpi -P /var/lib/jenkins/plugin
 chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
 
 echo -e "\nBringing the system up..."
