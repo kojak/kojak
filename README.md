@@ -38,26 +38,26 @@ The you local host should be configured with the following minimum specification
 Installation Instructions
 ------------------------
 
-1.  Checkout the contents of the Kojak git repository to a suitable directory on your host.
+Checkout the contents of the Kojak git repository to a suitable directory on your host.
 ```
 cd /opt
 git clone https://github.com/sbadakhc/kojak.git
 ```
 
-2.  As the root user execute kojak script.  You will be prompted about the type of installation you want to conduct.  If you choose to create a virtual machine.  You will be further prompted to supply some configuration options.  You can simply accept the default options if you have no special requirements.
+As the root user execute kojak script.  You will be prompted about the type of installation you want to conduct.  If you choose to create a virtual machine you will be further prompted to supply some configuration options.  You can simply accept the default options if you have no special requirements.
 ```
 cd /opt/kojak
 ./kojak
 1. Create VM
 ```
 
-3.  Once the virtual machine is created you should login to the virtual machine on address 192.168.122.2 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the "Install" option from the menu.
+Once the virtual machine is created you should login to the virtual machine on address 192.168.122.2 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the "Install" option from the menu.
 ```
 ./kojak
 2. Install
 ```
 
-4.  After the installation is complete you can opt to configure the system with base rcm tagging heirarchy.  This will get you up and running and building packages quickly.  Simply execute the Kojak script again and select the "Configure" option from the menu.
+After the installation is complete you can opt to configure the system with base rcm tagging heirarchy.  This will get you up and running and building packages quickly.  Simply execute the Kojak script again and select the "Configure" option from the menu.
 ```
 ./kojak
 3. Configure
