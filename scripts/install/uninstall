@@ -32,8 +32,6 @@ chkconfig postgresql off
 service postgresql stop
 chkconfig httpd off 
 service httpd stop
-chkconfig aprox off
-service aprox stop
 chkconfig jenkins off
 service jenkins stop
 chkconfig kojid off
