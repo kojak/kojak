@@ -194,6 +194,7 @@ su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm /tmp/kojibuilder.sql
 
 # Installing Jenkins Koji Plugin"
+service jenkins stop
 cp -p /etc/sysconfig/jenkins /etc/sysconfig/jenkins.orig
 cat > /tmp/jenkins.patch << 'EOF'
 --- /etc/sysconfig/jenkins.orig 2014-06-02 17:19:23.000000000 +0200
@@ -224,7 +225,7 @@ service postgresql restart
 service httpd restart
 service kojid start
 service kojira restart
-service jenkins restart
+service jenkins start
 
 echo -e "\nService status..."
 service kojid status
