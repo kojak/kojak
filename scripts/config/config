@@ -211,12 +211,6 @@ cat > /tmp/jenkins.patch << 'EOF'
 EOF
 patch -p0 < /tmp/jenkins.patch
 rm -f /tmp/jenkins.patch
-wget http://updates.jenkins-ci.org/latest/ssh-credentials.hpi /var/lib/jenkins/plugins
-wget http://updates.jenkins-ci.org/latest/git-client.hpi /var/lib/jenkins/plugins
-wget http://updates.jenkins-ci.org/latest/scm-api.hpi /var/lib/jenkins/plugins
-wget http://updates.jenkins-ci.org/latest/credentials.hpi /var/lib/jenkins/plugins
-wget http://updates.jenkins-ci.org/latest/git.hpi -P /var/lib/jenkins/plugins
-wget http://updates.jenkins-ci.org/latest/koji-plugin.hpi -P /var/lib/jenkins/plugins
 tar zxfv /opt/kojak/scripts/contrib/jenkins/jenkins.tar.gz -C /var/lib
 chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
 
