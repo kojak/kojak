@@ -220,7 +220,7 @@ wget http://updates.jenkins-ci.org/latest/koji-plugin.hpi -P /var/lib/jenkins/pl
 tar zxfv /opt/kojak/scripts/contrib/jenkins/jenkins.tar.gz -C /var/lib
 chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
 
-echo -e "\nBringing the system up..."
+echo -e "\nBringing the system up...\n"
 service postgresql restart
 service httpd restart
 service kojid start
