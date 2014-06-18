@@ -21,6 +21,10 @@
 # Uncomment to debug script
 #set -x
 
+# Load services configuration
+DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
+$DIR/init-service-accounting
+
 # Check user
 if [ "${USER}" != "root" ]; then
     echo -e "\n# This script requires root priviledges to run"
@@ -67,9 +71,6 @@ gpgcheck=1
 EOF
 
 echo -e "# 02. Installing packages" >> ${LOG}
-# Install Jenkins repo
-wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
-rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
 
 # Install RPMS
 yum -y install httpd mod_ssl openssl mod_auth_kerb mod_wsgi \
@@ -78,7 +79,7 @@ libvirt virt-install qemu-img postgresql-server \
 screen vim tree links dos2unix mlocate htop iftop \
 postgresql-python pyOpenSSL python-krbV python-cheetah python-qpid libvirt-python python-virtinst \
 koji koji-builder koji-hub koji-hub-plugins koji-utils koji-vm koji-web \
-java-1.7.0-openjdk-devel jenkins
+java-1.7.0-openjdk-devel
 
 # Configrue Java
 JDK=$(rpm -qa | grep openjdk | sort -n | tail -1)
@@ -669,20 +670,22 @@ su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm -rf /tmp/kojibuilder.sql
 rm -rf /tmp/koji
 
+echo -e "\nRunning tool installs...\n"
+for toolinst in install.d/*.sh
+do
+    ./install.d/$toolinst
+done
+
 echo -e "\nInitialising services...\n"
 service iptables stop
 chkconfig iptables off
 service ip6tables stop
 chkconfig ip6tables off
-chkconfig postgresql on
-service postgresql restart
-chkconfig httpd on
-service httpd start
-chkconfig jenkins on
-service jenkins start
-chkconfig kojid on
-service kojid start > 2&>1 > /dev/null
-chkconfig kojira on
-service kojira start
+
+for svc in $(ls -1 $SERVICES/*)
+do
+  chkconfig $svc on
+  service $svc restart
+done
 
 echo -e "\nInstallation complete...System ready for configuration."
