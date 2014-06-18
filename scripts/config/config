@@ -200,18 +200,18 @@ rm /tmp/kojibuilder.sql
 
 for toolcfg in config.d/*.sh
 do
-    $toolcfg
+    sh ./config.d/$toolcfg
 done
 
 echo -e "\nBringing the system up...\n"
-for svc in $(ls -1 $SERVICES/*)
+for svc in $SERVICES
 do
    service $(basename $svc) restart
 done
 
 
 echo -e "\nService status..."
-for svc in $(ls -1 $SERVICES/*)
+for svc in $SERVICES
 do
    service $(basename $svc) status
 done

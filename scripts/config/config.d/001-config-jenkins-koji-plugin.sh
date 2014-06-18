@@ -21,5 +21,3 @@ rm -f /tmp/jenkins.patch
 tar zxfv /opt/kojak/scripts/contrib/jenkins/jenkins.tar.gz -C /var/lib
 chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
 
-touch $SERVICES/jenkins
-

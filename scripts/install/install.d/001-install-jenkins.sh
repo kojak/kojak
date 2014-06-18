@@ -6,5 +6,3 @@ rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
 
 yum -y install jenkins
 
-touch $SERVICES/jenkins
-

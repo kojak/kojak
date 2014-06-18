@@ -673,7 +673,7 @@ rm -rf /tmp/koji
 echo -e "\nRunning tool installs...\n"
 for toolinst in install.d/*.sh
 do
-    ./install.d/$toolinst
+  sh ./install.d/$toolinst
 done
 
 echo -e "\nInitialising services...\n"
@@ -682,7 +682,7 @@ chkconfig iptables off
 service ip6tables stop
 chkconfig ip6tables off
 
-for svc in $(ls -1 $SERVICES/*)
+for svc in $SERVICES
 do
   chkconfig $svc on
   service $svc restart
