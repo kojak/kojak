@@ -1,6 +1,8 @@
 #!/bin/sh
 
 echo "Creating CI-* / CIx-* auto-proxy rule..."
+test -d /opt/aprox/data/autoprox || mkdir -p /opt/aprox/data/autoprox
+
 cat > /opt/aprox/data/autoprox/0010-ci.groovy << 'EOF'
 import org.commonjava.aprox.autoprox.data.*;
 import java.net.MalformedURLException;
@@ -74,6 +76,8 @@ class CIRule extends AbstractAutoProxRule
 EOF
 
 echo "Configuring public group to contain central and jboss.org public repository..."
+test -d /opt/aprox/data/aprox/group || mkdir -p /opt/aprox/data/aprox/group
+
 cat > /opt/aprox/data/aprox/group/public.json << 'EOF'
 {"constituents":["remote:central","remote:JB-public"],"key":"group:public"}
 EOF
