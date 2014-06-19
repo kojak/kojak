@@ -15,5 +15,8 @@ echo "Removing AProx install and mountpoints..."
 rm -rf /aprox
 rm -rf /opt/aprox
 
+echo "Removing autofs, davfs2, and rpmforge-release via Yum..."
+yum -y remove rpmforge-release davfs2 autofs
+
 echo "AProx uninstall complete."
 
