@@ -671,7 +671,8 @@ rm -rf /tmp/kojibuilder.sql
 rm -rf /tmp/koji
 
 echo -e "\nRunning tool installs...\n"
-for toolinst in install.d/*.sh
+dir=$(dirname $0)
+for toolinst in $dir/install.d/*.sh
 do
   sh $toolinst
 done
