@@ -64,7 +64,7 @@ USERS="koji mock kojibuilder postgres apache"
 for user in ${USERS}; do userdel -rf $user; groupdel $user; done
 
 # Update mlocate database
-echo -e "\nUpdating file datatabse...please be paitient."
+echo -e "\nUpdating file datatabse...please be patient."
 cd /
 updatedb
 ORIG_FILES=$(locate *.orig)
