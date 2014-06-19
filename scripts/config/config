@@ -198,9 +198,10 @@ DELETE from users where name = 'kojibuilder1.localdomain';\q" >> /tmp/kojibuilde
 su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm /tmp/kojibuilder.sql
 
-for toolcfg in config.d/*.sh
+dir=$(dirname $0)
+for toolcfg in $dir/config.d/*.sh
 do
-    sh ./config.d/$toolcfg
+    sh $toolcfg
 done
 
 echo -e "\nBringing the system up...\n"
