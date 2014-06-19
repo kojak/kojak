@@ -4,7 +4,7 @@ APROX_VERSION=0.14.1
 APROX_FLAVOR=aprox-launcher-easyprox
 
 echo "Adding RPMForge yum repository for DAVfs support..."
-yum localinstall http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
+yum -y localinstall http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
 
 echo "Installing DAVfs and Autofs to support mounting aprox-generated settings.xml files..."
 yum -y install davfs2 autofs
