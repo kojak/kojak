@@ -74,7 +74,7 @@ class CIRule extends AbstractAutoProxRule
 EOF
 
 echo "Configuring public group to contain central and jboss.org public repository..."
-cat > /opt/aprox/data/aprox/group/public.json < 'EOF'
+cat > /opt/aprox/data/aprox/group/public.json << 'EOF'
 {"constituents":["remote:central","remote:JB-public"],"key":"group:public"}
 EOF
 
