@@ -1,7 +1,7 @@
 #!/bin/sh
 
 echo "Creating CI-* / CIx-* auto-proxy rule..."
-cat > /opt/aprox/data/autoprox/0010-ci.groovy < 'EOF'
+cat > /opt/aprox/data/autoprox/0010-ci.groovy << 'EOF'
 import org.commonjava.aprox.autoprox.data.*;
 import java.net.MalformedURLException;
 import org.commonjava.aprox.model.*;
@@ -80,7 +80,7 @@ EOF
 
 echo "Setting up WebDAV mount..."
 test -d /etc/davfs || mkdir /etc/davfs
-cat > /etc/davfs/secrets < 'EOF'
+cat > /etc/davfs/secrets << 'EOF'
 http://localhost:8090/mavdav/settings koji notused
 EOF
 
@@ -90,7 +90,7 @@ chown -R koji:koji /aprox
 AUTO_MASTER_LINE='/aprox /etc/auto.aprox'
 grep $AUTO_MASTER_LINE /etc/auto.master || echo $AUTO_MASTER_LINE >> /etc/auto.master
 
-cat > /etc/auto.aprox < 'EOF'
+cat > /etc/auto.aprox << 'EOF'
 settings -fstype=davfs,rw,dir_mode=0777,file_mode=0444 :http://localhost:8090/mavdav/settings
 EOF
 
