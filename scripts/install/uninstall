@@ -29,7 +29,8 @@ fi
 
 # Load services configuration
 DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
-$DIR/init-service-accounting
+. $DIR/init-service-accounting
+loadServices
 
 for svc in $SERVICES; do
   chkconfig $svc off

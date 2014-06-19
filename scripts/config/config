@@ -30,7 +30,8 @@ export MAVEN="maven3-3.0.3-4"
 
 # Load services configuration
 DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
-$DIR/init-service-accounting
+. $DIR/init-service-accounting
+loadServices
 
 # Begin Koji configuration
 su -l ${USER} -c "

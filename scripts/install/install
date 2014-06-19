@@ -24,7 +24,7 @@
 # Load services configuration
 DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
 . $DIR/init-service-accounting
-echo "Found managed services: $SERVICES"
+loadServices
 
 # Check user
 if [ "${USER}" != "root" ]; then
