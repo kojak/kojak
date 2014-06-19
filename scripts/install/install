@@ -673,22 +673,20 @@ rm -rf /tmp/koji
 
 echo -e "\nRunning tool installs...\n"
 dir=$(dirname $0)
-for toolinst in $dir/install.d/*.sh
-do
-  sh $toolinst
+for toolinst in $dir/install.d/*.sh; do
+    sh $toolinst
 done
 
-echo -e "\nInitialising services...\n"
+echo -e "\nDisabling firewall...\n"
 service iptables stop
 chkconfig iptables off
 service ip6tables stop
 chkconfig ip6tables off
 
-for svc in $SERVICES
-do
-  echo -e "\nRestarting $svc\n"
-  chkconfig $svc on
-  service $svc restart
+echo -e "\nRestarting Services...\n"
+for svc in $SERVICES; do
+    chkconfig $svc on
+    service $svc restart
 done
 
 echo -e "\nInstallation complete...System ready for configuration."
