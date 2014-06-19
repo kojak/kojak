@@ -22,10 +22,10 @@
 . /etc/rc.d/init.d/functions
 
 PROG=aprox
-PID=$(ps -C 'java -jar /opt/aprox-launcher-easyprox/lib/aprox-cdi-components-0.12.2.jar' -o pid h)
-EXEC='opt/aprox-launcher-easyprox/bin/aprox.sh'
+APROX_HOME=/opt/aprox
+PID=$(ps -C "java -jar $APROX_HOME/lib/aprox-cdi-components" -o pid h)
 LOCKFILE=/var/lock/subsys/$PROG
-EXEC=/opt/aprox-launcher-easyprox/bin/aprox.sh
+EXEC=$APROX_HOME/bin/aprox.sh
 RETVAL=0
 
 # See how we're called.
@@ -39,12 +39,19 @@ case "$1" in
     ;;
   stop)
     echo -n $"Shutting down ($PROG): "
+
+    if [ -z $PID ]; then
+      echo "not running"
+      exit 0
+    fi
+
     kill $PID > /dev/null 2>&1
     RETVAL=$?
     [ $RETVAL -eq 0 ] && success || failure
     echo
     [ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$PROG
-    return $RETVAL
+
+    exit $RETVAL
     ;;
   restart)
     stop
