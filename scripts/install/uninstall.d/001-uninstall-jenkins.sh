@@ -11,5 +11,6 @@ CFG_DIRS="/var/lib/jenkins /var/cache/jenkins /etc/sysconfig/jenkins*"
 for dir in ${CFG_DIRS}; do rm -rf $dir || echo "$dir not found"; done
 
 # Remove users and groups
-userdel -rf jenkins; groupdel jenkins; done
+userdel -rf jenkins
+groupdel jenkins
 
