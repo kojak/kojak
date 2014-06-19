@@ -673,7 +673,7 @@ rm -rf /tmp/koji
 echo -e "\nRunning tool installs...\n"
 for toolinst in install.d/*.sh
 do
-  sh ./install.d/$toolinst
+  sh $toolinst
 done
 
 echo -e "\nInitialising services...\n"
