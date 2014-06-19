@@ -27,27 +27,28 @@ if [ "${USER}" != "root" ]; then
     exit
 fi
 
-# Stop services
-chkconfig postgresql off
-service postgresql stop
-chkconfig httpd off 
-service httpd stop
-chkconfig jenkins off
-service jenkins stop
-chkconfig kojid off
-service kojid stop
-chkconfig kojira off
-service kojira stop
+# Load services configuration
+DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
+. $DIR/init-service-accounting
+loadServices
+
+for svc in $SERVICES; do
+  chkconfig $svc off
+  service $svc stop
+done
 
 # Remove package
-yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder mock jenkins
+yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder mock
 
-# Remove Jenkins repo
-rm -f /etc/yum.repos.d/jenkins.repo.*
-rm -rf /var/lib/jenkins.orig /var/cache/jenkins.orig
+echo -e "\nRunning tool uninstalls...\n"
+dir=$(dirname $0)
+for tooluninst in $dir/uninstall.d/*.sh
+do
+    sh $tooluninst
+done
 
 # Remove configuration files
-CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /home/koji /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql /var/lib/mock /var/lib/jenkins /var/cache/jenkins /etc/sysconfig/jenkins*"
+CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /home/koji /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql /var/lib/mock"
 for dir in ${CFG_DIRS}; do rm -rf $dir || echo "$dir not found"; done
 
 # Remove log files
@@ -59,11 +60,11 @@ ${HOME}/kojak.log
 for file in ${LOG_FILES}; do rm -f $file || echo "$file not found"; done
 
 # Remove users and groups
-USERS="koji mock kojibuilder jenkins postgres apache"
+USERS="koji mock kojibuilder postgres apache"
 for user in ${USERS}; do userdel -rf $user; groupdel $user; done
 
 # Update mlocate database
-echo -e "\nUpdating file datatabse...please be paitient."
+echo -e "\nUpdating file datatabse...please be patient."
 cd /
 updatedb
 ORIG_FILES=$(locate *.orig)
