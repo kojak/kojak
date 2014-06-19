@@ -28,6 +28,11 @@ export PRODUCT="rcm-mw-tools"
 export ARCH="x86_64"
 export MAVEN="maven3-3.0.3-4"
 
+# Load services configuration
+DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
+. $DIR/init-service-accounting
+loadServices
+
 # Begin Koji configuration
 su -l ${USER} -c "
 
@@ -180,11 +185,12 @@ cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/serverca.crt
 
 # Set the appropriate permissions
 chown -R koji:apache /home/koji/.koji/
-service postgresql restart
-service httpd restart
-service jenkins restart
-service kojid start
-service kojira restart
+
+
+for svc in $(ls -1 $SERVICES/*)
+do
+   service $(basename $svc) restart
+done
 
 echo -e "\nUpdating permissions..."
 echo -e "UPDATE user_perms SET user_id = '5' where user_id = '4';\
@@ -193,36 +199,24 @@ DELETE from users where name = 'kojibuilder1.localdomain';\q" >> /tmp/kojibuilde
 su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm /tmp/kojibuilder.sql
 
-# Installing Jenkins Koji Plugin"
-service jenkins stop
-cp -p /etc/sysconfig/jenkins /etc/sysconfig/jenkins.orig
-cat > /tmp/jenkins.patch << 'EOF'
---- /etc/sysconfig/jenkins.orig 2014-06-02 17:19:23.000000000 +0200
-+++ /etc/sysconfig/jenkins  2014-06-05 15:22:00.665823455 +0200
-@@ -26,7 +26,7 @@
- # Be careful when you change this, as you need to update
- # permissions of $JENKINS_HOME and /var/log/jenkins.
- #
--JENKINS_USER="jenkins"
-+JENKINS_USER="koji"
-
- ## Type:        string
- ## Default:     "-Djava.awt.headless=true"
-EOF
-patch -p0 < /tmp/jenkins.patch
-rm -f /tmp/jenkins.patch
-tar zxfv /opt/kojak/scripts/contrib/jenkins/jenkins.tar.gz -C /var/lib
-chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
+dir=$(dirname $0)
+for toolcfg in $dir/config.d/*.sh
+do
+    sh $toolcfg
+done
 
 echo -e "\nBringing the system up...\n"
-service postgresql restart
-service httpd restart
-service kojid start
-service kojira restart
-service jenkins start
+for svc in $SERVICES
+do
+   service $(basename $svc) restart
+done
+
 
 echo -e "\nService status..."
-service kojid status
-service kojira status
+for svc in $SERVICES
+do
+   service $(basename $svc) status
+done
 
 echo -e "\nConfiguration complete...Kojak is OK"
+
