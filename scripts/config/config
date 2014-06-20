@@ -24,8 +24,9 @@
 # Declare variable
 export PROG="koji"
 export USER="koji"
-export PRODUCT="rcm-mw-tools"
+export HOST="kojibuilder1.localdomain"
 export ARCH="x86_64"
+export PRODUCT="rcm-mw-tools"
 export MAVEN="maven3-3.0.3-4"
 
 # Load services configuration
@@ -37,14 +38,14 @@ loadServices
 su -l ${USER} -c "
 
 # Configure Koji
-${PROG} add-host kojibuilder1.localdomain x86_64
-${PROG} add-host-to-channel kojibuilder1.localdomain appliance
-${PROG} add-host-to-channel kojibuilder1.localdomain createrepo
-${PROG} add-host-to-channel kojibuilder1.localdomain livecd
-${PROG} add-host-to-channel kojibuilder1.localdomain maven
-${PROG} add-host-to-channel kojibuilder1.localdomain vm
+${PROG} add-host ${HOST} x86_64
+${PROG} add-host-to-channel ${HOST} appliance
+${PROG} add-host-to-channel ${HOST} createrepo
+${PROG} add-host-to-channel ${HOST} livecd
+${PROG} add-host-to-channel ${HOST} maven
+${PROG} add-host-to-channel ${HOST} vm
 ${PROG} grant-permission repo kojira
-${PROG} grant-permission build kojibuilder1.localdomain
+${PROG} grant-permission build ${HOST} 
 
 # Add product tags
 ${PROG} add-tag ${PRODUCT} --arches ${ARCH} --maven-support --include-all
