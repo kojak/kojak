@@ -717,4 +717,3 @@ for svc in $SERVICES; do
 done
 
 echo -e "\nInstallation complete...Kojak is AOK"
-
