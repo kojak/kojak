@@ -95,6 +95,8 @@ FSTAB_LINE='http://localhost:8090/mavdav/settings    /aprox/settings    davfs   
 grep $FSTAB_LINE /etc/fstab > /dev/null || echo $FSTAB_LINE >> /etc/fstab
 
 service aprox restart
+curl -i http://localhost:8090/mavdav/settings/group/settings-public.xml
+
 mount /aprox/settings
 
 echo "Redirecting default Maven settings.xml for user 'koji' to AProx...\n  ...using local-loop aprox deployment: '/aprox/settings/group/settings-CIx-loop.xml'"
