@@ -95,7 +95,7 @@ AUTO_MASTER_LINE='/aprox /etc/auto.aprox'
 grep $AUTO_MASTER_LINE /etc/auto.master || echo $AUTO_MASTER_LINE >> /etc/auto.master
 
 cat > /etc/auto.aprox << 'EOF'
-settings -fstype=davfs,rw,dir_mode=0777,file_mode=0444 :http://localhost:8090/mavdav/settings
+settings -fstype=davfs,rw,dir_mode=0777,file_mode=0444 :http\://localhost:8090/mavdav/settings
 EOF
 
 service aprox restart
