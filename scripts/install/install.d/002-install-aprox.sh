@@ -6,8 +6,8 @@ APROX_FLAVOR=aprox-launcher-easyprox
 echo "Adding RPMForge yum repository for DAVfs support..."
 yum -y localinstall http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
 
-echo "Installing DAVfs and Autofs to support mounting aprox-generated settings.xml files..."
-yum -y install davfs2 autofs
+echo "Installing DAVfs to support mounting aprox-generated settings.xml files..."
+yum -y install davfs2
 
 echo "Installing aprox..."
 curl http://repo.maven.apache.org/maven2/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz | tar -C /opt -zxv

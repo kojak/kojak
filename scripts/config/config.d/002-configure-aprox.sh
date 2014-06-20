@@ -88,18 +88,14 @@ cat > /etc/davfs/secrets << 'EOF'
 http://localhost:8090/mavdav/settings koji notused
 EOF
 
-mkdir /aprox
+mkdir -p /aprox/settings
 chown -R koji:koji /aprox
 
-AUTO_MASTER_LINE='/aprox /etc/auto.aprox'
-grep $AUTO_MASTER_LINE /etc/auto.master || echo $AUTO_MASTER_LINE >> /etc/auto.master
-
-cat > /etc/auto.aprox << 'EOF'
-settings -fstype=davfs,rw,dir_mode=0777,file_mode=0444 :http\://localhost:8090/mavdav/settings
-EOF
+FSTAB_LINE='http://localhost:8090/mavdav/settings    /aprox/settings    davfs    defaults,auto,ro,noatime,username=koji,password=notused'
+grep $FSTAB_LINE /etc/fstab > /dev/null || echo $FSTAB_LINE >> /etc/fstab
 
 service aprox restart
-service autofs restart
+mount /aprox/settings
 
 echo "Redirecting default Maven settings.xml for user 'koji' to AProx...\n  ...using local-loop aprox deployment: '/aprox/settings/group/settings-CIx-loop.xml'"
 if [ ! -d /home/koji/.m2 ]; then
