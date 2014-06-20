@@ -83,15 +83,15 @@ cat > /opt/aprox/data/aprox/group/public.json << 'EOF'
 EOF
 
 echo "Setting up WebDAV mount..."
-test -d /etc/davfs || mkdir /etc/davfs
-cat > /etc/davfs/secrets << 'EOF'
-http://localhost:8090/mavdav/settings koji notused
-EOF
+test -d /etc/davfs2 || mkdir /etc/davfs2
+
+SECRETS_LINE="http://localhost:8090/mavdav/settings koji notused"
+grep $SECRETS_LINE /etc/davfs2/secrets > /dev/null || echo $SECRETS_LINE >> /etc/davfs2/secrets
 
 mkdir -p /aprox/settings
 chown -R koji:koji /aprox
 
-FSTAB_LINE='http://localhost:8090/mavdav/settings    /aprox/settings    davfs    defaults,auto,ro,noatime,username=koji,password=notused'
+FSTAB_LINE='http://localhost:8090/mavdav/settings    /aprox/settings    davfs    auto,ro    0 0'
 grep $FSTAB_LINE /etc/fstab > /dev/null || echo $FSTAB_LINE >> /etc/fstab
 
 service aprox restart
