@@ -86,20 +86,20 @@ EOF
 echo "Setting up WebDAV mount..."
 test -d /etc/davfs2 || mkdir /etc/davfs2
 
-SECRETS_LINE='http://localhost:8090/mavdav/settings koji notused'
+SECRETS_LINE='http://koji.localdomain:8090/mavdav/settings koji notused'
 grep "$SECRETS_LINE" /etc/davfs2/secrets > /dev/null || echo $SECRETS_LINE >> /etc/davfs2/secrets
 
 mkdir -p /aprox/settings
 chown -R koji:koji /aprox
 
-FSTAB_LINE='http://localhost:8090/mavdav/settings    /aprox/settings    davfs    auto,ro    0 0'
+FSTAB_LINE='http://koji.localdomain:8090/mavdav/settings    /aprox/settings    davfs    auto,ro    0 0'
 grep "$FSTAB_LINE" /etc/fstab > /dev/null || echo $FSTAB_LINE >> /etc/fstab
 
 service aprox restart
 
 echo "Sleeping 30s to allow AProx to start... (shouldn't take anything like that long)"
 sleep 30
-curl -I http://localhost:8090/mavdav/settings/group/settings-CIx-loop.xml
+curl -I http://koji.localdomain:8090/mavdav/settings/group/settings-CIx-loop.xml
 
 mount /aprox/settings
 
