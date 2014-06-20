@@ -86,13 +86,13 @@ echo "Setting up WebDAV mount..."
 test -d /etc/davfs2 || mkdir /etc/davfs2
 
 SECRETS_LINE='http://localhost:8090/mavdav/settings koji notused'
-grep $SECRETS_LINE /etc/davfs2/secrets > /dev/null || echo $SECRETS_LINE >> /etc/davfs2/secrets
+grep "$SECRETS_LINE" /etc/davfs2/secrets > /dev/null || echo $SECRETS_LINE >> /etc/davfs2/secrets
 
 mkdir -p /aprox/settings
 chown -R koji:koji /aprox
 
 FSTAB_LINE='http://localhost:8090/mavdav/settings    /aprox/settings    davfs    auto,ro    0 0'
-grep $FSTAB_LINE /etc/fstab > /dev/null || echo $FSTAB_LINE >> /etc/fstab
+grep "$FSTAB_LINE" /etc/fstab > /dev/null || echo $FSTAB_LINE >> /etc/fstab
 
 service aprox restart
 
