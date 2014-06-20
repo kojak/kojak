@@ -51,7 +51,13 @@ class CIRule extends AbstractAutoProxRule
         Group g = new Group( named );
 
         def match = (named =~ REGEX)[0]
-        g.addConstituent( new StoreKey( StoreType.remote, named ) )
+
+        def repoPart = "."
+        if ( match[2] != 'loop')
+        {
+            g.addConstituent( new StoreKey( StoreType.remote, named ) )
+            repoPart = ", along with a proxy to the Koji maven repository for the tag: '${match[2]}'."
+        }
 
         def publicPart = ""
         if ( match[1] )
@@ -60,12 +66,7 @@ class CIRule extends AbstractAutoProxRule
             publicPart = " Also includes the constituents from the 'public' group."
         }
 
-        def repoPart = "."
-        if ( match[2] != 'loop')
-        {
-            g.addConstituent( new StoreKey( StoreType.hosted, named ) )
-            repoPart = ", along with a proxy to the Koji maven repository for the tag: '${match[2]}'."
-        }
+        g.addConstituent( new StoreKey( StoreType.hosted, named ) )
 
         g.setDescription( "Group containing a local CI snapshot/releases deployment repository${repoPart}${publicPart}" )
 
@@ -98,7 +99,7 @@ service aprox restart
 
 echo "Sleeping 30s to allow AProx to start... (shouldn't take anything like that long)"
 sleep 30
-#curl -i http://localhost:8090/mavdav/settings/group/settings-public.xml
+curl -I http://localhost:8090/mavdav/settings/group/settings-CIx-loop.xml
 
 mount /aprox/settings
 
