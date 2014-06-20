@@ -46,6 +46,7 @@ ${PROG} add-host-to-channel ${HOST} maven
 ${PROG} add-host-to-channel ${HOST} vm
 ${PROG} grant-permission repo kojira
 ${PROG} grant-permission build ${HOST} 
+${PROG} edit-host --capacity 10.0 ${HOST}
 
 # Add product tags
 ${PROG} add-tag ${PRODUCT} --arches ${ARCH} --maven-support --include-all
@@ -86,9 +87,6 @@ ${PROG} add-group-pkg ${PRODUCT}-build livecd-build bash bzip2 coreutils cpio di
 # wrapper-build
 ${PROG} add-group ${PRODUCT}-build wrapper-rpm-build
 ${PROG} add-group-pkg ${PRODUCT}-build wrapper-rpm-build bash redhat-release redhat-release-server redhat-rpm-config rpm-build shadow-utils
-
-# Ramp up capacity
-${PROG} edit-host --capacity 10.0 kojibuilder1.localdomain
 
 # Add required build packages
 ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} bash binutils
