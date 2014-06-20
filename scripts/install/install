@@ -21,11 +21,6 @@
 # Uncomment to debug script
 #set -x
 
-# Load services configuration
-DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
-. $DIR/init-service-accounting
-loadServices
-
 # Check user
 if [ "${USER}" != "root" ]; then
     echo -e "\n# This script requires root priviledges to run"
@@ -72,6 +67,9 @@ gpgcheck=1
 EOF
 
 echo -e "# 02. Installing packages" >> ${LOG}
+# Install Jenkins repo
+wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
 
 # Install RPMS
 yum -y install httpd mod_ssl openssl mod_auth_kerb mod_wsgi \
@@ -80,7 +78,7 @@ libvirt virt-install qemu-img postgresql-server \
 screen vim tree links dos2unix mlocate htop iftop \
 postgresql-python pyOpenSSL python-krbV python-cheetah python-qpid libvirt-python python-virtinst \
 koji koji-builder koji-hub koji-hub-plugins koji-utils koji-vm koji-web \
-java-1.7.0-openjdk-devel
+java-1.7.0-openjdk-devel jenkins
 
 # Configrue Java
 JDK=$(rpm -qa | grep openjdk | sort -n | tail -1)
@@ -109,16 +107,16 @@ cat > /tmp/hosts.patch << 'EOF'
 @@ -1,2 +1,3 @@
  127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
  ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-+192.168.122.2   koji koji.localdomain
++10.34.25.167   koji koji.localdomain
 EOF
 patch -p0 < /tmp/hosts.patch
 rm -f /tmp/hosts.patch
 
 IP_ADDR=$(ip route get 8.8.8.8 | awk '/8.8.8.8/ {print $NF}')
 DUP_IP_ADDR=$(grep ${IP_ADDR} /etc/hosts)
-if [ "${IP_ADDR}" != "192.168.122.2" ] && [ "${IP_ADDR}" != "${DUP_IP_ADDR}" ]; then 
+if [ "${IP_ADDR}" != "10.34.25.167" ] && [ "${IP_ADDR}" != "${DUP_IP_ADDR}" ]; then 
     echo "Updating /etc/hosts with ${IP_ADDR}"
-    sed 's/192.168.122.2/'${IP_ADDR}'/' /etc/hosts > /etc/hosts.tmp 
+    sed 's/10.34.25.167/'${IP_ADDR}'/' /etc/hosts > /etc/hosts.tmp 
     cat /etc/hosts.tmp > /etc/hosts && rm -f /etc/hosts.tmp
 fi
 
@@ -519,8 +517,8 @@ cat > /tmp/pg_hba.conf.patch << 'EOF'
 +host    koji        apache              127.0.0.1/32             trust
 +host    koji        koji                ::1/128                  trust
 +host    koji        apache              ::1/128                  trust
-+host    koji        koji                192.168.122.2/32         trust
-+host    koji        apache              192.168.122.2/32         trust
++host    koji        koji                10.34.25.167/32         trust
++host    koji        apache              10.34.25.167/32         trust
 +host    koji        koji                192.168.122.1/32         trust
 +
 
@@ -530,9 +528,9 @@ EOF
 patch -p0 < /tmp/pg_hba.conf.patch
 rm -f /tmp/pg_hba.conf.patch
 
-if [ "${IP_ADDR}" != "192.168.122.2" ]; then
+if [ "${IP_ADDR}" != "10.34.25.167" ]; then
     echo "Updating /var/lib/pgsql/data/pg_hba.conf with ${IP_ADDR}"
-    sed 's/192.168.122.2/'${IP_ADDR}'/' /var/lib/pgsql/data/pg_hba.conf > /var/lib/pgsql/data/pg_hba.conf.tmp
+    sed 's/10.34.25.167/'${IP_ADDR}'/' /var/lib/pgsql/data/pg_hba.conf > /var/lib/pgsql/data/pg_hba.conf.tmp
     cat /var/lib/pgsql/data/pg_hba.conf.tmp > /var/lib/pgsql/data/pg_hba.conf && rm -f /var/lib/pgsql/data/pg_hba.conf.tmp
 fi
 
@@ -671,22 +669,20 @@ su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm -rf /tmp/kojibuilder.sql
 rm -rf /tmp/koji
 
-echo -e "\nRunning tool installs...\n"
-dir=$(dirname $0)
-for toolinst in $dir/install.d/*.sh; do
-    sh $toolinst
-done
-
-echo -e "\nDisabling firewall...\n"
+echo -e "\nInitialising services...\n"
 service iptables stop
 chkconfig iptables off
 service ip6tables stop
 chkconfig ip6tables off
-
-echo -e "\nRestarting Services...\n"
-for svc in $SERVICES; do
-    chkconfig $svc on
-    service $svc restart
-done
+chkconfig postgresql on
+service postgresql restart
+chkconfig httpd on
+service httpd start
+chkconfig jenkins on
+service jenkins start
+chkconfig kojid on
+service kojid start > 2&>1 > /dev/null
+chkconfig kojira on
+service kojira start
 
 echo -e "\nInstallation complete...System ready for configuration."

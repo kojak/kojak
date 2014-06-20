@@ -24,29 +24,22 @@
 # Declare variable
 export PROG="koji"
 export USER="koji"
-export HOST="kojibuilder1.localdomain"
-export ARCH="x86_64"
 export PRODUCT="rcm-mw-tools"
+export ARCH="x86_64"
 export MAVEN="maven3-3.0.3-4"
-
-# Load services configuration
-DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
-. $DIR/init-service-accounting
-loadServices
 
 # Begin Koji configuration
 su -l ${USER} -c "
 
 # Configure Koji
-${PROG} add-host ${HOST} x86_64
-${PROG} add-host-to-channel ${HOST} appliance
-${PROG} add-host-to-channel ${HOST} createrepo
-${PROG} add-host-to-channel ${HOST} livecd
-${PROG} add-host-to-channel ${HOST} maven
-${PROG} add-host-to-channel ${HOST} vm
+${PROG} add-host kojibuilder1.localdomain x86_64
+${PROG} add-host-to-channel kojibuilder1.localdomain appliance
+${PROG} add-host-to-channel kojibuilder1.localdomain createrepo
+${PROG} add-host-to-channel kojibuilder1.localdomain livecd
+${PROG} add-host-to-channel kojibuilder1.localdomain maven
+${PROG} add-host-to-channel kojibuilder1.localdomain vm
 ${PROG} grant-permission repo kojira
-${PROG} grant-permission build ${HOST} 
-${PROG} edit-host --capacity 10.0 ${HOST}
+${PROG} grant-permission build kojibuilder1.localdomain
 
 # Add product tags
 ${PROG} add-tag ${PRODUCT} --arches ${ARCH} --maven-support --include-all
@@ -87,6 +80,9 @@ ${PROG} add-group-pkg ${PRODUCT}-build livecd-build bash bzip2 coreutils cpio di
 # wrapper-build
 ${PROG} add-group ${PRODUCT}-build wrapper-rpm-build
 ${PROG} add-group-pkg ${PRODUCT}-build wrapper-rpm-build bash redhat-release redhat-release-server redhat-rpm-config rpm-build shadow-utils
+
+# Ramp up capacity
+${PROG} edit-host --capacity 10.0 kojibuilder1.localdomain
 
 # Add required build packages
 ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} bash binutils
@@ -184,12 +180,11 @@ cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/serverca.crt
 
 # Set the appropriate permissions
 chown -R koji:apache /home/koji/.koji/
-
-
-for svc in $(ls -1 $SERVICES/*)
-do
-   service $(basename $svc) restart
-done
+service postgresql restart
+service httpd restart
+service jenkins restart
+service kojid start
+service kojira restart
 
 echo -e "\nUpdating permissions..."
 echo -e "UPDATE user_perms SET user_id = '5' where user_id = '4';\
@@ -198,24 +193,36 @@ DELETE from users where name = 'kojibuilder1.localdomain';\q" >> /tmp/kojibuilde
 su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm /tmp/kojibuilder.sql
 
-dir=$(dirname $0)
-for toolcfg in $dir/config.d/*.sh
-do
-    sh $toolcfg
-done
+# Installing Jenkins Koji Plugin"
+service jenkins stop
+cp -p /etc/sysconfig/jenkins /etc/sysconfig/jenkins.orig
+cat > /tmp/jenkins.patch << 'EOF'
+--- /etc/sysconfig/jenkins.orig 2014-06-02 17:19:23.000000000 +0200
++++ /etc/sysconfig/jenkins  2014-06-05 15:22:00.665823455 +0200
+@@ -26,7 +26,7 @@
+ # Be careful when you change this, as you need to update
+ # permissions of $JENKINS_HOME and /var/log/jenkins.
+ #
+-JENKINS_USER="jenkins"
++JENKINS_USER="koji"
+
+ ## Type:        string
+ ## Default:     "-Djava.awt.headless=true"
+EOF
+patch -p0 < /tmp/jenkins.patch
+rm -f /tmp/jenkins.patch
+tar zxfv /opt/kojak/scripts/contrib/jenkins/jenkins.tar.gz -C /var/lib
+chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
 
 echo -e "\nBringing the system up...\n"
-for svc in $SERVICES
-do
-   service $(basename $svc) restart
-done
-
+service postgresql restart
+service httpd restart
+service kojid start
+service kojira restart
+service jenkins start
 
 echo -e "\nService status..."
-for svc in $SERVICES
-do
-   service $(basename $svc) status
-done
+service kojid status
+service kojira status
 
 echo -e "\nConfiguration complete...Kojak is OK"
-
