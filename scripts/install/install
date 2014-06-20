@@ -1,4 +1,4 @@
-#p!/bin/bash
+#!/bin/bash
 # 
 # Copyright (C) 2013 Red Hat Inc.
 # Author: Salim Badakhchani <sal@redhat.com>
@@ -32,6 +32,11 @@ if [ ! -f "/etc/centos-release" ]; then
     echo -e "\n# Unsupported OS...installation requires CentOS"
     echo
 fi
+
+# Load services configuration
+DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
+. $DIR/init-service-accounting
+loadServices
 
 LOG="/root/kojak.log"
 TSTAMP=$(date '+_%Y%m%d%H%M%S')
@@ -596,7 +601,6 @@ EOF
 patch -p0 < /tmp/koji.patch
 rm -f /tmp/koji.patch
 
-# SSL certs
 rm -rf /etc/pki/CA/serial*
 rm -rf /etc/pki/CA/index*
 mkdir -p /etc/pki/koji
@@ -627,7 +631,7 @@ echo -e "Generating component keys and signing certificates\n"
 echo -e "y\ny" > ${CRTHOME}/response.txt
 
 # Create certificates for the koji components.
-for USER in koji kojiadmin kojira kojiweb kojihub
+for USER in koji kojiadmin kojira kojiweb kojihub kojibuilder
 do
     echo "creating certificate for ${USER} ..."
     openssl genrsa -out ${CRTHOME}/certs/${USER}.key 2048
@@ -663,26 +667,54 @@ cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/serverca.crt
 chown -R koji:apache /home/koji/.koji/
 cd -
 
-# Kojibuilder ssl update
-echo -e "UPDATE users SET name = 'kojibuilder' WHERE name = 'kojibuilder1.localdomain';\q" >> /tmp/kojibuilder.sql
-su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
-rm -rf /tmp/kojibuilder.sql
-rm -rf /tmp/koji
 
-echo -e "\nInitialising services...\n"
+echo -e "\nRunning tool installs..."
+dir=$(dirname $0)
+for toolinst in $dir/install.d/*.sh; do
+    sh $toolinst
+done
+
+echo -e "\nDisabling firewall..."
 service iptables stop
 chkconfig iptables off
 service ip6tables stop
 chkconfig ip6tables off
-chkconfig postgresql on
-service postgresql restart
-chkconfig httpd on
-service httpd start
-chkconfig jenkins on
-service jenkins start
-chkconfig kojid on
-service kojid start > 2&>1 > /dev/null
-chkconfig kojira on
-service kojira start
 
-echo -e "\nInstallation complete...System ready for configuration."
+echo -e "\nRestarting Services..."
+for svc in $SERVICES; do
+    chkconfig $svc on
+    service $svc start
+done
+
+echo -e "\nCreating base config..."
+export PROG="koji"
+export USER="koji"
+export HOST="kojibuilder1.localdomain"
+export ARCH="x86_64"
+
+su -l ${USER} -c "
+${PROG} add-host ${HOST} x86_64
+${PROG} edit-host --capacity 10.0 ${HOST}
+${PROG} add-host-to-channel ${HOST} appliance
+${PROG} add-host-to-channel ${HOST} createrepo
+${PROG} add-host-to-channel ${HOST} livecd
+${PROG} add-host-to-channel ${HOST} maven
+${PROG} add-host-to-channel ${HOST} vm
+${PROG} grant-permission repo kojira
+${PROG} grant-permission build kojibuilder
+"
+echo -e "\nUpdating permissions..."
+echo -e "UPDATE host set user_id = '3' where name = 'kojibuilder1.localdomain';\
+UPDATE host set name = 'kojibuilder1' where name = 'kojibuilder1.localdomain';\
+UPDATE users set usertype = '1' where name = 'kojibuilder';\
+DELETE from users where name = 'kojibuilder1.localdomain';\q" >> /tmp/kojibuilder.sql
+su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
+rm /tmp/kojibuilder.sql
+
+echo -e "\nService Status..."
+for svc in $SERVICES; do
+    service $svc status
+done
+
+echo -e "\nInstallation complete...Kojak is AOK"
+
