@@ -9,9 +9,6 @@ yum -y localinstall http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-
 echo "Installing DAVfs to support mounting aprox-generated settings.xml files..."
 yum -y install davfs2
 
-echo "Backing up /etc/fstab"
-cp -p /etc/fstab /etc/fstab.orig
-
 echo "Installing aprox..."
 curl http://repo.maven.apache.org/maven2/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz | tar -C /opt -zxv
 mv /opt/$APROX_FLAVOR /opt/aprox
@@ -20,9 +17,10 @@ echo "Setting up aprox init script..."
 ln -s /opt/aprox/bin/init/aprox /etc/init.d/aprox
 chmod +x /opt/aprox/bin/init/aprox
 
-echo "Setting aprox port to 8090..."
+echo "Setting aprox port to 8090 and context-path to '/aprox'..."
 cat > /opt/aprox/bin/boot.properties << 'EOF'
 port=8090
+context-path=/aprox
 EOF
 
 echo "Changing ownership to koji:koji for /opt/aprox..."
