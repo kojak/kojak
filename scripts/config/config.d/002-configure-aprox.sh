@@ -86,22 +86,30 @@ EOF
 echo "Setting up WebDAV mount..."
 test -d /etc/davfs2 || mkdir /etc/davfs2
 
-SECRETS_LINE='http://koji.localdomain:8090/mavdav/settings koji notused'
-grep "$SECRETS_LINE" /etc/davfs2/secrets > /dev/null || echo $SECRETS_LINE >> /etc/davfs2/secrets
+SETTINGS_SECRETS_LINE='/aprox/settings koji notused'
+grep "$SETTINGS_SECRETS_LINE" /etc/davfs2/secrets > /dev/null || echo $SETTINGS_SECRETS_LINE >> /etc/davfs2/secrets
+
+STORES_SECRETS_LINE='/aprox/stores koji notused'
+grep "$STORES_SECRETS_LINE" /etc/davfs2/secrets > /dev/null || echo $STORES_SECRETS_LINE >> /etc/davfs2/secrets
 
 mkdir -p /aprox/settings
+mkdir -p /aprox/stores
 chown -R koji:koji /aprox
 
-FSTAB_LINE='http://koji.localdomain:8090/mavdav/settings    /aprox/settings    davfs    auto,ro    0 0'
-grep "$FSTAB_LINE" /etc/fstab > /dev/null || echo $FSTAB_LINE >> /etc/fstab
+SETTINGS_FSTAB_LINE='http://koji.localdomain/aprox/mavdav/settings    /aprox/settings    davfs    auto,ro    0 0'
+grep "$SETTINGS_FSTAB_LINE" /etc/fstab > /dev/null || echo $SETTINGS_FSTAB_LINE >> /etc/fstab
+
+STORES_FSTAB_LINE='http://koji.localdomain/aprox/mavdav/stores    /aprox/stores    davfs    auto,ro    0 0'
+grep "$STORES_FSTAB_LINE" /etc/fstab > /dev/null || echo $STORES_FSTAB_LINE >> /etc/fstab
 
 service aprox restart
 
 echo "Sleeping 30s to allow AProx to start... (shouldn't take anything like that long)"
 sleep 30
-curl -I http://koji.localdomain:8090/mavdav/settings/group/settings-CIx-loop.xml
+curl -I http://koji.localdomain:8090/aprox/mavdav/settings/group/settings-CIx-loop.xml
 
 mount /aprox/settings
+mount /aprox/stores
 
 echo "Redirecting default Maven settings.xml for user 'koji' to AProx...\n  ...using local-loop aprox deployment: '/aprox/settings/group/settings-CIx-loop.xml'"
 if [ ! -d /home/koji/.m2 ]; then
@@ -116,6 +124,16 @@ if [ -f $KOJI_DEFAULT_SETTINGS_XML ]; then
 fi
 
 ln -s /aprox/settings/group/settings-CIx-loop.xml $KOJI_DEFAULT_SETTINGS_XML
+
+echo "Setting up reverse proxy to AProx..."
+cat > /etc/httpd/conf.d/aprox.conf << 'EOF'
+ProxyPreserveHost On
+ProxyPass /aprox http://localhost:8090/aprox
+ProxyPassReverse /aprox http://localhost:8090/aprox
+EOF
+
+APROX_CONF_INCLUDE="Include /etc/httpd/conf.d/aprox.conf"
+grep "$APROX_CONF_INCLUDE" /etc/httpd/conf/httpd.conf || echo "$APROX_CONF_INCLUDE" >> /etc/httpd/conf/httpd.conf
 
 echo "AProx configuration complete."
 
