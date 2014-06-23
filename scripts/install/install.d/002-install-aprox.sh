@@ -9,9 +9,6 @@ yum -y localinstall http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-
 echo "Installing DAVfs to support mounting aprox-generated settings.xml files..."
 yum -y install davfs2
 
-echo "Backing up /etc/fstab"
-cp -p /etc/fstab /etc/fstab.orig
-
 echo "Installing aprox..."
 curl http://repo.maven.apache.org/maven2/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz | tar -C /opt -zxv
 mv /opt/$APROX_FLAVOR /opt/aprox
