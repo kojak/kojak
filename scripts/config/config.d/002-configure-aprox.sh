@@ -108,6 +108,18 @@ echo "Sleeping 30s to allow AProx to start... (shouldn't take anything like that
 sleep 30
 curl -I http://koji.localdomain:8090/aprox/mavdav/settings/group/settings-CIx-loop.xml
 
+echo "Setting up reverse proxy to AProx..."
+cat > /etc/httpd/conf.d/aprox.conf << 'EOF'
+ProxyPreserveHost On
+ProxyPass /aprox http://localhost:8090/aprox
+ProxyPassReverse /aprox http://localhost:8090/aprox
+EOF
+
+APROX_CONF_INCLUDE="Include /etc/httpd/conf.d/aprox.conf"
+grep "$APROX_CONF_INCLUDE" /etc/httpd/conf/httpd.conf || echo "$APROX_CONF_INCLUDE" >> /etc/httpd/conf/httpd.conf
+
+service httpd graceful
+
 mount /aprox/settings
 mount /aprox/stores
 
@@ -127,18 +139,6 @@ for userdir in '/home/koji' '/root'; do
 
   ln -s /aprox/settings/group/settings-CIx-loop.xml $KOJI_DEFAULT_SETTINGS_XML
 done
-
-echo "Setting up reverse proxy to AProx..."
-cat > /etc/httpd/conf.d/aprox.conf << 'EOF'
-ProxyPreserveHost On
-ProxyPass /aprox http://localhost:8090/aprox
-ProxyPassReverse /aprox http://localhost:8090/aprox
-EOF
-
-APROX_CONF_INCLUDE="Include /etc/httpd/conf.d/aprox.conf"
-grep "$APROX_CONF_INCLUDE" /etc/httpd/conf/httpd.conf || echo "$APROX_CONF_INCLUDE" >> /etc/httpd/conf/httpd.conf
-
-service httpd graceful
 
 echo "AProx configuration complete."
 
