@@ -20,8 +20,13 @@ cp /etc/davfs2/secrets /etc/davfs2/secrets.aprox
 sed '/aprox/d' /etc/davfs2/secrets.aprox > /etc/davfs2/secrets
 rm /etc/davfs2/secrets.aprox
 
-echo "Removing .m2 directory from koji home directory..."
-rm -rf /home/koji/.m2
+for userdir in '/home/koji' '/root'; do
+  user=$(basename $userdir)
+  echo "Removing AProx files from .m2 directory for '${user}'..."
+  rm -rf $userdir/.m2/repo-*
+  rm -f $userdir/.m2/settings.xml
+  test -f $userdir/.m2/settings.pre-aprox && mv $userdir/.m2/settings.pre-aprox $userdir/.m2/settings.xml
+done
 
 echo "Removing AProx install and mountpoints..."
 rm -rf /aprox
