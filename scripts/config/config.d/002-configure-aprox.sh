@@ -111,19 +111,22 @@ curl -I http://koji.localdomain:8090/aprox/mavdav/settings/group/settings-CIx-lo
 mount /aprox/settings
 mount /aprox/stores
 
-echo "Redirecting default Maven settings.xml for user 'koji' to AProx...\n  ...using local-loop aprox deployment: '/aprox/settings/group/settings-CIx-loop.xml'"
-if [ ! -d /home/koji/.m2 ]; then
-  mkdir -p /home/koji/.m2
-  chown -R koji:koji /home/koji/.m2
-fi
+for userdir in '/home/koji' '/root'; do
+  user=$(basename $userdir)
+  echo "Redirecting default Maven settings.xml for '${user}' to AProx...\n  ...using local-loop aprox deployment: '/aprox/settings/group/settings-CIx-loop.xml'"
+  if [ ! -d $userdir/.m2 ]; then
+    mkdir -p $userdir/.m2
+    chown -R $user:$user $userdir/.m2
+  fi
 
-KOJI_DEFAULT_SETTINGS_XML="/home/koji/.m2/settings.xml"
+  KOJI_DEFAULT_SETTINGS_XML="$userdir/.m2/settings.xml"
 
-if [ -f $KOJI_DEFAULT_SETTINGS_XML ]; then
- mv $KOJI_DEFAULT_SETTINGS_XML ${KOJI_DEFAULT_SETTINGS_XML}.pre-aprox
-fi
+  if [ -f $KOJI_DEFAULT_SETTINGS_XML ]; then
+   mv $KOJI_DEFAULT_SETTINGS_XML ${KOJI_DEFAULT_SETTINGS_XML}.pre-aprox
+  fi
 
-ln -s /aprox/settings/group/settings-CIx-loop.xml $KOJI_DEFAULT_SETTINGS_XML
+  ln -s /aprox/settings/group/settings-CIx-loop.xml $KOJI_DEFAULT_SETTINGS_XML
+done
 
 echo "Setting up reverse proxy to AProx..."
 cat > /etc/httpd/conf.d/aprox.conf << 'EOF'
@@ -134,6 +137,8 @@ EOF
 
 APROX_CONF_INCLUDE="Include /etc/httpd/conf.d/aprox.conf"
 grep "$APROX_CONF_INCLUDE" /etc/httpd/conf/httpd.conf || echo "$APROX_CONF_INCLUDE" >> /etc/httpd/conf/httpd.conf
+
+service httpd graceful
 
 echo "AProx configuration complete."
 
