@@ -1,9 +1,10 @@
 #!/bin/sh
 
 echo "Unmounting all /aprox/* filesystems..."
-for d in $(ls -1d /aprox); do
-  umount $d
-done
+umount /aprox/settings/
+
+echo "Returning fstab to original state..."
+cat /etc/fstab.orig > /etc/fstab
 
 echo "Removing aprox autofs configuration..."
 rm /etc/auto.aprox

@@ -59,8 +59,8 @@ host koji koji 127.0.0.1/32 trust
 host koji apache 127.0.0.1/32 trust
 host koji koji ::1/128 trust
 host koji apache ::1/128 trust
-host koji koji 192.168.122.2/32 trust
-host koji apache 192.168.122.2/32 trust" >> /var/lib/pgsql/data/pg_hba.conf
+host koji koji 10.34.25.167/32 trust
+host koji apache 10.34.25.167/32 trust" >> /var/lib/pgsql/data/pg_hba.conf
 
 sed -i -e "s/local all all peer/local all all trust/g" /var/lib/pgsql/data/pg_hba.conf
 chown postgres:postgres /var/lib/pgsql/data/pg_hba.conf.orig

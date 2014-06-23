@@ -51,9 +51,9 @@ cd /opt/kojak
 1. Create VM
 ```
 
-Once the virtual machine is created you should login to the virtual machine on address 192.168.122.2 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the "Install" option from the menu.
+Once the virtual machine is created you should login to the virtual machine on address 10.34.25.167 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the "Install" option from the menu.
 ```
-ssh root@192.168.122.2
+ssh root@10.34.25.167
 cd /opt/kojak
 ./kojak
 2. Install
@@ -74,7 +74,7 @@ Configuration Notes
 
 The Kojak virtual machine is configured with a set of default options.  Executing the kojak script will allow you to modify and save these variables as required.  Installation directories, iso location and virtual machine resources allocations (Mem, CPU and Storage etc) can all be reconfigured as required.  The appliance is configured with with a static address taken from the pool of ip addresses from the "default" network that is configured with libvirt.
 
-You can access the virtual machine via ssh at 192.168.122.2 using the following credentials:
+You can access the virtual machine via ssh at 10.34.25.167 using the following credentials:
 
 1. username: root
 2. password: root
