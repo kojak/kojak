@@ -21,7 +21,7 @@
 # Uncomment to debug script
 #set -x
 
-# Check to see if user is root
+# Check user priviledges
 if [ "${USER}" != "root" ]; then
     echo -e "\n# This script requires root priviledges to run"
     exit
