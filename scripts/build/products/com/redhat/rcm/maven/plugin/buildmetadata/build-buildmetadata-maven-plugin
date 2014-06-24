@@ -21,6 +21,19 @@
 # Uncomment to debug script
 set -x
 
+# Check user priviledges
+if [ "$USER" != "koji" ]; then
+echo -e "\n# This script requires koji priviledges to run"
+    exit
+fi
+
+# Check to see if Aprox is running
+STATUS=$(service aprox status | grep running)
+if [ "$STATUS" == "aprox is running" ]; then
+echo -e "\n# You must stop the aprox service before provisioning this build"
+    exit
+fi
+
 SCM='git+'
 URL='https://github.com/sbadakhc'
 APP='buildmetadata-maven-plugin'
