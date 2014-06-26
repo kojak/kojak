@@ -1,6 +1,6 @@
 #!/bin/sh
 
-APROX_VERSION=0.14.4
+APROX_VERSION=0.14.5
 APROX_FLAVOR=aprox-launcher-easyprox
 
 echo "Adding RPMForge yum repository for DAVfs support..."
