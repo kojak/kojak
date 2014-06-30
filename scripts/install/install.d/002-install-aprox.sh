@@ -32,7 +32,7 @@ echo "Applying aprox patches..."
 DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
 for patch in $(ls -1 $DIR/patch.d/aprox/*.patch); do
   echo "...$(basename $patch)"
-  patch -p1 < $patch
+  (cd /opt/aprox && patch -p1 < $patch)
 done
 
 echo "Changing ownership to koji:koji for /opt/aprox..."
