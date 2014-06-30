@@ -1,7 +1,7 @@
 diff --git a/launchers/base/src/main/resources/bin/init/aprox b/launchers/base/src/main/resources/bin/init/aprox
 index 7bf8b75..d8851f3 100755
---- a/launchers/base/src/main/resources/bin/init/aprox
-+++ b/launchers/base/src/main/resources/bin/init/aprox
+--- a/bin/init/aprox
++++ b/bin/init/aprox
 @@ -23,7 +23,7 @@
  
  PROG=aprox
