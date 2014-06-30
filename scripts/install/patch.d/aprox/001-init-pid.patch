@@ -16,7 +16,7 @@ index 7bf8b75..141332f 100755
        RETVAL=0
      else
 -      killproc ${PROG} > /dev/null 2>&1
-+      kill -SIGTERM ${PROG} > /dev/null 2>&1
++      for pid in ${PID}; do kill -SIGTERM ${pid} > /dev/null 2>&1; done
        RETVAL=$?
        [ $RETVAL -eq 0 ] && success || failure
        echo
