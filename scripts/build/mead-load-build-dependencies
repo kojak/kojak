@@ -112,7 +112,7 @@ for log in args:
                     if (i + 1) < len(tokens):
                         url = tokens[i + 1]
                         baseurl = os.path.dirname(url)
-                        baseurl = NORM_RE.sub(r'\1/', baseurl)
+                        baseurl = NORM_RE.sub(r'\1/', baseurl) + '/'
                         check_and_append(opts, urls, baseurl)
                         i += 1
                     else:
