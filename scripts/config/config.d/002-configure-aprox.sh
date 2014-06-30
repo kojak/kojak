@@ -1,9 +1,11 @@
 #!/bin/sh
 
-echo "Creating CI-* / CIx-* auto-proxy rule..."
-test -d /opt/aprox/data/autoprox || mkdir -p /opt/aprox/data/autoprox
+DATA=/opt/aprox/var/lib/aprox/data
 
-cat > /opt/aprox/data/autoprox/0010-ci.groovy << 'EOF'
+echo "Creating CI-* / CIx-* auto-proxy rule..."
+test -d $DATA/autoprox || mkdir -p $DATA/autoprox
+
+cat > $DATA/autoprox/0010-ci.groovy << 'EOF'
 import org.commonjava.aprox.autoprox.data.*;
 import java.net.MalformedURLException;
 import org.commonjava.aprox.model.*;
@@ -77,9 +79,9 @@ class CIRule extends AbstractAutoProxRule
 EOF
 
 echo "Configuring public group to contain central and jboss.org public repository..."
-test -d /opt/aprox/data/aprox/group || mkdir -p /opt/aprox/data/aprox/group
+test -d $DATA/aprox/group || mkdir -p $DATA/aprox/group
 
-cat > /opt/aprox/data/aprox/group/public.json << 'EOF'
+cat > $DATA/aprox/group/public.json << 'EOF'
 {"constituents":["remote:central","remote:JB-public"],"key":"group:public"}
 EOF
 
@@ -97,8 +99,8 @@ grep "$FSTAB_LINE" /etc/fstab > /dev/null || echo $FSTAB_LINE >> /etc/fstab
 
 service aprox restart
 
-echo "Sleeping 30s to allow AProx to start... (shouldn't take anything like that long)"
-sleep 30
+echo "Sleeping 10s to allow AProx to start... (shouldn't take anything like that long)"
+sleep 10
 curl -I http://koji.localdomain:8090/mavdav/settings/group/settings-CIx-loop.xml
 
 mount /aprox/settings
