@@ -1,7 +1,7 @@
 Kojak - "Koji in an box"
 ========================
 
-Kojak is a collection of scripts that can be used to automate the installation and configuration of the Koji build system. It is part of a productization effort to encourage the adoption of Koji for use in development, testing and staging environments.  The scripts included in this repository can be used to create a fully operational Koji instance on the local system or optionally as virtual machine utilizing the Libvirt visualization API and a kickstart file.  The virtual machine is based on a stock vanilla CentOS installation, to provide an automated "out of the box" solution, which may be used for development, testing and educational purposes.
+Kojak is a collection of scripts that can be used to automate the installation and configuration of the Koji build system. It is part of a productization effort to encourage the adoption of Koji for use in development, testing and staging environments.  The scripts included in this repository can be used to create a fully operational Koji instance on the local system or optionally as virtual machine utilizing the Libvirt visualization API and a Kickstart file.  The virtual machine is based on a stock vanilla CentOS installation, to provide an automated "out of the box" solution, which may be used for development, testing and educational purposes.
 
 Tool Chain
 ----------
@@ -11,7 +11,7 @@ Future implementations of Kojak will ship with a standardised tool chain designe
 Installation Prerequisites
 ---------------------------
 
-If you opt for the virtual installation option the scripts will build a virtual machine which will be accessible from your local host.  Alternatively you can install directly on the local host if, for example, you have a dedicated server.  Kojak has been successfully installed and tested on CentOS 6.5 and Fedora 18+. 
+If you opt for the virtual installation option the scripts will build a virtual machine which will be accessible from your local host.  Alternatively you can install directly on the local host if, for example, you have a dedicated server.  Kojak has been successfully installed and tested on CentOS and RHEL 6+.
 
 For more information about virtualization see below:
 
@@ -51,9 +51,9 @@ cd /opt/kojak
 1. Create VM
 ```
 
-Once the virtual machine is created you should login to the virtual machine on address 10.34.25.167 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the "Install" option from the menu.
+Once the virtual machine is created you should login to the virtual machine on address 192.168.122.2 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the "Install" option from the menu.
 ```
-ssh root@10.34.25.167
+ssh root@192.168.122.2
 cd /opt/kojak
 ./kojak
 2. Install
@@ -74,7 +74,7 @@ Configuration Notes
 
 The Kojak virtual machine is configured with a set of default options.  Executing the kojak script will allow you to modify and save these variables as required.  Installation directories, iso location and virtual machine resources allocations (Mem, CPU and Storage etc) can all be reconfigured as required.  The appliance is configured with with a static address taken from the pool of ip addresses from the "default" network that is configured with libvirt.
 
-You can access the virtual machine via ssh at 10.34.25.167 using the following credentials:
+You can access the virtual machine via ssh at 192.168.122.2 using the following credentials:
 
 1. username: root
 2. password: root
