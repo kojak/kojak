@@ -82,8 +82,8 @@ You can access the virtual machine via ssh at 192.168.122.2 using the following 
 Currently Kojak uses SSL certificates as the preferred method of authentication.  To utilize the client certificate for browser based logins you will need to import the certificate.  The certificate is can be accessed from /home/koji/.koji.  Certificates are created for a default set of users which includes koji, kojiadmin, kojira and 3 kojibuilders.
 
 The Koji web interface is accessible via http://koji.localdomain/koji
-
 Jenkins configured with the Koji plugin can be configured via the Jenkins GUI via http://koji.localdomain:8080
+Aprox configured with a standard set of repos is available via http://koji.localdomain:8090
 
 Known Issues
 ------------
