@@ -25,9 +25,9 @@ index 7bf8b75..ef398ae 100755
 +      echo
 +      [ $RETVAL -eq 0 ] && touch /var/lock/subsys/$PROG
 +    else
-+      echo "already running"
-+      REDVAL=0
-+    end
++      echo "aprox (pid ${PID}) already running"
++      RETVAL=0
++    fi
  }
  stop() {
      echo -n $"Shutting down $PROG: "
