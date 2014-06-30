@@ -12,7 +12,7 @@ yum -y install davfs2
 echo "Backing up /etc/fstab"
 cp -p /etc/fstab /etc/fstab.orig
 
-echo "Installing aprox..."
+echo "Installing AProx ($APROX_FLAVOR, version $APROX_VERSION)..."
 #curl http://repo.maven.apache.org/maven2/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz | tar -C /opt -zxv
 curl http://oss.sonatype.com/content/repository/orgcommonjava-1076/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz | tar -C /opt -zxv
 
