@@ -7,7 +7,7 @@ index 7bf8b75..d8851f3 100755
  PROG=aprox
  APROX_HOME=/opt/aprox
 -PID=$(ps -C "java -jar $APROX_HOME/lib/aprox-cdi-components-0.14.6.jar" -o pid h)
-+PID=$(lsof "$APROX_HOME/lib/aprox-cdi-components-0.14.6.jar" | grep java | awk '{print $2}')
++PID=$(lsof "$APROX_HOME/lib/aprox-cdi-components-0.14.6.jar" | grep java | head -1 | awk '{print $2}')
  LOCKFILE=/var/lock/subsys/$PROG
  EXEC=$APROX_HOME/bin/aprox.sh
  RETVAL=0
