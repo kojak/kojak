@@ -1,0 +1,13 @@
+diff --git a/launchers/base/src/main/resources/bin/init/aprox b/launchers/base/src/main/resources/bin/init/aprox
+index 7bf8b75..d8851f3 100755
+--- a/launchers/base/src/main/resources/bin/init/aprox
++++ b/launchers/base/src/main/resources/bin/init/aprox
+@@ -23,7 +23,7 @@
+ 
+ PROG=aprox
+ APROX_HOME=/opt/aprox
+-PID=$(ps -C "java -jar $APROX_HOME/lib/aprox-cdi-components-0.14.6.jar" -o pid h)
++PID=$(lsof "$APROX_HOME/lib/aprox-cdi-components-0.14.6.jar" | grep java | awk '{print $2}')
+ LOCKFILE=/var/lock/subsys/$PROG
+ EXEC=$APROX_HOME/bin/aprox.sh
+ RETVAL=0
