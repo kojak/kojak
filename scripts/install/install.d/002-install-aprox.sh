@@ -1,7 +1,7 @@
 #!/bin/sh
 
-APROX_VERSION=0.14.5
-APROX_FLAVOR=aprox-launcher-easyprox
+APROX_VERSION=0.14.6
+APROX_FLAVOR=aprox-launcher-savant
 
 echo "Adding RPMForge yum repository for DAVfs support..."
 yum -y localinstall http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
@@ -13,8 +13,8 @@ echo "Backing up /etc/fstab"
 cp -p /etc/fstab /etc/fstab.orig
 
 echo "Installing aprox..."
-curl http://repo.maven.apache.org/maven2/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz | tar -C /opt -zxv
-mv /opt/$APROX_FLAVOR /opt/aprox
+#curl http://repo.maven.apache.org/maven2/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz | tar -C /opt -zxv
+curl http://oss.sonatype.com/content/repository/orgcommonjava-1076/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz | tar -C /opt -zxv
 
 echo "Setting up aprox init script..."
 ln -s /opt/aprox/bin/init/aprox /etc/init.d/aprox
