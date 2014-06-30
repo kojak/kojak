@@ -14,6 +14,8 @@ cp -p /etc/fstab /etc/fstab.orig
 
 echo "Installing AProx ($APROX_FLAVOR, version $APROX_VERSION)..."
 #curl http://repo.maven.apache.org/maven2/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz | tar -C /opt -zxv
+
+echo "Downloading from staging location: http://oss.sonatype.org/content/repository/orgcommonjava-1076/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz"
 curl http://oss.sonatype.org/content/repository/orgcommonjava-1076/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz | tar -C /opt -zxv
 
 echo "Setting up aprox init script..."
