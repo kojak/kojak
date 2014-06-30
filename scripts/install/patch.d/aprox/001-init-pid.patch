@@ -1,5 +1,5 @@
 diff --git a/launchers/base/src/main/resources/bin/init/aprox b/launchers/base/src/main/resources/bin/init/aprox
-index 7bf8b75..4b23721 100755
+index 7bf8b75..3cb2a5a 100755
 --- a/bin/init/aprox
 +++ b/bin/init/aprox
 @@ -23,26 +23,36 @@
@@ -46,7 +46,16 @@ index 7bf8b75..4b23721 100755
        RETVAL=$?
        [ $RETVAL -eq 0 ] && success || failure
        echo
-@@ -74,6 +84,7 @@ case "$1" in
+@@ -51,6 +61,8 @@ stop() {
+ }
+ restart() {
+     stop
++    echo "Waiting 10s for old process to stop"
++    sleep 10
+     start
+ }
+ 
+@@ -74,6 +86,7 @@ case "$1" in
          then
              echo "$PROG is stopped"
          else
