@@ -1,13 +1,22 @@
 diff --git a/launchers/base/src/main/resources/bin/init/aprox b/launchers/base/src/main/resources/bin/init/aprox
-index 7bf8b75..d8851f3 100755
---- a/bin/init/aprox
-+++ b/bin/init/aprox
+index 7bf8b75..141332f 100755
+--- a/aprox/bin/init/aprox
++++ b/aprox/bin/init/aprox
 @@ -23,7 +23,7 @@
  
  PROG=aprox
  APROX_HOME=/opt/aprox
 -PID=$(ps -C "java -jar $APROX_HOME/lib/aprox-cdi-components-0.14.6.jar" -o pid h)
-+PID=$(lsof "$APROX_HOME/lib/aprox-cdi-components-0.14.6.jar" | grep java | head -1 | awk '{print $2}')
++PID=$(lsof "$APROX_HOME/lib/aprox-cdi-components-0.14.6.jar" | grep java | awk '{print $2}')
  LOCKFILE=/var/lock/subsys/$PROG
  EXEC=$APROX_HOME/bin/aprox.sh
  RETVAL=0
+@@ -42,7 +42,7 @@ stop() {
+       echo "not running"
+       RETVAL=0
+     else
+-      killproc ${PROG} > /dev/null 2>&1
++      kill -SIGTERM ${PROG} > /dev/null 2>&1
+       RETVAL=$?
+       [ $RETVAL -eq 0 ] && success || failure
+       echo
