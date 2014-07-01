@@ -8,6 +8,8 @@ Tool Chain
 
 Future implementations of Kojak will ship with a standardised tool chain designed to allow developers to build, test, deploy, verfiy and replicate product builds and their associated repositories in a consistent way.  The long term goal is to provide a development/staging platform to allow users to familerise themselves with the build system and allow them access to Koji outside of prodcution environments.   
 
+The current tool chain integrates Jenkins, Jenkins Koji Plugin and Aprox.  Kojak also ships with a growing catalog of tried and tested product builds.  The buildmetadata-maven-plugin is the first example of this type and can be utilised to report a host of data about a build and the environment it was conducted in.
+
 Installation Prerequisites
 ---------------------------
 
@@ -78,9 +80,11 @@ su - koji
 /opt/kojak/scripts/build/products/com/redhat/rcm/maven/plugin/buildmetadata/build-buildmetadata-maven-plugin
 ```
 
-This build provisioning script evokes Maven which downloads the dependencies for the build.  It then proceeds to import the artifacts into the Koji instance and tags the build ready for Jenkins to orchestrate the execution of the build via the Jenkins Koji Plugin.  This "development" build can be tracked via the Jenkins console and if successful it will be submitted to the Koji instance for building.  You can track the result of your "staging" build via the Koji web interface.  If your build is successful there your in pretty good shape to submit your build to your RCM team ;)
+This build provisioning script evokes Maven which downloads the dependencies for the build.  It then proceeds to import the artifacts into the Koji instance and tags the build ready for Jenkins to orchestrate the execution of the build via the Jenkins Koji Plugin.  Once the script has finished executing you can proceed with the build via Jenkins.  
 
-Building with Kojak allows you to leverage Jenkins for Continous Integration and Aprox for repository management in a preconfigured and standardised way.   
+Browsing to the Jenkins web interface you will see a preconfigured build task.  Simply execute the build task and wait for it to complete.  This "development" build can be tracked via the Jenkins console and if successful it will be submitted to the Koji instance for building.  
+
+You can track the result of your "staging" build via the Koji web interface.  If your build is successful there your in pretty good shape to submit your build to your RCM team ;) Building with Kojak allows you to leverage Jenkins for Continous Integration and Aprox for repository management in a preconfigured and standardised way.
 
 For more inforation about using Koji see:
 
