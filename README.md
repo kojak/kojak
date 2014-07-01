@@ -29,7 +29,7 @@ The virtual machine is configured with the following default specifications:
 1. 4GB RAM
 2. 32GB Disk Space
 
-The you local host should be configured with the following minimum specifications:
+Your local host should be configured with the following minimum specifications:
 
 1. Centos 6.5 or Fedora 18+ with virtualization package group
 2. 8GB RAM
@@ -50,6 +50,12 @@ cd /opt/kojak
 ./kojak
 1. Create VM
 ```
+The select the default options:
+
+```
+1. Default
+
+```
 
 Once the virtual machine is created you should login to the virtual machine on address 192.168.122.2 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the "Install" option from the menu.
 ```
@@ -65,13 +71,23 @@ After the installation is complete you can opt to configure the system with base
 3. Configure
 ```
 
+At this stage the system fully installed and configured.  To get you started right away we have included scripts to allow you provision a build and execute a Jenkins job to execute the build example in.
+
+Switch to the koji user and execute the following build provisioning script:
+```
+su - koji
+/opt/kojak/scripts/build/products/com/redhat/rcm/maven/plugin/buildmetadata/build-buildmetadata-maven-plugin
+```
+
+This build provisioning script evokes Maven which downloads the dependencies for the build.  It then proceeds to import the artifacts into the Koji instance and tags the build ready for Jenkins to orchestrate the execution of the build via the Jenkins Koji Plugin.  The development build is can be tracked via the Jenkins console and if successful it with be submitted to the Koji instance for building.  You can the result of your staging build via the Koji web interface.  If your build is successful here your in pretty good shape to submit your build to your RCM team ;)
+
+
 For more inforation about using Koji see:
 
 https://fedoraproject.org/wiki/Koji for more details about using Koji.
 
 Configuration Notes
 -------------------
-
 The Kojak virtual machine is configured with a set of default options.  Executing the kojak script will allow you to modify and save these variables as required.  Installation directories, iso location and virtual machine resources allocations (Mem, CPU and Storage etc) can all be reconfigured as required.  The appliance is configured with with a static address taken from the pool of ip addresses from the "default" network that is configured with libvirt.
 
 You can access the virtual machine via ssh at 192.168.122.2 using the following credentials:
