@@ -54,7 +54,6 @@ The select the default options:
 
 ```
 1. Default
-
 ```
 
 Once the virtual machine is created you should login to the virtual machine on address 192.168.122.2 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the "Install" option from the menu.
