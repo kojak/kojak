@@ -78,8 +78,9 @@ su - koji
 /opt/kojak/scripts/build/products/com/redhat/rcm/maven/plugin/buildmetadata/build-buildmetadata-maven-plugin
 ```
 
-This build provisioning script evokes Maven which downloads the dependencies for the build.  It then proceeds to import the artifacts into the Koji instance and tags the build ready for Jenkins to orchestrate the execution of the build via the Jenkins Koji Plugin.  The development build is can be tracked via the Jenkins console and if successful it with be submitted to the Koji instance for building.  You can the result of your staging build via the Koji web interface.  If your build is successful here your in pretty good shape to submit your build to your RCM team ;)
+This build provisioning script evokes Maven which downloads the dependencies for the build.  It then proceeds to import the artifacts into the Koji instance and tags the build ready for Jenkins to orchestrate the execution of the build via the Jenkins Koji Plugin.  This "development" build can be tracked via the Jenkins console and if successful it will be submitted to the Koji instance for building.  You can track the result of your "staging" build via the Koji web interface.  If your build is successful there your in pretty good shape to submit your build to your RCM team ;)
 
+Building with Kojak allows your to leverage Jenkins for Continous Integration and Aprox for repository management in a preconfigured and standardised way.   
 
 For more inforation about using Koji see:
 
