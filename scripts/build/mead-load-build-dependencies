@@ -254,6 +254,7 @@ for baseurl in urls:
                    link.endswith('/') or \
                    link.startswith('?') or link.endswith('-zip') or link.endswith('-tgz') or \
                    'Sonatype-content.css' in link or link.endswith('.audit.json') or \
+                   link.endswith('index.html') or \
                    link in BAD_ARTIFACTS:
                 pass
             elif [ext for ext in SUPPORTED_EXTS if link.endswith(ext)]:
@@ -266,10 +267,6 @@ for baseurl in urls:
                     # absolute link on this host
                     pieces = baseurl.split('/')[:3]
                     url = '/'.join(pieces) + link
-                elif link.endswith('index.html'):
-                    print "skipping index file: %s" % link
-                    do_import = False
-                    download = False
                 else:
                     # relative link
                     url = '%s/%s' % (baseurl, link)
