@@ -256,7 +256,10 @@ for baseurl in urls:
                    'Sonatype-content.css' in link or link.endswith('.audit.json') or \
                    link.endswith('index.html') or \
                    os.path.basename(link) in BAD_ARTIFACTS:
-                print "skipping bad artifact: %s" % link
+                
+                if opts.debug:
+                    print "skipping bad artifact: %s" % link
+                
                 pass
             elif [ext for ext in SUPPORTED_EXTS if link.endswith(ext)]:
                 if '://' in link:
@@ -269,11 +272,13 @@ for baseurl in urls:
                 else:
                     # relative link
                     url = '%s/%s' % (baseurl, link)
-
-                print "Downloading: %s" % url
+                
+                if opts.debug:
+                    print "Downloading: %s" % url
+                
                 grabber.urlgrab(url, filename=os.path.join(tmpdir, os.path.basename(link)),
                                 progress_obj=METER)
-
+                
                 if do_import is None:
                     do_import = True
             else:
