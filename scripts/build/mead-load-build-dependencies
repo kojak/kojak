@@ -269,9 +269,9 @@ for baseurl in urls:
                     # relative link
                     url = '%s/%s' % (baseurl, link)
 
-                    print url
-                    grabber.urlgrab(url, filename=os.path.join(tmpdir, os.path.basename(link)),
-                                    progress_obj=METER)
+                print url
+                grabber.urlgrab(url, filename=os.path.join(tmpdir, os.path.basename(link)),
+                                progress_obj=METER)
 
                 if do_import is None:
                     do_import = True
