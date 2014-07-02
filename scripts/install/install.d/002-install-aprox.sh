@@ -30,12 +30,14 @@ cat > /opt/aprox/bin/boot.properties << 'EOF'
 port=8090
 EOF
 
-echo "Applying aprox patches..."
 DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
-for patch in $(ls -1 $DIR/patch.d/aprox/*.patch); do
-  echo "...$(basename $patch)"
-  patch -d /opt/aprox -p1 < $patch
-done
+if [ -d $DIR/patch.d/aprox ]; then
+  echo "Applying aprox patches..."
+  for patch in $(ls -1 $DIR/patch.d/aprox/*.patch); do
+    echo "...$(basename $patch)"
+    patch -d /opt/aprox -p1 < $patch
+  done
+fi
 
 echo "Changing ownership to koji:koji for /opt/aprox..."
 chown -R koji:koji /opt/aprox
