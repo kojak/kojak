@@ -1,9 +1,7 @@
 #!/bin/sh
 
-# http://localhost:8080/api/1.0/hosted/local-deployments/org/commonjava/aprox/launch/aprox-launcher-savant/0.14.7-SNAPSHOT/aprox-launcher-savant-0.14.7-20140702.153309-1-launcher.tar.gz
 APROX_FLAVOR=aprox-launcher-savant
 APROX_VERSION=0.14.7-SNAPSHOT
-APROX_VERSION_SNAP=0.14.7-20140702.153309-1
 
 echo "Adding RPMForge yum repository for DAVfs support..."
 yum -y localinstall http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
@@ -18,7 +16,8 @@ echo "Installing AProx ($APROX_FLAVOR, version $APROX_VERSION)..."
 
 #URL=http://repo.maven.apache.org/maven2/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz
 #URL=https://oss.sonatype.org/content/repositories/orgcommonjava-1076/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz
-URL=http://192.168.122.1:8080/api/1.0/hosted/local-deployments/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION_SNAP-launcher.tar.gz
+
+URL=http://192.168.122.1:8080/api/1.0/hosted/local-deployments/org/commonjava/aprox/launch/aprox-launcher-savant/0.14.7-SNAPSHOT/aprox-launcher-savant-0.14.7-20140702.193919-2-launcher.tar.gz
 echo "Downloading AProx from: $URL"
 curl $URL | tar -C /opt -zxv
 
