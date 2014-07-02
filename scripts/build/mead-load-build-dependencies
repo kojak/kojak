@@ -258,8 +258,6 @@ for baseurl in urls:
                    link in BAD_ARTIFACTS:
                 pass
             elif [ext for ext in SUPPORTED_EXTS if link.endswith(ext)]:
-                download = True
-
                 if '://' in link:
                     # absolute link
                     url = link
@@ -271,7 +269,7 @@ for baseurl in urls:
                     # relative link
                     url = '%s/%s' % (baseurl, link)
 
-                if download:
+                    print url
                     grabber.urlgrab(url, filename=os.path.join(tmpdir, os.path.basename(link)),
                                     progress_obj=METER)
 
