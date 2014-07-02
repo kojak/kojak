@@ -255,7 +255,7 @@ for baseurl in urls:
                    link.startswith('?') or link.endswith('-zip') or link.endswith('-tgz') or \
                    'Sonatype-content.css' in link or link.endswith('.audit.json') or \
                    link.endswith('index.html') or \
-                   link in BAD_ARTIFACTS:
+                   os.path.basename(link) in BAD_ARTIFACTS:
                 print "skipping bad artifact: %s" % link
                 pass
             elif [ext for ext in SUPPORTED_EXTS if link.endswith(ext)]:
