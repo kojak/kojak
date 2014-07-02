@@ -264,6 +264,9 @@ for baseurl in urls:
                     # absolute link on this host
                     pieces = baseurl.split('/')[:3]
                     url = '/'.join(pieces) + link
+                elif link.endswith('index.html'):
+                    print "skipping index file: %s" % link
+                    continue
                 else:
                     # relative link
                     url = '%s/%s' % (baseurl, link)
