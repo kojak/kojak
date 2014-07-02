@@ -5,7 +5,7 @@ DATA=/opt/aprox/var/lib/aprox/data
 echo "Creating CI-* / CIx-* auto-proxy rule..."
 test -d $DATA/autoprox || mkdir -p $DATA/autoprox
 
-cat > $DATA/autoprox/0010-ci.groovy << 'EOF'
+cat > $DATA/autoprox/0001-ci.groovy << 'EOF'
 import org.commonjava.aprox.autoprox.data.*;
 import java.net.MalformedURLException;
 import org.commonjava.aprox.model.*;
@@ -17,6 +17,11 @@ class CIRule extends AbstractAutoProxRule
     boolean matches( String named )
     {
         return named =~ REGEX;
+    }
+
+    boolean isValidationEnabled()
+    {
+        false
     }
 
     RemoteRepository createRemoteRepository( String named )
