@@ -21,7 +21,7 @@
 # Uncomment to debug script
 #set -x
 
-# Check to see if user is root
+# Check user priviledges
 if [ "${USER}" != "root" ]; then
     echo -e "\n# This script requires root priviledges to run"
     exit
@@ -33,13 +33,13 @@ fi
 VMNAME=${VMNAME:="kojak-CentOS-6.5-x86_64"}
 VMHOME=${VMHOME:="/var/lib/libvirt/images"}
 TMPDIR=${TMPDIR:="/var/tmp/kojak"}
-DISTDIR=${DISTDIR:="RedHat/CentOS/6/5/x86_64"}
+DISTDIR=${DISTDIR:="RedHat/CentOS/6.5/x86_64"}
 
 # Sources and configuration
 CFGDIR=${CFGDIR:="${TMPDIR}/cfg/${DISTDIR}"}
 KSCFG=${KSCFG:="/kojak-ks.cfg"}
 KJKFG=${KJKCFG:="${CFGDIR}/kojak.cfg"}
-SRCLOC=${SRCLOC:="http://mirror.centos.org/centos/6/os/x86_64/"}
+SRCLOC=${SRCLOC:="http://mirror.centos.org/centos/6.5/os/x86_64/"}
 
 # Virtual machine specifications
 OS_TYPE=${OS_TYPE:="linux"}

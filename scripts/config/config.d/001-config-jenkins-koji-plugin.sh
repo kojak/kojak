@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # Installing Jenkins Koji Plugin"
 service jenkins stop

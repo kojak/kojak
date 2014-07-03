@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 # 
 # Copyright (C) 2013 Red Hat Inc.
 # Author: Salim Badakhchani <sal@redhat.com>
@@ -21,7 +21,7 @@
 # Uncomment to debug script
 #set -x
 
-# Check user
+# Check user priviledges
 if [ "${USER}" != "root" ]; then
     echo -e "\n# This script requires root priviledges to run"
     exit

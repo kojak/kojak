@@ -9,9 +9,6 @@ yum -y localinstall http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-
 echo "Installing DAVfs to support mounting aprox-generated settings.xml files..."
 yum -y install davfs2
 
-echo "Backing up /etc/fstab"
-cp -p /etc/fstab /etc/fstab.orig
-
 echo "Installing AProx ($APROX_FLAVOR, version $APROX_VERSION)..."
 
 URL=http://repo.maven.apache.org/maven2/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz
@@ -22,9 +19,10 @@ echo "Setting up aprox init script..."
 ln -s /opt/aprox/bin/init/aprox /etc/init.d/aprox
 chmod +x /opt/aprox/bin/init/aprox
 
-echo "Setting aprox port to 8090..."
+echo "Setting aprox port to 8090 and context-path to '/aprox'..."
 cat > /opt/aprox/bin/boot.properties << 'EOF'
 port=8090
+context-path=/aprox
 EOF
 
 DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))

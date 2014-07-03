@@ -1,17 +1,19 @@
 Kojak - "Koji in an box"
 ========================
 
-Kojak is a collection of scripts that can be used to automate the installation and configuration of the Koji build system. It is part of a productization effort to encourage the adoption of Koji for use in development, testing and staging environments.  The scripts included in this repository can be used to create a fully operational Koji instance on the local system or optionally as virtual machine utilizing the Libvirt visualization API and a kickstart file.  The virtual machine is based on a stock vanilla CentOS installation, to provide an automated "out of the box" solution, which may be used for development, testing and educational purposes.
+Kojak is a collection of scripts that can be used to automate the installation and configuration of the Koji build system. It is part of a productization effort to encourage the adoption of Koji for use in development, testing and staging environments.  The scripts included in this repository can be used to create a fully operational Koji instance on the local system or optionally as virtual machine utilizing the Libvirt visualization API and a Kickstart file.  The virtual machine is based on a stock vanilla CentOS installation, to provide an automated "out of the box" solution, which may be used for development, testing and educational purposes.
 
 Tool Chain
 ----------
 
 Future implementations of Kojak will ship with a standardised tool chain designed to allow developers to build, test, deploy, verfiy and replicate product builds and their associated repositories in a consistent way.  The long term goal is to provide a development/staging platform to allow users to familerise themselves with the build system and allow them access to Koji outside of prodcution environments.   
 
+The current tool chain integrates Jenkins, Jenkins Koji Plugin and Aprox.  Kojak also ships with a growing catalog of tried and tested product builds.  The buildmetadata-maven-plugin is the first example of this type and can be utilised to report a host of data about a build and the environment it was conducted in.
+
 Installation Prerequisites
 ---------------------------
 
-If you opt for the virtual installation option the scripts will build a virtual machine which will be accessible from your local host.  Alternatively you can install directly on the local host if, for example, you have a dedicated server.  Kojak has been successfully installed and tested on CentOS 6.5 and Fedora 18+. 
+If you opt for the virtual installation option the scripts will build a virtual machine which will be accessible from your local host.  Alternatively you can install directly on the local host if, for example, you have a dedicated server.  Kojak has been successfully installed and tested on CentOS and RHEL 6+.
 
 For more information about virtualization see below:
 
@@ -29,7 +31,7 @@ The virtual machine is configured with the following default specifications:
 1. 4GB RAM
 2. 32GB Disk Space
 
-The you local host should be configured with the following minimum specifications:
+Your local host should be configured with the following minimum specifications:
 
 1. Centos 6.5 or Fedora 18+ with virtualization package group
 2. 8GB RAM
@@ -50,10 +52,15 @@ cd /opt/kojak
 ./kojak
 1. Create VM
 ```
+The select the default options:
 
-Once the virtual machine is created you should login to the virtual machine on address 10.34.25.167 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the "Install" option from the menu.
 ```
-ssh root@10.34.25.167
+1. Default
+```
+
+Once the virtual machine is created you should login to the virtual machine on address 192.168.122.2 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the "Install" option from the menu.
+```
+ssh root@192.168.122.2
 cd /opt/kojak
 ./kojak
 2. Install
@@ -65,16 +72,29 @@ After the installation is complete you can opt to configure the system with base
 3. Configure
 ```
 
+At this stage the system fully installed and configured.  To get you started right away we have included scripts to allow you provision a build and execute a Jenkins job to execute the build example in.
+
+Switch to the koji user and execute the following build provisioning script:
+```
+su - koji
+/opt/kojak/scripts/build/products/com/redhat/rcm/maven/plugin/buildmetadata/build-buildmetadata-maven-plugin
+```
+
+This build provisioning script evokes Maven which downloads the dependencies for the build.  It then proceeds to import the artifacts into the Koji instance and tags the build ready for Jenkins to orchestrate the execution of the build via the Jenkins Koji Plugin.  Once the script has finished executing you can proceed with the build via Jenkins.  
+
+Browsing to the Jenkins web interface you will see a preconfigured build task.  Simply execute the build task and wait for it to complete.  This "development" build can be tracked via the Jenkins console and if successful it will be submitted to the Koji instance for building.  
+
+You can track the result of your "staging" build via the Koji web interface.  If your build is successful there your in pretty good shape to submit your build to your RCM team ;) Building with Kojak allows you to leverage Jenkins for Continous Integration and Aprox for repository management in a preconfigured and standardised way.
+
 For more inforation about using Koji see:
 
 https://fedoraproject.org/wiki/Koji for more details about using Koji.
 
 Configuration Notes
 -------------------
-
 The Kojak virtual machine is configured with a set of default options.  Executing the kojak script will allow you to modify and save these variables as required.  Installation directories, iso location and virtual machine resources allocations (Mem, CPU and Storage etc) can all be reconfigured as required.  The appliance is configured with with a static address taken from the pool of ip addresses from the "default" network that is configured with libvirt.
 
-You can access the virtual machine via ssh at 10.34.25.167 using the following credentials:
+You can access the virtual machine via ssh at 192.168.122.2 using the following credentials:
 
 1. username: root
 2. password: root
@@ -84,6 +104,8 @@ Currently Kojak uses SSL certificates as the preferred method of authentication.
 The Koji web interface is accessible via http://koji.localdomain/koji
 
 Jenkins configured with the Koji plugin can be configured via the Jenkins GUI via http://koji.localdomain:8080
+
+Aprox configured with a standard set of repos is available via http://koji.localdomain:8090
 
 Known Issues
 ------------
