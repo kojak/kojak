@@ -1,7 +1,7 @@
 #!/bin/sh
 
-APROX_VERSION=0.14.4
-APROX_FLAVOR=aprox-launcher-easyprox
+APROX_FLAVOR=aprox-launcher-savant
+APROX_VERSION=0.14.7
 
 echo "Adding RPMForge yum repository for DAVfs support..."
 yum -y localinstall http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
@@ -9,9 +9,11 @@ yum -y localinstall http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-
 echo "Installing DAVfs to support mounting aprox-generated settings.xml files..."
 yum -y install davfs2
 
-echo "Installing aprox..."
-curl http://repo.maven.apache.org/maven2/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz | tar -C /opt -zxv
-mv /opt/$APROX_FLAVOR /opt/aprox
+echo "Installing AProx ($APROX_FLAVOR, version $APROX_VERSION)..."
+
+URL=http://repo.maven.apache.org/maven2/org/commonjava/aprox/launch/$APROX_FLAVOR/$APROX_VERSION/$APROX_FLAVOR-$APROX_VERSION-launcher.tar.gz
+echo "Downloading AProx from: $URL"
+curl $URL | tar -C /opt -zxv
 
 echo "Setting up aprox init script..."
 ln -s /opt/aprox/bin/init/aprox /etc/init.d/aprox
@@ -22,6 +24,15 @@ cat > /opt/aprox/bin/boot.properties << 'EOF'
 port=8090
 context-path=/aprox
 EOF
+
+DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
+if [ -d $DIR/patch.d/aprox ]; then
+  echo "Applying aprox patches..."
+  for patch in $(ls -1 $DIR/patch.d/aprox/*.patch); do
+    echo "...$(basename $patch)"
+    patch -d /opt/aprox -p1 < $patch
+  done
+fi
 
 echo "Changing ownership to koji:koji for /opt/aprox..."
 chown -R koji:koji /opt/aprox

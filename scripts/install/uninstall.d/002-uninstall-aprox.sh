@@ -1,5 +1,9 @@
 #!/bin/sh
 
+echo "Disabling/Removing aprox init.d link..."
+chkconfig aprox off
+rm /etc/init.d/aprox
+
 echo "Unmounting all /aprox/* filesystems..."
 umount /aprox/settings/
 
@@ -32,7 +36,7 @@ echo "Removing AProx install and mountpoints..."
 rm -rf /aprox
 rm -rf /opt/aprox
 
-echo "Removing autofs, davfs2, and rpmforge-release via Yum..."
+echo "Removing davfs2 and rpmforge-release via Yum..."
 yum -y remove rpmforge-release davfs2
 
 echo "AProx uninstall complete."
