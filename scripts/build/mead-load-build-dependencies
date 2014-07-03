@@ -263,7 +263,12 @@ for baseurl in urls:
             skip = False
             for pattern in BAD_ARTIFACTS:
                 re = pattern.compile()
-                if re.match(link) or re.match(os.path.basename(link)):
+                if re.match(link):
+                    print "Skipping: %s from pattern: %s using full link to match" % (link, pattern)
+                    skip=True
+                    break
+                elif re.match(os.path.basename(link)):
+                    print "Skipping: %s from pattern: %s using filename: %s" % (link, pattern, os.path.basename(link))
                     skip=True
                     break
             
