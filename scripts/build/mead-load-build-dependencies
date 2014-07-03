@@ -22,12 +22,22 @@ KOJI_HUB = 'http://koji.localdomain/kojihub'
 LINK_RE = re.compile(r'href="([^"]+)"', re.I)
 NORM_RE = re.compile(r'([^:])//+')
 METER = urlgrabber.progress.TextMeter()
-BAD_ARTIFACTS = ['pom.xml',
+BAD_ARTIFACTS = ['.*.md5',
+                 '.*.sha1',
+                 '.*.asc',
+                 '.*-tgz',
+                 '.*-zip',
+                 '\\?.+',
+                 '.*.html',
+                 '.*.css',
+                 '.*.audit.json',
+                 '.*maven-.+-javadoc.pom',
+                 'pom.xml',
                  'maven-metadata.xml',
                  'maven-plugin-tools-2.0-javadoc.pom',
-                 'struts-1.2.8-el.pom',
                  'maven-reporting-2.0-javadoc.pom',
                  'maven-2.0-javadoc.pom',
+                 'struts-1.2.8-el.pom',
                  'connector-1.5.pom',
                  'jbosscache-core-3.0.2.GA.pom',
                  'jboss-vfs-2.0.0.CR1.pom',
@@ -250,11 +260,20 @@ for baseurl in urls:
     if download:
         tmpdir = tempfile.mkdtemp()
         for link in links:
+            skip = False
+            for pattern in BAD_ARTIFACTS:
+                re = pattern.compile()
+                if re.match(link) or re.match(os.path.basename(link)):
+                    skip=True
+                    break
+            
+            if skip:
             if link.endswith('.md5') or link.endswith('.sha1') or link.endswith('.asc') or \
                    link.endswith('/') or \
                    link.startswith('?') or link.endswith('-zip') or link.endswith('-tgz') or \
                    'Sonatype-content.css' in link or link.endswith('.audit.json') or \
                    link.endswith('index.html') or \
+                   link.endswith('-javadoc.pom') \
                    os.path.basename(link) in BAD_ARTIFACTS:
                 
                 if opts.debug:
