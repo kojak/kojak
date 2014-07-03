@@ -84,13 +84,17 @@ def check_and_append(opts, url_list, url):
 def is_bad_artifact(link):
     for pattern in BAD_ARTIFACTS:
         regex = re.compile(pattern)
-        print "Checking whether pattern: %s matches either link: %s or filename: %s" % (pattern, link, os.path.basename(link))
+        
+        if opts.debug:
+            print "Checking whether pattern: %s matches either link: %s or filename: %s" % (pattern, link, os.path.basename(link))
         
         if regex.match(link):
-            print "Skipping: %s from pattern: %s using full link to match" % (link, pattern)
+            if opts.debug:
+                print "Skipping: %s from pattern: %s using full link to match" % (link, pattern)
             return True
         elif regex.match(os.path.basename(link)):
-            print "Skipping: %s from pattern: %s using filename: %s" % (link, pattern, os.path.basename(link))
+            if opts.debug:
+                print "Skipping: %s from pattern: %s using filename: %s" % (link, pattern, os.path.basename(link))
             return True
     
     return False
