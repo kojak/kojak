@@ -47,9 +47,10 @@ VER="1.3.1"
 OPT="-Dmaven.test.skip=true"
 
 if [ -e "${HOME}/workspace/${APP}/build.log" ]; then
-koji maven-build ${OPT} ${TGT} ${SRC}
+    koji wait-repo rcm-mw-tools-build
+    koji maven-build ${OPT} ${TGT} ${SRC}
 else
-cd ~/workspace
+    cd ~/workspace
     git clone ${URL}/${APP}.git
     cd ${APP}
     git checkout ${APP}-${VER}
