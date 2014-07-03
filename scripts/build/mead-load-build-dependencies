@@ -28,7 +28,7 @@ BAD_ARTIFACTS = ['.*.md5',
                  '.*-tgz',
                  '.*-zip',
                  '\\?.+',
-                 '.+/$'
+                 '.+/$',
                  '.*.html',
                  '.*.css',
                  '.*.audit.json',
