@@ -268,14 +268,6 @@ for baseurl in urls:
                     break
             
             if skip:
-            if link.endswith('.md5') or link.endswith('.sha1') or link.endswith('.asc') or \
-                   link.endswith('/') or \
-                   link.startswith('?') or link.endswith('-zip') or link.endswith('-tgz') or \
-                   'Sonatype-content.css' in link or link.endswith('.audit.json') or \
-                   link.endswith('index.html') or \
-                   link.endswith('-javadoc.pom') \
-                   os.path.basename(link) in BAD_ARTIFACTS:
-                
                 if opts.debug:
                     print "skipping bad artifact: %s" % link
                 
