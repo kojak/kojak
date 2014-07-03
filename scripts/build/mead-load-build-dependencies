@@ -80,6 +80,20 @@ def check_and_append(opts, url_list, url):
         # New url, append it to the list
         url_list.append(url)
 
+def is_bad_artifact(link):
+    for pattern in BAD_ARTIFACTS:
+        re = pattern.compile()
+        print "Checking whether pattern: %s matches either link: %s or filename: %s" % (pattern, link, os.path.basename(link))
+        
+        if re.match(link):
+            print "Skipping: %s from pattern: %s using full link to match" % (link, pattern)
+            return True
+        elif re.match(os.path.basename(link)):
+            print "Skipping: %s from pattern: %s using filename: %s" % (link, pattern, os.path.basename(link))
+            return True
+    
+    return False
+
 parser = optparse.OptionParser(usage='%prog maven-build-log')
 parser.add_option('--urls', action='store_true',
                   help='The file passed in is a list of urls, one per line, rather than an unprocessed log file')
@@ -166,7 +180,7 @@ for baseurl in urls:
     pom_found = False
     download = False
     for link in links:
-        if link in BAD_ARTIFACTS:
+        if is_bad_artifact(link):
             continue
         if link.endswith('.pom'):
             if pom_found:
@@ -260,21 +274,7 @@ for baseurl in urls:
     if download:
         tmpdir = tempfile.mkdtemp()
         for link in links:
-            skip = False
-            for pattern in BAD_ARTIFACTS:
-                re = pattern.compile()
-                print "Checking whether pattern: %s matches either link: %s or filename: %s" % (pattern, link, os.path.basename(link))
-                
-                if re.match(link):
-                    print "Skipping: %s from pattern: %s using full link to match" % (link, pattern)
-                    skip=True
-                    break
-                elif re.match(os.path.basename(link)):
-                    print "Skipping: %s from pattern: %s using filename: %s" % (link, pattern, os.path.basename(link))
-                    skip=True
-                    break
-            
-            if skip:
+            if is_bad_artifact(link):
                 if opts.debug:
                     print "skipping bad artifact: %s" % link
                 
