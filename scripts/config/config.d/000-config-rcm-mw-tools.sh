@@ -72,7 +72,7 @@ fi
 
 # Install Maven3
 MVNRPM=$(rpm -q maven3)
-if [ ! -z ${MVNRPM} ]; then
+if [ ! -z "${MVNRPM}" ]; then
     echo -e "${MVNRPM} already installed"
 else
     yum -y localinstall /opt/kojak/pkgs/maven3-3.0.3-4.noarch.rpm 
