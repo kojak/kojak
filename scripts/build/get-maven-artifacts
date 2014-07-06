@@ -7,58 +7,62 @@ import urlgrabber.progress
 import koji
 import optparse
 
+def main():
 
-KOJI_HUB = 'http://koji.localdomain/kojihub'
+    KOJI_HUB = 'http://koji.localdomain/kojihub'
 
-MAVEN_BASE = 'http://repo1.maven.org/maven2'
-JBOSS_BASE = 'http://repository.jboss.org/nexus/content/groups/public-jboss'
-OLD_JBOSS_BASE = 'http://repository.jboss.org/maven2'
+    MAVEN_BASE = 'http://repo1.maven.org/maven2'
+    JBOSS_BASE = 'http://repository.jboss.org/nexus/content/groups/public-jboss'
+    OLD_JBOSS_BASE = 'http://repository.jboss.org/maven2'
 
-LINK_RE = re.compile(r'href="([^"]+)"')
+    LINK_RE = re.compile(r'href="([^"]+)"')
 
-parser = optparse.OptionParser(usage='%prog groupId:artifactId:type:version')
-parser.add_option('--repo', dest='repos', help='Additional repo to check', action='append',
-                  default=[MAVEN_BASE, JBOSS_BASE, OLD_JBOSS_BASE])
-options, args = parser.parse_args()
+    parser = optparse.OptionParser(usage='%prog groupId:artifactId:type:version')
+    parser.add_option('--repo', dest='repos', help='Additional repo to check', action='append',
+                      default=[MAVEN_BASE, JBOSS_BASE, OLD_JBOSS_BASE])
+    options, args = parser.parse_args()
 
-SUPPORTED_EXTS = []
-session = koji.ClientSession(KOJI_HUB)
-for archive_type in session.getArchiveTypes():
-    SUPPORTED_EXTS.extend(archive_type['extensions'].split())
+    SUPPORTED_EXTS = []
+    session = koji.ClientSession(KOJI_HUB)
+    for archive_type in session.getArchiveTypes():
+        SUPPORTED_EXTS.extend(archive_type['extensions'].split())
 
-if len(args) == 1:
-    tokens = args[0].split(':')
-    if len(tokens) == 3:
-        group_id, artifact_id, version = tokens
+    if len(args) == 1:
+        tokens = args[0].split(':')
+        if len(tokens) == 3:
+            group_id, artifact_id, version = tokens
+        else:
+            group_id, artifact_id, dummy, version = tokens
+    elif len(args) == 3:
+        group_id, artifact_id, version = args
     else:
-        group_id, artifact_id, dummy, version = tokens
-elif len(args) == 3:
-    group_id, artifact_id, version = args
-else:
-    parser.error('You must specify a groupId:artifactId:type:version tuple, or pass groupId, artifactId, and version as parameters')
+        parser.error('You must specify a groupId:artifactId:type:version tuple, or pass groupId, artifactId, and version as parameters')
 
-path = '%s/%s/%s' % (group_id.replace('.', '/'), artifact_id, version)
-for base in options.repos:
-    baseurl = '%s/%s' % (base, path)
+    path = '%s/%s/%s' % (group_id.replace('.', '/'), artifact_id, version)
+    for base in options.repos:
+        baseurl = '%s/%s' % (base, path)
 
-    try:
-        contents = urlgrabber.urlread(baseurl)
-        print 'Downloading from %s' % baseurl
-    except:
-        print 'Could not read %s, continuing...' % baseurl
-        continue
-
-    links = LINK_RE.findall(contents)
-    for link in links:
-        if link.endswith('maven-metadata.xml'):
+        try:
+            contents = urlgrabber.urlread(baseurl)
+            print 'Downloading from %s' % baseurl
+        except:
+            print 'Could not read %s, continuing...' % baseurl
             continue
-        if [ext for ext in SUPPORTED_EXTS if link.endswith(ext)]:
-            if '://' in link:
-                url = link
-            else:
-                url = '%s/%s' % (baseurl, link)
-            urlgrabber.urlgrab(url, progress_obj=urlgrabber.progress.TextMeter())
-    break
-else:
-    print 'Could not download artifacts for %s:%s:%s' % (group_id, artifact_id, version)
-    sys.exit(1)
+
+        links = LINK_RE.findall(contents)
+        for link in links:
+            if link.endswith('maven-metadata.xml'):
+                continue
+            if [ext for ext in SUPPORTED_EXTS if link.endswith(ext)]:
+                if '://' in link:
+                    url = link
+                else:
+                    url = '%s/%s' % (baseurl, link)
+                urlgrabber.urlgrab(url, progress_obj=urlgrabber.progress.TextMeter())
+        break
+    else:
+        print 'Could not download artifacts for %s:%s:%s' % (group_id, artifact_id, version)
+        sys.exit(1)
+
+if __name__ == '__main__':
+  main()

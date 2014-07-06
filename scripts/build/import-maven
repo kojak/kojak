@@ -5,79 +5,83 @@ import optparse
 import os
 import sys
 
-KOJI_HUB = 'http://koji.localdomain/kojihub'
-KOJI_CMD = 'koji'
+def main():
+    
+    KOJI_HUB = 'http://koji.localdomain/kojihub'
+    KOJI_CMD = 'koji'
+    def run(cmd, fail=True):
+        print cmd
+        ret = os.system(cmd)
+        if ret != 0:
+            print 'Error running command'
+            if fail:
+                sys.exit(1)
 
-def run(cmd, fail=True):
-    print cmd
-    ret = os.system(cmd)
-    if ret != 0:
-        print 'Error running command'
-        if fail:
+    session = koji.ClientSession(KOJI_HUB)
+
+    parser = optparse.OptionParser(usage='%prog [options] artifact [artifact...]')
+    parser.add_option('--tag', dest='tags', action='append',
+                      default=['rcm-mw-tools'], help='Additional tags to import into')
+    parser.add_option('--owner', default=os.environ['USER'], help='Owner of the package')
+    parser.add_option('--release', default='1', help='Release of the build to create')
+    options, args = parser.parse_args()
+
+    pom = None
+    for arg in args[:]:
+        if arg.endswith('.pom'):
+            if not pom:
+                pom = arg
+            else:
+                sys.exit('Multiple .pom files specified. You may only import one Maven build at a time.')
+
+    if not pom:
+        sys.exit('No .pom file specified')
+
+    pom_info = koji.parse_pom(pom)
+    maven_info = koji.pom_to_maven_info(pom_info)
+    build_info = koji.maven_info_to_nvr(maven_info)
+    build_info['release'] = options.release
+
+    brew_build = session.getBuild(build_info)
+    if brew_build:
+        if brew_build['task_id']:
+            print '%s was built in MEAD, cannot import additional artifacts to it' % koji.buildLabel(brew_build)
             sys.exit(1)
 
-session = koji.ClientSession(KOJI_HUB)
+        brew_artifacts = session.listArchives(buildID=brew_build['id'], type='maven')
+        if brew_artifacts:
+            for arg in args[:]:
+                if os.path.basename(arg) in [f['filename'] for f in brew_artifacts]:
+                    print os.path.basename(arg), 'has already been uploaded'
+                    args.remove(arg)
 
-parser = optparse.OptionParser(usage='%prog [options] artifact [artifact...]')
-parser.add_option('--tag', dest='tags', action='append',
-                  default=['rcm-mw-tools'], help='Additional tags to import into')
-parser.add_option('--owner', default=os.environ['USER'], help='Owner of the package')
-parser.add_option('--release', default='1', help='Release of the build to create')
-options, args = parser.parse_args()
+    if args:
+        cmd = KOJI_CMD + ' import-archive --create-build --type maven --type-info %s %s %s' % (pom, koji.buildLabel(build_info), ' '.join(args))
+        run(cmd)
+    else:
+        print 'All artifacts for %s have already been imported, skipping...' % koji.buildLabel(build_info)
 
-pom = None
-for arg in args[:]:
-    if arg.endswith('.pom'):
-        if not pom:
-            pom = arg
+    for tagname in set(options.tags):
+        tag = session.getTag(tagname, strict=True)
+        package = session.getPackage(build_info['name'])
+        target = (tag['name'] +'-candidate')
+        tag_pkgs = []
+        if package:
+            tag_pkgs = session.listPackages(tagID=tag['id'], pkgID=package['id'], inherited=True)
+
+        if tag_pkgs:
+            print '%s already exists in %s, not adding...' % (package['name'], tag['name'])
         else:
-            sys.exit('Multiple .pom files specified. You may only import one Maven build at a time.')
+            cmd = KOJI_CMD + ' add-pkg --owner %s %s %s' % (options.owner, tag['name'], build_info['name'])
+            run(cmd)
 
-if not pom:
-    sys.exit('No .pom file specified')
+        if tag['name'] in [t['name'] for t in session.listTags(build=koji.buildLabel(build_info))]:
+            print '%s already tagged with %s, skipping...' % (koji.buildLabel(build_info), tag['name'])
+        else:
+            cmd = KOJI_CMD + ' tag-build --nowait %s %s' % (target, koji.buildLabel(build_info))
+            run(cmd)
 
-pom_info = koji.parse_pom(pom)
-maven_info = koji.pom_to_maven_info(pom_info)
-build_info = koji.maven_info_to_nvr(maven_info)
-build_info['release'] = options.release
+    print 'Imported and tagged %s' % koji.buildLabel(build_info)
 
-brew_build = session.getBuild(build_info)
-if brew_build:
-    if brew_build['task_id']:
-        print '%s was built in MEAD, cannot import additional artifacts to it' % koji.buildLabel(brew_build)
-        sys.exit(1)
-
-    brew_artifacts = session.listArchives(buildID=brew_build['id'], type='maven')
-    if brew_artifacts:
-        for arg in args[:]:
-            if os.path.basename(arg) in [f['filename'] for f in brew_artifacts]:
-                print os.path.basename(arg), 'has already been uploaded'
-                args.remove(arg)
-
-if args:
-    cmd = KOJI_CMD + ' import-archive --create-build --type maven --type-info %s %s %s' % (pom, koji.buildLabel(build_info), ' '.join(args))
-    run(cmd)
-else:
-    print 'All artifacts for %s have already been imported, skipping...' % koji.buildLabel(build_info)
-
-for tagname in set(options.tags):
-    tag = session.getTag(tagname, strict=True)
-    package = session.getPackage(build_info['name'])
-    target = (tag['name'] +'-candidate')
-    tag_pkgs = []
-    if package:
-        tag_pkgs = session.listPackages(tagID=tag['id'], pkgID=package['id'], inherited=True)
-
-    if tag_pkgs:
-        print '%s already exists in %s, not adding...' % (package['name'], tag['name'])
-    else:
-        cmd = KOJI_CMD + ' add-pkg --owner %s %s %s' % (options.owner, tag['name'], build_info['name'])
-        run(cmd)
-
-    if tag['name'] in [t['name'] for t in session.listTags(build=koji.buildLabel(build_info))]:
-        print '%s already tagged with %s, skipping...' % (koji.buildLabel(build_info), tag['name'])
-    else:
-        cmd = KOJI_CMD + ' tag-build --nowait %s %s' % (target, koji.buildLabel(build_info))
-        run(cmd)
-
-print 'Imported and tagged %s' % koji.buildLabel(build_info)
+if __name__ == '__main__':
+  main()
