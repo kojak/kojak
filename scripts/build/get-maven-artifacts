@@ -10,11 +10,9 @@ import optparse
 def main():
 
     KOJI_HUB = 'http://koji.localdomain/kojihub'
-
     MAVEN_BASE = 'http://repo1.maven.org/maven2'
     JBOSS_BASE = 'http://repository.jboss.org/nexus/content/groups/public-jboss'
     OLD_JBOSS_BASE = 'http://repository.jboss.org/maven2'
-
     LINK_RE = re.compile(r'href="([^"]+)"')
 
     parser = optparse.OptionParser(usage='%prog groupId:artifactId:type:version')
@@ -29,10 +27,11 @@ def main():
 
     if len(args) == 1:
         tokens = args[0].split(':')
-        if len(tokens) == 3:
-            group_id, artifact_id, version = tokens
-        else:
-            group_id, artifact_id, dummy, version = tokens
+        if len(tokens) < 3:
+            parser.error('Invalid GAV: %s' % args[0])
+        group_id = tokens[0]
+        artifact_id = tokens[1]
+        version = tokens[-1]
     elif len(args) == 3:
         group_id, artifact_id, version = args
     else:

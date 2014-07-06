@@ -15,31 +15,18 @@ import urlgrabber.grabber
 def main():
 
     grabber = urlgrabber.grabber.URLGrabber(ssl_verify_host=False, ssl_verify_peer=False)
-
     basedir = os.path.dirname(sys.argv[0])
 
     KOJI_HUB = 'http://koji.localdomain/kojihub'
-
     LINK_RE = re.compile(r'href="([^"]+)"', re.I)
     NORM_RE = re.compile(r'([^:])//+')
     METER = urlgrabber.progress.TextMeter()
-    BAD_ARTIFACTS = ['.*.md5',
-                     '.*.sha1',
-                     '.*.asc',
-                     '.*-tgz',
-                     '.*-zip',
-                     '\\?.+',
-                     '.+/$',
-                     '.*.html',
-                     '.*.css',
-                     '.*.audit.json',
-                     '.*maven-.+-javadoc.pom',
-                     'pom.xml',
+    BAD_ARTIFACTS = ['pom.xml',
                      'maven-metadata.xml',
                      'maven-plugin-tools-2.0-javadoc.pom',
+                     'struts-1.2.8-el.pom',
                      'maven-reporting-2.0-javadoc.pom',
                      'maven-2.0-javadoc.pom',
-                     'struts-1.2.8-el.pom',
                      'connector-1.5.pom',
                      'jbosscache-core-3.0.2.GA.pom',
                      'jboss-vfs-2.0.0.CR1.pom',
@@ -81,24 +68,6 @@ def main():
         else:
             # New url, append it to the list
             url_list.append(url)
-
-    def is_bad_artifact(link):
-        for pattern in BAD_ARTIFACTS:
-            regex = re.compile(pattern)
-            
-            if opts.debug:
-                print "Checking whether pattern: %s matches either link: %s or filename: %s" % (pattern, link, os.path.basename(link))
-            
-            if regex.match(link):
-                if opts.debug:
-                    print "Skipping: %s from pattern: %s using full link to match" % (link, pattern)
-                return True
-            elif regex.match(os.path.basename(link)):
-                if opts.debug:
-                    print "Skipping: %s from pattern: %s using filename: %s" % (link, pattern, os.path.basename(link))
-                return True
-        
-        return False
 
     parser = optparse.OptionParser(usage='%prog maven-build-log')
     parser.add_option('--urls', action='store_true',
@@ -142,7 +111,7 @@ def main():
                         if (i + 1) < len(tokens):
                             url = tokens[i + 1]
                             baseurl = os.path.dirname(url)
-                            baseurl = NORM_RE.sub(r'\1/', baseurl) + '/'
+                            baseurl = NORM_RE.sub(r'\1/', baseurl)
                             check_and_append(opts, urls, baseurl)
                             i += 1
                         else:
@@ -186,7 +155,7 @@ def main():
         pom_found = False
         download = False
         for link in links:
-            if is_bad_artifact(link):
+            if link in BAD_ARTIFACTS:
                 continue
             if link.endswith('.pom'):
                 if pom_found:
@@ -280,10 +249,11 @@ def main():
         if download:
             tmpdir = tempfile.mkdtemp()
             for link in links:
-                if is_bad_artifact(link):
-                    if opts.debug:
-                        print "skipping bad artifact: %s" % link
-                    
+                if link.endswith('.md5') or link.endswith('.sha1') or link.endswith('.asc') or \
+                       link.endswith('/') or \
+                       link.startswith('?') or link.endswith('-zip') or link.endswith('-tgz') or \
+                       'Sonatype-content.css' in link or link.endswith('.audit.json') or \
+                       link in BAD_ARTIFACTS:
                     pass
                 elif [ext for ext in SUPPORTED_EXTS if link.endswith(ext)]:
                     if '://' in link:
@@ -296,13 +266,8 @@ def main():
                     else:
                         # relative link
                         url = '%s/%s' % (baseurl, link)
-                    
-                    if opts.debug:
-                        print "Downloading: %s" % url
-                    
                     grabber.urlgrab(url, filename=os.path.join(tmpdir, os.path.basename(link)),
                                     progress_obj=METER)
-                    
                     if do_import is None:
                         do_import = True
                 else:
