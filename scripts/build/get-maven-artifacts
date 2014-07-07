@@ -8,6 +8,7 @@ import koji
 import optparse
 
 def main():
+
     KOJI_HUB = 'http://koji.localdomain/kojihub'
     MAVEN_BASE = 'http://repo1.maven.org/maven2'
     JBOSS_BASE = 'http://repository.jboss.org/nexus/content/groups/public-jboss'
