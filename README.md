@@ -72,15 +72,7 @@ After the installation is complete you can opt to configure the system with base
 3. Configure
 ```
 
-At this stage the system fully installed and configured.  To get you started right away we have included scripts to allow you provision a build and execute a Jenkins job to execute the build example in.
-
-Switch to the koji user and execute the following build provisioning script:
-```
-su - koji
-/opt/kojak/scripts/build/products/com/redhat/rcm/maven/plugin/buildmetadata/build-buildmetadata-maven-plugin
-```
-
-This build provisioning script evokes Maven which downloads the dependencies for the build.  It then proceeds to import the artifacts into the Koji instance and tags the build ready for Jenkins to orchestrate the execution of the build via the Jenkins Koji Plugin.  Once the script has finished executing you can proceed with the build via Jenkins.  
+At this stage the system fully installed and configured.  
 
 Browsing to the Jenkins web interface you will see a preconfigured build task.  Simply execute the build task and wait for it to complete.  This "development" build can be tracked via the Jenkins console and if successful it will be submitted to the Koji instance for building.  
 
