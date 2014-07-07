@@ -20,10 +20,13 @@ session = koji.ClientSession(KOJI_HUB)
 
 parser = optparse.OptionParser(usage='%prog [options] artifact [artifact...]')
 parser.add_option('--tag', dest='tags', action='append',
-                  default=['rcm-mw-tools'], help='Additional tags to import into')
+                  default=[], help='Additional tags to import into')
 parser.add_option('--owner', default=os.environ['USER'], help='Owner of the package')
 parser.add_option('--release', default='1', help='Release of the build to create')
 options, args = parser.parse_args()
+
+if not options.tags:
+    parser.error("You have to specify at least one --tag")
 
 pom = None
 for arg in args[:]:
