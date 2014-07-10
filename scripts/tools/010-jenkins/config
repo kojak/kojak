@@ -18,7 +18,20 @@ cat > /tmp/jenkins.patch << 'EOF'
 EOF
 patch -p0 < /tmp/jenkins.patch
 rm -f /tmp/jenkins.patch
-tar zxfv /opt/kojak/scripts/contrib/jenkins/jenkins.tar.gz -C /var/lib
+
+#tar zxfv /opt/kojak/scripts/contrib/jenkins/jenkins.tar.gz -C /var/lib
+
+files="$(basename $0)/files"
+cp -af $files/jenkins /var/lib/jenkins
+mkdir -p /var/lib/jenkins/.pki/nssdb
+
+javaver=$(java -version 2>&1 | head -1 | awk '{print $3}')
+javaver="${javaver%\"}"
+javaver="${javaver#\"}"
+
+mkdir -p /var/lib/jenkins/.java/fonts/${javaver}
+cp $files/fcinfo* /var/lib/jenkins/.java/fonts/${javaver}
+
 chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
 
 service jenkins start
