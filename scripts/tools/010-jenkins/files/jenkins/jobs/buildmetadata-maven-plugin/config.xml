@@ -30,9 +30,10 @@
     <groupId>com.redhat.rcm.maven.plugin</groupId>
     <artifactId>buildmetadata-maven-plugin</artifactId>
   </rootModule>
-  <goals>clean install -C -B dependency:resolve-plugins -Dmaven.test.skip=true</goals>
+  <goals>clean install -C -B -Dmaven.test.skip=true</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
+  <localRepository class="hudson.maven.local_repo.PerJobLocalRepositoryLocator"/>
   <ignoreUpstremChanges>false</ignoreUpstremChanges>
   <archivingDisabled>false</archivingDisabled>
   <siteArchivingDisabled>false</siteArchivingDisabled>
@@ -46,11 +47,22 @@
   <reporters/>
   <publishers/>
   <buildWrappers/>
-  <prebuilders/>
+  <prebuilders>
+    <hudson.tasks.Shell>
+      <command>rm -rf $WORKSPACE/.repository</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Maven>
+      <targets>dependency:resolve-plugins -C -B</targets>
+      <mavenName>(Default)</mavenName>
+      <usePrivateRepository>true</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+    </hudson.tasks.Maven>
+  </prebuilders>
   <postbuilders>
     <hudson.tasks.Shell>
-      <command>/opt/kojak/scripts/build/mead-load-build-dependencies --tag rcm-mw-tools  /var/lib/jenkins/jobs/buildmetadata-maven-plugin/builds/${BUILD_NUMBER}/log
-koji add-pkg rcm-mw-tools-candidate  com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin --owner koji
+      <command>/opt/kojak/scripts/build/mead-load-build-dependencies --tag rcm-mw-tools  /var/lib/jenkins/jobs/buildmetadata-maven-plugin/builds/${BUILD_NUMBER}/log &amp;&amp; koji regen-repo rcm-mw-tools-build
+koji add-pkg rcm-mw-tools-candidate  com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin --owner koji || exit 0
 </command>
     </hudson.tasks.Shell>
     <org.jenkinsci.plugins.koji.KojiBuilder plugin="koji-plugin@0.2">
