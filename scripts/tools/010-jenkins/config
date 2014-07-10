@@ -19,8 +19,6 @@ EOF
 patch -p0 < /tmp/jenkins.patch
 rm -f /tmp/jenkins.patch
 
-#tar zxfv /opt/kojak/scripts/contrib/jenkins/jenkins.tar.gz -C /var/lib
-
 files="$(basename $0)/files"
 cp -af $files/jenkins /var/lib/jenkins
 mkdir -p /var/lib/jenkins/.pki/nssdb
