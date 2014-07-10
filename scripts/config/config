@@ -23,19 +23,11 @@
 
 # Load services configuration
 DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
-. $DIR/init-service-accounting
-loadServices
+. $DIR/kojak-functions
 
-dir=$(dirname $0)
-for toolcfg in $dir/config.d/*.sh
-do
-    sh $toolcfg
-done
+eachTool config
 
 echo -e "\nBringing the system up...\n"
-for svc in $SERVICES
-do
-   service $(basename $svc) restart
-done
+eachService restart
 
 echo -e "\nConfiguration complete...Kojak is AOK"

@@ -29,23 +29,16 @@ fi
 
 # Load services configuration
 DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
-. $DIR/init-service-accounting
-loadServices
+. $DIR/kojak-functions
 
-for svc in $SERVICES; do
-  chkconfig $svc off
-  service $svc stop
-done
+eachService off
+eachService stop
 
 # Remove package
 yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder mock
 
 echo -e "\nRunning tool uninstalls...\n"
-dir=$(dirname $0)
-for tooluninst in $dir/uninstall.d/*.sh
-do
-    sh $tooluninst
-done
+eachTool uninstall
 
 # Remove configuration files
 CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /home/koji /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql /var/lib/mock"

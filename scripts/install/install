@@ -35,8 +35,7 @@ fi
 
 # Load services configuration
 DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
-. $DIR/init-service-accounting
-loadServices
+. $DIR/kojak-functions
 
 LOG="/root/kojak.log"
 TSTAMP=$(date '+_%Y%m%d%H%M%S')
@@ -673,10 +672,7 @@ cd -
 
 
 echo -e "\nRunning tool installs..."
-dir=$(dirname $0)
-for toolinst in $dir/install.d/*.sh; do
-    sh $toolinst
-done
+eachTool install
 
 echo -e "\nDisabling firewall..."
 service iptables stop
@@ -685,10 +681,8 @@ service ip6tables stop
 chkconfig ip6tables off
 
 echo -e "\nRestarting Services..."
-for svc in $SERVICES; do
-    chkconfig $svc on
-    service $svc start
-done
+eachService on
+eachService restart
 
 echo -e "\nCreating base config..."
 export PROG="koji"
@@ -716,8 +710,6 @@ su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm /tmp/kojibuilder.sql
 
 echo -e "\nService Status..."
-for svc in $SERVICES; do
-    service $svc status
-done
+eachService status
 
 echo -e "\nInstallation complete...Kojak is AOK"
