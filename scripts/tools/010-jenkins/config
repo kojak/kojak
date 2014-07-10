@@ -22,8 +22,8 @@ rm -f /tmp/jenkins.patch
 dir=$( cd $(dirname $0) ; pwd -P )
 files="${dir}/files"
 
-echo "Copying jenkins overlay files from ${files}/jenkins to /var/lib/jenkins..."
-cp -af $files/jenkins /var/lib/jenkins
+echo "Copying jenkins overlay files from ${files}/jenkins/* to /var/lib/jenkins..."
+cp -af $files/jenkins/* /var/lib/jenkins
 mkdir -p /var/lib/jenkins/.pki/nssdb
 
 javaver=$(java -version 2>&1 | head -1 | awk '{print $3}')
