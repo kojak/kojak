@@ -61,7 +61,9 @@
   </prebuilders>
   <postbuilders>
     <hudson.tasks.Shell>
-      <command>/opt/kojak/scripts/build/mead-load-build-dependencies --tag rcm-mw-tools  /var/lib/jenkins/jobs/buildmetadata-maven-plugin/builds/${BUILD_NUMBER}/log &amp;&amp; koji regen-repo rcm-mw-tools-build
+      <command>/opt/kojak/scripts/build/mead-load-build-dependencies --tag rcm-mw-tools  /var/lib/jenkins/jobs/buildmetadata-maven-plugin/builds/${BUILD_NUMBER}/log
+koji regen-repo rcm-mw-tools-build 2>&amp;1
+koji wait-repo rcm-mw-tools-build
 koji add-pkg rcm-mw-tools-candidate  com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin --owner koji || exit 0
 </command>
     </hudson.tasks.Shell>
