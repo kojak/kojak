@@ -30,7 +30,7 @@ def main():
                 sys.exit(1)
         return ret
 
-    output = Popen(["find", basedir, "-type", "f", "-name", "*.pom"], stdout=PIPE).communicate()[0]
+    output = subprocess.Popen(["find", basedir, "-type", "f", "-name", "*.pom"], stdout=subprocess.PIPE).communicate()[0]
     regen = None
     for line in output.split(os.linesep):
         dir = os.path.dirname(line)
