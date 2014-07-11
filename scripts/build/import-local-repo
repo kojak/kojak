@@ -1,0 +1,63 @@
+#!/usr/bin/python
+
+import os.path
+import sys
+import glob
+import subprocess
+import koji
+import time
+
+def main():
+
+    KOJI_HUB = 'http://koji.localdomain/kojihub'
+
+    if sysv.argv.length < 3:
+        print "Usage: %s <tag-name> <repo-directory>" % sys.argv[0]
+        sys.exit(1)
+
+    scriptdir = os.path.dirname(sys.argv[0])
+    tag = sys.argv[1]
+    basedir = os.path.dirname(sys.argv[2])
+
+    session = koji.ClientSession(KOJI_HUB)
+
+    def run(cmd, fail=True):
+        print cmd
+        ret = os.system(cmd)
+        if ret != 0:
+            print 'Error running command'
+            if fail:
+                sys.exit(1)
+        return ret
+
+    output = Popen(["find", basedir, "-type", "f", "-name", "*.pom"], stdout=PIPE).communicate()[0]
+    regen = None
+    for line in output.split(os.linesep):
+        dir = os.path.dirname(line)
+
+        cmd = os.path.join(scriptdir, 'import-maven')
+        cmd += ' --tag ' + tag
+        cmd += ' %s/*' % dir
+        ret = run(cmd, False)
+        if ret == 0:
+            regen = True
+
+    if regen:
+        task = session.newRepo(tag)
+        task_state = None
+        while True:
+            task_state = session.getTaskInfo(task)['state']
+            if task_state > 1:
+               break
+
+            print "Waiting for regen-repo (task: %s) to complete..." % task
+            time.sleep(15)
+
+        if task_state != koji.TASK_STATES['CLOSED']:
+          # regen-repo failed.
+          sys.exit(2)
+
+if __name__ == '__main__':
+    main()
+
+            
