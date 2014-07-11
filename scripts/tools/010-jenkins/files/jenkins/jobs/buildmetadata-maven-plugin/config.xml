@@ -1,0 +1,86 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<maven2-moduleset plugin="maven-plugin@2.3">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.2">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://github.com/sbadakhc/buildmetadata-maven-plugin.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <rootModule>
+    <groupId>com.redhat.rcm.maven.plugin</groupId>
+    <artifactId>buildmetadata-maven-plugin</artifactId>
+  </rootModule>
+  <goals>clean install -C -B -Dmaven.test.skip=true</goals>
+  <aggregatorStyleBuild>true</aggregatorStyleBuild>
+  <incrementalBuild>false</incrementalBuild>
+  <localRepository class="hudson.maven.local_repo.PerJobLocalRepositoryLocator"/>
+  <ignoreUpstremChanges>false</ignoreUpstremChanges>
+  <archivingDisabled>false</archivingDisabled>
+  <siteArchivingDisabled>false</siteArchivingDisabled>
+  <resolveDependencies>false</resolveDependencies>
+  <processPlugins>false</processPlugins>
+  <mavenValidationLevel>-1</mavenValidationLevel>
+  <runHeadless>false</runHeadless>
+  <disableTriggerDownstreamProjects>false</disableTriggerDownstreamProjects>
+  <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+  <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+  <reporters/>
+  <publishers/>
+  <buildWrappers/>
+  <prebuilders>
+    <hudson.tasks.Shell>
+      <command>rm -rf $WORKSPACE/.repository</command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Maven>
+      <targets>dependency:resolve-plugins -C -B</targets>
+      <mavenName>(Default)</mavenName>
+      <usePrivateRepository>true</usePrivateRepository>
+      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+      <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+    </hudson.tasks.Maven>
+  </prebuilders>
+  <postbuilders>
+    <hudson.tasks.Shell>
+      <command>/opt/kojak/scripts/build/mead-load-build-dependencies --tag rcm-mw-tools  /var/lib/jenkins/jobs/buildmetadata-maven-plugin/builds/${BUILD_NUMBER}/log
+koji regen-repo rcm-mw-tools-build 2>&amp;1
+koji wait-repo rcm-mw-tools-build
+koji add-pkg rcm-mw-tools-candidate  com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin --owner koji || exit 0
+</command>
+    </hudson.tasks.Shell>
+    <org.jenkinsci.plugins.koji.KojiBuilder plugin="koji-plugin@0.2">
+      <kojiBuild>buildmetadata-maven-plugin-1.3.1</kojiBuild>
+      <kojiTarget>rcm-mw-tools-candidate</kojiTarget>
+      <kojiPackage>com.redhat.rcm.maven.plugin.buildmetadata-maven-plugin</kojiPackage>
+      <kojiOptions></kojiOptions>
+      <kojiTask>mavenBuild</kojiTask>
+      <kojiScratchBuild>false</kojiScratchBuild>
+      <kojiScmUrl>git+https://github.com/sbadakhc/buildmetadata-maven-plugin.git#7130058036a80c727810f0beb55488ee0ff7ba15</kojiScmUrl>
+    </org.jenkinsci.plugins.koji.KojiBuilder>
+  </postbuilders>
+  <runPostStepsIfResult>
+    <name>SUCCESS</name>
+    <ordinal>0</ordinal>
+    <color>BLUE</color>
+    <completeBuild>true</completeBuild>
+  </runPostStepsIfResult>
+</maven2-moduleset>
