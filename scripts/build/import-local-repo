@@ -76,6 +76,9 @@ def main():
             maven_info = koji.parse_pom(contents=content)
             if maven_info:
                 maven_info['pom'] = pom
+                maven_info['group_id'] = maven_info['groupId']
+                maven_info['artifact_id'] = maven_info['artifactId']
+                maven_info['baseurl'] = pom
 
             return maven_info
         except KeyboardInterrupt:
