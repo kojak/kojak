@@ -11,7 +11,7 @@ def main():
 
     KOJI_HUB = 'http://koji.localdomain/kojihub'
 
-    if sys.argv.length < 3:
+    if len(sys.argv) < 3:
         print "Usage: %s <tag-name> <repo-directory>" % sys.argv[0]
         sys.exit(1)
 
