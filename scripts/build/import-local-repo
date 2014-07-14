@@ -162,6 +162,9 @@ def main():
         print "Processing: %s" % dir
         
         maven_info = parse_pom(line)
+        if not maven_info:
+            print "POM didn't parse: %s" % line
+            continue
 
         files = []
         do_import = False
