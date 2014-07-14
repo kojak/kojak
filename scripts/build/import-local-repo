@@ -7,11 +7,12 @@ import subprocess
 import koji
 import time
 import re
+import optparse
 
 def main():
-
+    
     KOJI_HUB = 'http://koji.localdomain/kojihub'
-
+    
     BAD_ARTIFACTS = ['.md5',
                      '.sha1',
                      '.asc',
@@ -33,20 +34,30 @@ def main():
                      'jbosscache-core-3.0.0.GA.pom',
                      'jbosscache-core-3.2.1.GA.pom',
                      'commons-lang-2.0.distribution-zip']
-
+    
     BAD_ARTIFACT_PATTERNS = ['maven-.+-javadoc.pom$']
-
-
-    if len(sys.argv) < 3:
+    
+    
+    parser = optparse.OptionParser(usage='%prog <tag-name> <local-repo-directory>')
+    parser.add_option('-d', '--debug', action='store_true', help='Print verbose error messages')
+    
+    opts, args = parser.parse_args()
+    
+    if len(args) < 2:
         print "Usage: %s <tag-name> <repo-directory>" % sys.argv[0]
         sys.exit(1)
-
+    
     scriptdir = os.path.dirname(sys.argv[0])
-    tag = sys.argv[1]
-    basedir = os.path.dirname(sys.argv[2])
-
+    tag = args[0]
+    basedir = os.path.dirname(args[1])
+    
     session = koji.ClientSession(KOJI_HUB)
+    
+    SUPPORTED_EXTS = []
+    for archive_type in session.getArchiveTypes():
+        SUPPORTED_EXTS.extend(archive_type['extensions'].split())
 
+    
     def run(cmd, fail=True):
         print cmd
         ret = os.system(cmd)
@@ -55,40 +66,124 @@ def main():
             if fail:
                 sys.exit(1)
         return ret
+    
+    def parse_pom(pom):
+        try:
+            pom_info = koji.parse_pom(contents=pom)
+        except KeyboardInterrupt:
+            raise
+        except:
+            if opts.debug:
+                print '\nError reading pom at: %s' % url
+                print '  error was: ' + str(sys.exc_info()[1])
+                # traceback.print_exc()
+            return None
 
+        return koji.pom_to_maven_info(pom_info)
+    
+    def is_valid_import(path):
+        for suff in BAD_ARTIFACTS:
+            if os.path.basename(path) == suff or path.endswith(suff):
+                    print "Skipping file: %s; it was disqualified by name/suffix match: %s" % (path, suff)
+                    return False
+        
+        for pat in BAD_ARTIFACT_PATTERNS:
+            pattern = re.compile(pat)
+            if pattern.match(path) or pattern.match(os.path.basename(path)):
+                print "Skipping file: %s; it was disqualified by pattern match: %s" % (path, pat)
+                return False
+         
+        if [ext for ext in SUPPORTED_EXTS if path.endswith(ext)]:
+            print koji.mavenLabel(maven_info), 'exists but %s is missing, importing...' % link
+            return True
+     
+    def should_import(maven_info, path):
+        maven_label = koji.mavenLabel(maven_info)
+        
+        if '$' in maven_label:
+            print '\nBad GAV vector: %s at %s, skipping...' % (maven_label, baseurl)
+            continue
+        
+        if [prefix for prefix in opts.exclude if maven_label.startswith(prefix)]:
+            print '\nSkipping excluded artifacts from %s...' % maven_label
+            continue
+        
+        if 'SNAPSHOT' in maven_info['version']:
+            print '\nCannot handle snspshots from %s, download and import manually...' % maven_label
+            continue
+        
+        # print 'Maven archives for %s:' % koji.mavenLabel(maven_info), maven_archives
+        maven_archives = session.listArchives(type='maven', typeInfo=maven_info, queryOpts={'order': 'id'})
+        if not maven_archives:
+            maven_info['baseurl'] = baseurl
+            print '\n%(group_id)s:%(artifact_id)s:%(version)s from %(baseurl)s has no versions in Koji, downloading and importing' % maven_info
+            return True
+        else:
+            if path not in [a['filename'] for a in maven_archives]:
+                print koji.mavenLabel(maven_info), 'exists but %s is missing, importing...' % link
+                return True
+            
+            builds = set()
+            for archive in maven_archives:
+                builds.add(archive['build_id'])
+            for build_id in builds:
+                tags = set([t['name'] for t in session.listTags(build=build_id)])
+                overlap = taglist.intersection(tags)
+                if overlap:
+                    if opts.debug:
+                        build = session.getBuild(build_id)
+                        print '\n%s in available in %s (provides %s:%s:%s)' % (koji.buildLabel(build), ', '.join(overlap),
+                                                                               maven_info['group_id'], maven_info['artifact_id'],
+                                                                               maven_info['version'])
+                    return False
+                else:
+                    # just take the highest numbered build
+                    labels = []
+                    for build_id in sorted(builds):
+                        labels.append(koji.buildLabel(session.getBuild(build_id)))
+                    print '\n%s:%s:%s is missing from %s, is provided by: %s' % (maven_info['group_id'], maven_info['artifact_id'],
+                                                                                 maven_info['version'],
+                                                                                 opts.check_tag,
+                                                                                 ', '.join(labels))
+
+   
     output = subprocess.Popen(["find", basedir, "-type", "f", "-name", "*.pom"], stdout=subprocess.PIPE).communicate()[0]
     regen = None
+    
+    lines = output.split(os.linesep)
+    print "Processing %s POMs..." % len(lines)
+    
     for line in output.split(os.linesep):
         dir = os.path.dirname(line)
+        
+        print "Processing: %s" % dir
+        
+        maven_info = parse_pom(line)
 
         files = []
+        do_import = False
         for name in glob.glob("%s/*" % dir):
-            include = True
-            for suff in BAD_ARTIFACTS:
-                if name == suff or name.endswith(suff):
-                    print "Skipping file: %s; it was disqualified by name/suffix match: %s" % (name, suff)
-                    include = False
-
-            if include:
-                for pat in BAD_ARTIFACT_PATTERNS:
-                    pattern = re.compile(pat)
-                    if pattern.match(name) or pattern.match(os.path.basename(name)):
-                        print "Skipping file: %s; it was disqualified by pattern match: %s" % (name, pat)
-                        include = False
-
-            if include:
-                print "Including file: %s" % name
+            imp = is_valid_import(name)
+            if imp:
                 files.append(name)
-
-        cmd = os.path.join(scriptdir, 'import-maven')
-        cmd += ' --tag ' + tag
-        cmd += ' '
-        cmd += ' '.join(files)
-
-        ret = run(cmd, False)
-        if ret == 0:
-            regen = True
-
+            else:
+                print "Skipping non-importable file: %s" % name
+                continue
+            
+            if should_import(maven_info, name):
+                print "Including file: %s" % name
+                do_import = True
+        
+        if do_import:
+            cmd = os.path.join(scriptdir, 'import-maven')
+            cmd += ' --tag ' + tag
+            cmd += ' '
+            cmd += ' '.join(files)
+        
+            ret = run(cmd, False)
+            if ret == 0:
+                regen = True
+    
     if regen:
         task = session.newRepo(tag)
         task_state = None
@@ -96,10 +191,10 @@ def main():
             task_state = session.getTaskInfo(task)['state']
             if task_state > 1:
                break
-
+            
             print "Waiting for regen-repo (task: %s) to complete..." % task
             time.sleep(15)
-
+        
         if task_state != koji.TASK_STATES['CLOSED']:
           # regen-repo failed.
           sys.exit(2)
