@@ -73,7 +73,7 @@ def main():
         except KeyboardInterrupt:
             raise
         except:
-            print '\nError reading pom at: %s' % url
+            print '\nError reading pom at: %s' % pom
             print '  error was: ' + str(sys.exc_info()[1])
             # traceback.print_exc()
     
