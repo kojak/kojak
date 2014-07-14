@@ -8,6 +8,7 @@ import koji
 import time
 import re
 import optparse
+from pprint import pprint
 
 def main():
     
@@ -72,7 +73,10 @@ def main():
             with open(pom, 'r') as content_file:
                 content = content_file.read()
             
-            return koji.parse_pom(contents=content)
+            maven_info = koji.parse_pom(contents=content)
+            maven_info['pom'] = pom if maven_info
+
+            return maven_info
         except KeyboardInterrupt:
             raise
         except:
@@ -117,8 +121,7 @@ def main():
         # print 'Maven archives for %s:' % koji.mavenLabel(maven_info), maven_archives
         maven_archives = session.listArchives(type='maven', typeInfo=maven_info, queryOpts={'order': 'id'})
         if not maven_archives:
-            maven_info['baseurl'] = baseurl
-            print '\n%(group_id)s:%(artifact_id)s:%(version)s from %(baseurl)s has no versions in Koji, downloading and importing' % maven_info
+            print '\n%(groupId)s:%(artifactId)s:%(version)s from %(pom)s has no versions in Koji, downloading and importing' % maven_info
             return True
         else:
             if path not in [a['filename'] for a in maven_archives]:
@@ -162,7 +165,7 @@ def main():
         
         maven_info = parse_pom(line)
         if maven_info:
-            print "Using parsed maven info:\n%s" % maven_info
+            pprint(maven_info)
         else:
             print "POM didn't parse: %s" % line
             continue
