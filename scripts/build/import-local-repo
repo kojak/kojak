@@ -69,7 +69,10 @@ def main():
     
     def parse_pom(pom):
         try:
-            return koji.parse_pom(contents=pom)
+            with open(pom, 'r') as content_file:
+                content = content_file.read()
+            
+            return koji.parse_pom(contents=content)
         except KeyboardInterrupt:
             raise
         except:
