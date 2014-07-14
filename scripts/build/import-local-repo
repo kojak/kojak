@@ -6,10 +6,36 @@ import glob
 import subprocess
 import koji
 import time
+import re
 
 def main():
 
     KOJI_HUB = 'http://koji.localdomain/kojihub'
+
+    BAD_ARTIFACTS = ['.md5',
+                     '.sha1',
+                     '.asc',
+                     '-tgz',
+                     '-zip',
+                     '.html',
+                     '.css',
+                     '.audit.json',
+                     'pom.xml',
+                     '_maven.repositories',
+                     'maven-metadata.xml',
+                     'struts-1.2.8-el.pom',
+                     'connector-1.5.pom',
+                     'jbosscache-core-3.0.2.GA.pom',
+                     'jboss-vfs-2.0.0.CR1.pom',
+                     'milyn-smooks-javabean-1.1.pom',
+                     'milyn-commons-1.1.pom',
+                     'milyn-smooks-core-1.1.pom',
+                     'jbosscache-core-3.0.0.GA.pom',
+                     'jbosscache-core-3.2.1.GA.pom',
+                     'commons-lang-2.0.distribution-zip']
+
+    BAD_ARTIFACT_PATTERNS = ['maven-.+-javadoc.pom$']
+
 
     if len(sys.argv) < 3:
         print "Usage: %s <tag-name> <repo-directory>" % sys.argv[0]
@@ -35,9 +61,24 @@ def main():
     for line in output.split(os.linesep):
         dir = os.path.dirname(line)
 
+        files = []
+        for name in glob.glob("%s/*" % dir):
+            for suff in BAD_ARTIFACTS:
+                if name == suff or name.endswith(suff):
+                    continue
+
+            for pat in BAD_ARTIFACT_PATTERNS:
+                pattern = re.compile(pat)
+                if pattern.match(name) or pattern.match(os.path.basename(name)):
+                    continue
+
+            files.append(name)
+
         cmd = os.path.join(scriptdir, 'import-maven')
         cmd += ' --tag ' + tag
-        cmd += ' %s/*' % dir
+        cmd += ' '
+        cmd += ' '.join(files)
+
         ret = run(cmd, False)
         if ret == 0:
             regen = True
