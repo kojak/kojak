@@ -161,10 +161,12 @@ def main():
         print "Processing: %s\n  (in: %s)" % (line, dir)
         
         maven_info = parse_pom(line)
-        if not maven_info:
+        if maven_info:
+            print "Using parsed maven info:\n%s" % maven_info
+        else:
             print "POM didn't parse: %s" % line
             continue
-
+        
         files = []
         do_import = False
         for name in glob.glob("%s/*" % dir):
