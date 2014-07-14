@@ -74,7 +74,8 @@ def main():
                 content = content_file.read()
             
             maven_info = koji.parse_pom(contents=content)
-            maven_info['pom'] = pom if maven_info
+            if maven_info:
+                maven_info['pom'] = pom
 
             return maven_info
         except KeyboardInterrupt:
