@@ -63,19 +63,22 @@ def main():
 
         files = []
         for name in glob.glob("%s/*" % dir):
+            include = True
             for suff in BAD_ARTIFACTS:
                 if name == suff or name.endswith(suff):
                     print "Skipping file: %s; it was disqualified by name/suffix match: %s" % (name, suff)
-                    continue
+                    include = False
 
-            for pat in BAD_ARTIFACT_PATTERNS:
-                pattern = re.compile(pat)
-                if pattern.match(name) or pattern.match(os.path.basename(name)):
-                    print "Skipping file: %s; it was disqualified by pattern match: %s" % (name, pat)
-                    continue
+            if include:
+                for pat in BAD_ARTIFACT_PATTERNS:
+                    pattern = re.compile(pat)
+                    if pattern.match(name) or pattern.match(os.path.basename(name)):
+                        print "Skipping file: %s; it was disqualified by pattern match: %s" % (name, pat)
+                        include = False
 
-            print "Including file: %s" % name
-            files.append(name)
+            if include:
+                print "Including file: %s" % name
+                files.append(name)
 
         cmd = os.path.join(scriptdir, 'import-maven')
         cmd += ' --tag ' + tag
