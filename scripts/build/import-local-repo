@@ -73,11 +73,9 @@ def main():
         except KeyboardInterrupt:
             raise
         except:
-            if opts.debug:
-                print '\nError reading pom at: %s' % url
-                print '  error was: ' + str(sys.exc_info()[1])
-                # traceback.print_exc()
-            return None
+            print '\nError reading pom at: %s' % url
+            print '  error was: ' + str(sys.exc_info()[1])
+            # traceback.print_exc()
     
     def is_valid_import(path):
         for suff in BAD_ARTIFACTS:
