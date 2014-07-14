@@ -54,7 +54,8 @@ def main():
     tag = args[0]
     basedir = os.path.dirname(args[1])
     
-    session = koji.ClientSession(KOJI_HUB, {'user': KOJI_USER, 'password': KOJI_PASSWORD})
+    session = koji.ClientSession(KOJI_HUB)
+    session.login({'user': KOJI_USER, 'password': KOJI_PASSWORD})
     
     SUPPORTED_EXTS = []
     for archive_type in session.getArchiveTypes():
