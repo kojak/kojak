@@ -94,7 +94,7 @@ def main():
                 return False
          
         if [ext for ext in SUPPORTED_EXTS if path.endswith(ext)]:
-            print koji.mavenLabel(maven_info), 'exists but %s is missing, importing...' % link
+            print koji.mavenLabel(maven_info), 'exists but %s is missing, importing...' % path
             return True
      
     def should_import(maven_info, path):
@@ -120,7 +120,7 @@ def main():
             return True
         else:
             if path not in [a['filename'] for a in maven_archives]:
-                print koji.mavenLabel(maven_info), 'exists but %s is missing, importing...' % link
+                print koji.mavenLabel(maven_info), 'exists but %s is missing, importing...' % path
                 return True
             
             builds = set()
