@@ -94,13 +94,15 @@ def main():
     def is_valid_import(path):
         for suff in BAD_ARTIFACTS:
             if os.path.basename(path) == suff or path.endswith(suff):
+                if opts.debug:
                     print "Skipping file: %s; it was disqualified by name/suffix match: %s" % (path, suff)
-                    return False
+                return False
         
         for pat in BAD_ARTIFACT_PATTERNS:
             pattern = re.compile(pat)
             if pattern.match(path) or pattern.match(os.path.basename(path)):
-                print "Skipping file: %s; it was disqualified by pattern match: %s" % (path, pat)
+                if opts.debug:
+                    print "Skipping file: %s; it was disqualified by pattern match: %s" % (path, pat)
                 return False
          
         if not [ext for ext in SUPPORTED_EXTS if path.endswith(ext)]:
@@ -124,7 +126,7 @@ def main():
         # print 'Maven archives for %s:' % koji.mavenLabel(maven_info), maven_archives
         maven_archives = session.listArchives(type='maven', typeInfo=maven_info, queryOpts={'order': 'id'})
         if not maven_archives:
-            print '\n%(groupId)s:%(artifactId)s:%(version)s from %(pom)s has no versions in Koji, downloading and importing' % maven_info
+            print '\n%(groupId)s:%(artifactId)s:%(version)s from %(pom)s has no versions in Koji importing' % maven_info
             return True
         else:
             if path not in [a['filename'] for a in maven_archives]:
@@ -159,16 +161,19 @@ def main():
     regen = None
     
     lines = output.split(os.linesep)
-    print "Processing %s POMs..." % len(lines)
+    if opts.debug:
+        print "Processing %s POMs..." % len(lines)
     
     for line in output.split(os.linesep):
         if not os.path.isfile(line):
-            print "Skipping bad output. Not a POM: %s" % line
+            if opts.debug:
+                print "Skipping bad output. Not a POM: %s" % line
             continue
         
         dir = os.path.dirname(line)
         
-        print "Processing: %s\n  (in: %s)" % (line, dir)
+        if opts.debug:
+            print "Processing: %s\n  (in: %s)" % (line, dir)
         
         maven_info = parse_pom(line)
         if maven_info:
@@ -184,11 +189,13 @@ def main():
             if imp:
                 files.append(name)
             else:
-                print "Skipping non-importable file: %s" % name
+                if opts.debug:
+                    print "Skipping non-importable file: %s" % name
                 continue
             
             if should_import(maven_info, name):
-                print "Including file: %s" % name
+                if opts.debug:
+                    print "Including file: %s" % name
                 do_import = True
         
         if do_import:
