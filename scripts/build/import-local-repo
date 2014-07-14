@@ -93,9 +93,12 @@ def main():
                 print "Skipping file: %s; it was disqualified by pattern match: %s" % (path, pat)
                 return False
          
-        if [ext for ext in SUPPORTED_EXTS if path.endswith(ext)]:
-            print koji.mavenLabel(maven_info), 'exists but %s is missing, importing...' % path
-            return True
+        if not [ext for ext in SUPPORTED_EXTS if path.endswith(ext)]:
+            print "Unsupported extension: %s" % path
+            return False
+        
+        return True
+
      
     def should_import(maven_info, path):
         maven_label = koji.mavenLabel(maven_info)
