@@ -114,10 +114,6 @@ def main():
             print '\nBad GAV vector: %s at %s, skipping...' % (maven_label, baseurl)
             return False
         
-        if [prefix for prefix in opts.exclude if maven_label.startswith(prefix)]:
-            print '\nSkipping excluded artifacts from %s...' % maven_label
-            return False
-        
         if 'SNAPSHOT' in maven_info['version']:
             print '\nCannot handle snspshots from %s, download and import manually...' % maven_label
             return False
