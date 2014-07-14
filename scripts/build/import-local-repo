@@ -69,7 +69,7 @@ def main():
     
     def parse_pom(pom):
         try:
-            pom_info = koji.parse_pom(contents=pom)
+            return koji.parse_pom(contents=pom)
         except KeyboardInterrupt:
             raise
         except:
@@ -78,8 +78,6 @@ def main():
                 print '  error was: ' + str(sys.exc_info()[1])
                 # traceback.print_exc()
             return None
-
-        return koji.pom_to_maven_info(pom_info)
     
     def is_valid_import(path):
         for suff in BAD_ARTIFACTS:
@@ -159,7 +157,7 @@ def main():
     for line in output.split(os.linesep):
         dir = os.path.dirname(line)
         
-        print "Processing: %s" % dir
+        print "Processing: %s\n  (in: %s)" % (line, dir)
         
         maven_info = parse_pom(line)
         if not maven_info:
