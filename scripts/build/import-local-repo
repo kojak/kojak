@@ -159,6 +159,10 @@ def main():
     print "Processing %s POMs..." % len(lines)
     
     for line in output.split(os.linesep):
+        if not os.path.isfile(line):
+            print "Skipping bad output. Not a POM: %s" % line
+            continue
+        
         dir = os.path.dirname(line)
         
         print "Processing: %s\n  (in: %s)" % (line, dir)
