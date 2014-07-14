@@ -102,15 +102,15 @@ def main():
         
         if '$' in maven_label:
             print '\nBad GAV vector: %s at %s, skipping...' % (maven_label, baseurl)
-            continue
+            return False
         
         if [prefix for prefix in opts.exclude if maven_label.startswith(prefix)]:
             print '\nSkipping excluded artifacts from %s...' % maven_label
-            continue
+            return False
         
         if 'SNAPSHOT' in maven_info['version']:
             print '\nCannot handle snspshots from %s, download and import manually...' % maven_label
-            continue
+            return False
         
         # print 'Maven archives for %s:' % koji.mavenLabel(maven_info), maven_archives
         maven_archives = session.listArchives(type='maven', typeInfo=maven_info, queryOpts={'order': 'id'})
@@ -135,7 +135,6 @@ def main():
                         print '\n%s in available in %s (provides %s:%s:%s)' % (koji.buildLabel(build), ', '.join(overlap),
                                                                                maven_info['group_id'], maven_info['artifact_id'],
                                                                                maven_info['version'])
-                    return False
                 else:
                     # just take the highest numbered build
                     labels = []
@@ -145,6 +144,7 @@ def main():
                                                                                  maven_info['version'],
                                                                                  opts.check_tag,
                                                                                  ', '.join(labels))
+        return False
 
    
     output = subprocess.Popen(["find", basedir, "-type", "f", "-name", "*.pom"], stdout=subprocess.PIPE).communicate()[0]
