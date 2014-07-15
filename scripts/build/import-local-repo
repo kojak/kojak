@@ -13,12 +13,12 @@ from pprint import pprint
 def main():
     
     KOJI_HUB = 'http://koji.localdomain/kojihub'
-    KOJI_USER = 'jenkins'
-    KOJI_PASSWORD = 'jenkins'
 
-    KOJI_CLIENT_CERT = '/etc/pki/koji/kojiadmin.pem'
-    KOJI_CLIENT_CA = '/etc/pki/koji/koji_ca_cert.crt'
-    KOJI_HUB_CA = '/etc/pki/koji/kojihub.pem'
+    # This relies on 'insert into users (name, password, status, usertype) values ('jenkins', 'jenkins', 0, 0);' in the koji db.
+    # See: http://fedoraproject.org/wiki/Koji/ServerHowTo
+    KOJI_USER = 'koji'
+    KOJI_PASSWORD = 'koji'
+
     
     BAD_ARTIFACTS = ['.md5',
                      '.sha1',
@@ -126,7 +126,7 @@ def main():
             return False
         
         if 'SNAPSHOT' in maven_info['version']:
-            print '\nCannot handle snspshots from %s, download and import manually...' % maven_label
+            print '\nCannot handle snapshots from %s, download and import manually...' % maven_label
             return False
         
         # print 'Maven archives for %s:' % koji.mavenLabel(maven_info), maven_archives
