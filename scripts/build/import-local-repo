@@ -15,6 +15,10 @@ def main():
     KOJI_HUB = 'http://koji.localdomain/kojihub'
     KOJI_USER = 'koji'
     KOJI_PASSWORD = 'koji'
+
+    KOJI_CLIENT_CERT = '/etc/kojiweb/kojiweb.crt'
+    KOJI_CLIENT_CA = '/etc/kojiweb/clientca.crt'
+    KOJI_HUB_CA = '/etc/kojiweb/kojihubca.crt'
     
     BAD_ARTIFACTS = ['.md5',
                      '.sha1',
@@ -55,7 +59,8 @@ def main():
     basedir = os.path.dirname(args[1])
     
     session = koji.ClientSession(KOJI_HUB, {'user': KOJI_USER, 'password': KOJI_PASSWORD})
-    session.login()
+    session.ssl_login( KOJI_CLIENT_CERT, KOJI_CLIENT_CA, KOJI_HUB_CA )
+    
     
     SUPPORTED_EXTS = []
     for archive_type in session.getArchiveTypes():
