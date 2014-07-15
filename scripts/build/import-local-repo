@@ -8,7 +8,6 @@ import koji
 import time
 import re
 import optparse
-from pprint import pprint
 
 def main():
     
@@ -168,24 +167,22 @@ def main():
     
     lines = output.split(os.linesep)
     if opts.debug:
-        print "Processing %s POMs..." % len(lines)
+        print "\nProcessing %s POMs..." % len(lines)
     
     for line in output.split(os.linesep):
         if not os.path.isfile(line):
             if opts.debug:
-                print "Skipping bad output. Not a POM: %s" % line
+                print "\nSkipping bad output. Not a POM: %s" % line
             continue
         
         dir = os.path.dirname(line)
         
         if opts.debug:
-            print "Processing: %s\n  (in: %s)" % (line, dir)
+            print "\nProcessing: %s\n  (in: %s)" % (line, dir)
         
         maven_info = parse_pom(line)
-        if maven_info:
-            pprint(maven_info)
-        else:
-            print "POM didn't parse: %s" % line
+        if not maven_info:
+            print "\nPOM didn't parse: %s" % line
             continue
         
         files = []
@@ -196,12 +193,12 @@ def main():
                 files.append(name)
             else:
                 if opts.debug:
-                    print "Skipping non-importable file: %s" % name
+                    print "\nSkipping non-importable file: %s" % name
                 continue
             
             if should_import(maven_info, name):
                 if opts.debug:
-                    print "Including file: %s" % name
+                    print "\nIncluding file: %s" % name
                 do_import = True
         
         if do_import:
@@ -218,14 +215,18 @@ def main():
         task = session.newRepo(tag)
         task_state = None
         while True:
+            print "\nWaiting for regen-repo (task: %s) to complete..." % task
+            
             task_state = session.getTaskInfo(task)['state']
+            print "\nLast state: %s" % task_state
+            
             if task_state > 1:
                break
             
-            print "Waiting for regen-repo (task: %s) to complete..." % task
             time.sleep(15)
         
         if task_state != koji.TASK_STATES['CLOSED']:
+          print "\nRepository regen (task: %s) failed with state: %s" % (task, task_state)
           # regen-repo failed.
           sys.exit(2)
 
