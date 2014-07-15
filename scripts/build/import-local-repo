@@ -16,9 +16,9 @@ def main():
     KOJI_USER = 'koji'
     KOJI_PASSWORD = 'koji'
 
-    KOJI_CLIENT_CERT = '/etc/pki/koji/certs/kojiadmin.crt'
+    KOJI_CLIENT_CERT = '/etc/pki/koji/kojiadmin.pem'
     KOJI_CLIENT_CA = '/etc/pki/koji/koji_ca_cert.crt'
-    KOJI_HUB_CA = '/etc/pki/koji/certs/kojihub.crt'
+    KOJI_HUB_CA = '/etc/pki/koji/kojihub.pem'
     
     BAD_ARTIFACTS = ['.md5',
                      '.sha1',
