@@ -13,8 +13,8 @@ from pprint import pprint
 def main():
     
     KOJI_HUB = 'http://koji.localdomain/kojihub'
-    KOJI_USER = 'koji'
-    KOJI_PASSWORD = 'koji'
+    KOJI_USER = 'jenkins'
+    KOJI_PASSWORD = 'jenkins'
 
     KOJI_CLIENT_CERT = '/etc/pki/koji/kojiadmin.pem'
     KOJI_CLIENT_CA = '/etc/pki/koji/koji_ca_cert.crt'
@@ -59,7 +59,7 @@ def main():
     basedir = os.path.dirname(args[1])
     
     session = koji.ClientSession(KOJI_HUB, {'user': KOJI_USER, 'password': KOJI_PASSWORD})
-    session.login({'user': KOJI_USER, 'password': KOJI_PASSWORD, 'hostip':'127.0.0.1'})
+    session.login()
     #session.ssl_login( KOJI_CLIENT_CERT, KOJI_CLIENT_CA, KOJI_HUB_CA )
     
     
