@@ -59,7 +59,7 @@ def main():
     basedir = os.path.dirname(args[1])
     
     session = koji.ClientSession(KOJI_HUB, {'user': KOJI_USER, 'password': KOJI_PASSWORD})
-    session.login(KOJI_USER, KOJI_PASSWORD, {'hostip':'127.0.0.1'})
+    session.login({'user': KOJI_USER, 'password': KOJI_PASSWORD, 'hostip':'127.0.0.1'})
     #session.ssl_login( KOJI_CLIENT_CERT, KOJI_CLIENT_CA, KOJI_HUB_CA )
     
     
