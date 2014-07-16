@@ -131,11 +131,11 @@ def main():
         # print 'Maven archives for %s:' % koji.mavenLabel(maven_info), maven_archives
         maven_archives = session.listArchives(type='maven', typeInfo=maven_info, queryOpts={'order': 'id'})
         if not maven_archives:
-            print '\n%(groupId)s:%(artifactId)s:%(version)s from %(pom)s has no versions in Koji importing' % maven_info
+            print '\nNo versions in Koji for: %(groupId)s:%(artifactId)s:%(version)s\n  from %(pom)s\nImporting.' % maven_info
             return True
         else:
             if path not in [a['filename'] for a in maven_archives]:
-                print koji.mavenLabel(maven_info), 'exists but %s is missing, importing...' % path
+                print koji.mavenLabel(maven_info), 'exists but this artifact is missing.\n  Artifact: %s\nImporting.' % path
                 return True
             
             builds = set()
@@ -161,8 +161,9 @@ def main():
                                                                                  ', '.join(labels))
         return False
 
-   
-    output = subprocess.Popen(["find", basedir, "-type", "f", "-name", "*.pom"], stdout=subprocess.PIPE).communicate()[0]
+    find_cmd = ["find", basedir, "-type", "f", "-name", "*.pom"]
+    print "\n", " ".join(find_cmd)
+    output = subprocess.Popen(find_cmd, stdout=subprocess.PIPE).communicate()[0]
     regen = None
     
     lines = output.split(os.linesep)
