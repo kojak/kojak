@@ -27,6 +27,13 @@ if [ "${USER}" != "root" ]; then
     exit
 fi
 
+# Check if Kojak is installed
+INST_FILE="/tmp/install"
+if [ ! -f "${INST_FILE}" ]; then
+    echo -e "\n# Kojak is not installed"
+    exit
+fi
+
 # Load services configuration
 DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
 . $DIR/kojak-functions
@@ -55,6 +62,8 @@ for file in ${LOG_FILES}; do rm -f $file || echo "$file not found"; done
 # Remove users and groups
 USERS="koji mock kojibuilder postgres apache"
 for user in ${USERS}; do userdel -rf $user; groupdel $user; done
+
+rm -f /tmp/install /tmp/config
 
 # Update mlocate database
 echo -e "\nUpdating file datatabse...please be patient."

@@ -33,6 +33,13 @@ if [ ! -f "/etc/centos-release" ]; then
     echo
 fi
 
+# Check if Kojak is installed
+INST_FILE="/tmp/install"
+if [ -f "${INST_FILE}" ]; then
+    echo -e "\n# Kojak already installed"
+    exit
+fi
+
 # Load services configuration
 DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
 . $DIR/kojak-functions
@@ -711,5 +718,6 @@ rm /tmp/kojibuilder.sql
 
 echo -e "\nService Status..."
 eachService status
+touch /tmp/install
 
 echo -e "\nInstallation complete...Kojak is AOK"

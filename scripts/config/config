@@ -21,6 +21,20 @@
 # Uncomment to debug script
 #set -x
 
+# Check if kojak is installed
+INST_FILE="/tmp/install"
+if [ ! -f "${INST_FILE}" ]; then
+    echo -e "\n# Kojak not installed...please select the installation option before atempting to configure the system"
+    exit
+fi
+
+# Check if kojak is configured
+CFG_FILE="/tmp/config"
+if [ -f "${CFG_FILE}" ]; then
+    echo -e "\n# Kojak already configured"
+    exit
+fi
+
 # Load services configuration
 DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
 . $DIR/kojak-functions
@@ -29,5 +43,6 @@ eachTool config
 
 echo -e "\nBringing the system up...\n"
 eachService restart
+touch /tmp/config
 
 echo -e "\nConfiguration complete...Kojak is AOK"
