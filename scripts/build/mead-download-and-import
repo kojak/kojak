@@ -1,0 +1,159 @@
+#!/usr/bin/python
+
+import sys
+import optparse
+import subprocess
+import tempfile
+import os.path
+import shutil
+import glob
+import xml.dom.minidom
+import hashlib
+
+SCRIPTDIR = os.path.abspath(os.path.dirname(sys.argv[0]))
+
+def run(cmd, chdir=None, fatal=True, verbose=False):
+    output = ''
+    olddir = None
+    if chdir:
+        olddir = os.getcwd()
+        os.chdir(chdir)
+    proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    output, dummy = proc.communicate()
+    if verbose:
+        print output
+    ret = proc.returncode
+    if olddir:
+        os.chdir(olddir)
+    if ret and fatal:
+        msg = 'error running: %s, return code was %s' % (' '.join(cmd), ret)
+        if not verbose:
+            msg += ', output was:\n%s' % output
+        raise RuntimeError, msg
+    return ret, output
+
+def get_child(node, name):
+    for child in node.childNodes:
+        if hasattr(child, 'tagName') and child.tagName == name:
+            return child
+    return None
+
+def get_text(node):
+    if node:
+        return node.firstChild.data
+    return None
+
+def parse_parent(pom):
+    doc = xml.dom.minidom.parse(pom)
+    project_node = get_child(doc, 'project')
+    parent_node = get_child(project_node, 'parent')
+    if not parent_node:
+        return None
+    g = get_text(get_child(parent_node, 'groupId'))
+    a = get_text(get_child(parent_node, 'artifactId'))
+    v = get_text(get_child(parent_node, 'version'))
+    return g, a, v
+
+def parent_gav(workdir):
+    poms = glob.glob(os.path.join(workdir, '*.pom'))
+    if len(poms) != 1:
+        raise RuntimeError, 'only one .pom may be associated with a G:A:V'
+    return parse_parent(poms[0])
+
+def parse_pom(pom):
+    doc = xml.dom.minidom.parse(pom)
+    project_node = get_child(doc, 'project')
+    parent = parse_parent(pom)
+    g = get_text(get_child(project_node, 'groupId'))
+    if not g:
+        g = parent[0]
+    a = get_text(get_child(project_node, 'artifactId'))
+    if not a:
+        a = parent[1]
+    v = get_text(get_child(project_node, 'version'))
+    if not v:
+        v = parent[2]
+    return g, a, v
+
+def repo_path(opts, pom):
+    g, a, v = parse_pom(pom)
+    g = g.replace('.', '/')
+    return os.path.join(g, a, v)
+
+def make_checksums(artifact):
+    md5 = hashlib.md5()
+    sha1 = hashlib.sha1()
+    with file(artifact) as f:
+        while True:
+            content = f.read(8192)
+            if not content:
+                break
+            md5.update(content)
+            sha1.update(content)
+    with file(artifact + '.md5', 'w') as f:
+        f.write(md5.hexdigest())
+    with file(artifact + '.sha1', 'w') as f:
+        f.write(sha1.hexdigest())
+
+def import_local(opts, gav, workdir):
+    poms = glob.glob(os.path.join(workdir, '*.pom'))
+    if len(poms) != 1:
+        raise RuntimeError, 'only one .pom may be associated with a G:A:V'
+    if not os.path.isdir(opts.local_repo):
+        raise RuntimeError, 'local repo directory %s does not exist' % opts.local_repo
+    repopath = repo_path(opts, poms[0])
+    destdir = os.path.join(opts.local_repo, repopath)
+    if os.path.exists(destdir):
+        print '%s exists, not adding %s into the local repo' % (destdir, gav)
+        return
+    os.makedirs(destdir)
+    for artifact in glob.glob(os.path.join(workdir, '*')):
+        shutil.copy(artifact, destdir)
+        artifact_name = os.path.basename(artifact)
+        make_checksums(os.path.join(destdir, artifact_name))
+    print 'Added %s to %s' % (gav, destdir)
+
+def download_and_import(opts, gav):
+    workdir = tempfile.mkdtemp()
+    success = False
+    try:
+        cmd = [os.path.join(SCRIPTDIR, 'get-maven-artifacts'), gav]
+        run(cmd, chdir=workdir, verbose=opts.verbose)
+        if opts.keep:
+            print '%s downloaded to %s' % (gav, workdir)
+        cmd = [os.path.join(SCRIPTDIR, 'import-maven')]
+        if opts.tag:
+            cmd.extend(['--tag', opts.tag])
+        cmd.extend(glob.glob(os.path.join(workdir, '*')))
+        ret, output = run(cmd, verbose=opts.verbose)
+        if not opts.verbose:
+            print output.strip().splitlines()[-1]
+        if opts.local_repo:
+            import_local(opts, gav, workdir)
+        parent = parent_gav(workdir)
+        if opts.recurse and parent:
+            success = download_and_import(opts, '%s:%s:%s' % parent)
+        else:
+            success = True
+    except RuntimeError, e:
+        print e.args[0]
+    finally:
+        if not opts.keep:
+            shutil.rmtree(workdir)
+    return success
+
+parser = optparse.OptionParser()
+parser.add_option('-t', '--tag', help='Tag to import into')
+parser.add_option('-r', '--recurse', action='store_true', help='Recursively import parent GAVs')
+parser.add_option('-k', '--keep', action='store_true', help='Keep downloaded artifacts')
+parser.add_option('-l', '--local-repo', help='Import downloaded artifacts into the given local repo')
+parser.add_option('-v', '--verbose', action='store_true', help='Verbose output')
+
+opts, args = parser.parse_args()
+if not args:
+    parser.error('You must provide a G:A:V to import')
+
+for gav in args:
+    success = download_and_import(opts, gav)
+    if not success:
+        sys.exit(1)
