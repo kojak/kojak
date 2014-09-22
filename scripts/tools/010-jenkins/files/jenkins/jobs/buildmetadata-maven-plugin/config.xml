@@ -72,7 +72,7 @@ koji add-pkg rcm-mw-tools-candidate  com.redhat.rcm.maven.plugin-buildmetadata-m
       <kojiOptions></kojiOptions>
       <kojiTask>mavenBuild</kojiTask>
       <kojiScratchBuild>false</kojiScratchBuild>
-      <kojiScmUrl>git+https://github.com/sbadakhc/buildmetadata-maven-plugin.git#15677b591c85cd48b553378ab53567795d675509</kojiScmUrl>
+      <kojiScmUrl>git+https://github.com/sbadakhc/buildmetadata-maven-plugin.git#a7e9d8815111479dbdbfd335bb4812d479a76224</kojiScmUrl>
     </org.jenkinsci.plugins.koji.KojiBuilder>
   </postbuilders>
   <runPostStepsIfResult>
