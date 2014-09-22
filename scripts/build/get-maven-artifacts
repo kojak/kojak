@@ -16,7 +16,8 @@ OLD_JBOSS_BASE = 'http://repository.jboss.org/maven2'
 LINK_RE = re.compile(r'href="([^"]+)"')
 
 parser = optparse.OptionParser(usage='%prog groupId:artifactId:type:version')
-parser.add_option('--repo', dest='repos', help='Additional repo to check', action='append',
+parser.add_option('--repo', dest='repos', metavar='REPOURL',
+                  help='Additional repo to check (may be used multiple times)', action='append',
                   default=[MAVEN_BASE, JBOSS_BASE, OLD_JBOSS_BASE])
 options, args = parser.parse_args()
 

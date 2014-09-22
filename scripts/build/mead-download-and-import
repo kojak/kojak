@@ -103,27 +103,33 @@ def import_local(opts, gav, workdir):
         raise RuntimeError, 'local repo directory %s does not exist' % opts.local_repo
     repopath = repo_path(opts, poms[0])
     destdir = os.path.join(opts.local_repo, repopath)
-    if os.path.exists(destdir):
-        print '%s exists, not adding %s into the local repo' % (destdir, gav)
-        return
-    os.makedirs(destdir)
+    if not os.path.exists(destdir):
+        os.makedirs(destdir)
     for artifact in glob.glob(os.path.join(workdir, '*')):
-        shutil.copy(artifact, destdir)
         artifact_name = os.path.basename(artifact)
-        make_checksums(os.path.join(destdir, artifact_name))
-    print 'Added %s to %s' % (gav, destdir)
+        destfile = os.path.join(destdir, artifact_name)
+        if os.path.exists(destfile):
+            print '%s exists in %s, not overwriting' % (artifact_name, destdir)
+        else:
+            shutil.copy(artifact, destfile)
+            make_checksums(destfile)
+    print '%s available at %s' % (gav, destdir)
 
 def download_and_import(opts, gav):
     workdir = tempfile.mkdtemp()
     success = False
     try:
         cmd = [os.path.join(SCRIPTDIR, 'get-maven-artifacts'), gav]
+        for repo in opts.repos:
+            cmd.extend(['--repo', repo])
         run(cmd, chdir=workdir, verbose=opts.verbose)
         if opts.keep:
             print '%s downloaded to %s' % (gav, workdir)
         cmd = [os.path.join(SCRIPTDIR, 'import-maven')]
         if opts.tag:
             cmd.extend(['--tag', opts.tag])
+        if opts.owner:
+            cmd.extend(['--owner', opts.owner])
         cmd.extend(glob.glob(os.path.join(workdir, '*')))
         ret, output = run(cmd, verbose=opts.verbose)
         if not opts.verbose:
@@ -142,18 +148,40 @@ def download_and_import(opts, gav):
             shutil.rmtree(workdir)
     return success
 
-parser = optparse.OptionParser()
+def get_gavs(opts, args):
+    gavs = []
+    if opts.file:
+        for filename in args:
+            with file(filename) as f:
+                for line in f:
+                    line = line.strip()
+                    if line.startswith('#') or not line:
+                        continue
+                    gavs.append(line)
+    else:
+        gavs = args
+    return gavs
+
+parser = optparse.OptionParser(usage='%prog groupId:artifactId:version...')
 parser.add_option('-t', '--tag', help='Tag to import into')
+parser.add_option('--repo', dest='repos', metavar='REPOURL',
+                  help='Additional repo to check (may be used multiple times)', action='append',
+                  default=[])
 parser.add_option('-r', '--recurse', action='store_true', help='Recursively import parent GAVs')
 parser.add_option('-k', '--keep', action='store_true', help='Keep downloaded artifacts')
 parser.add_option('-l', '--local-repo', help='Import downloaded artifacts into the given local repo')
+parser.add_option('--owner', default=os.environ['USER'], help='Owner of the package')
+parser.add_option('-f', '--file', action='store_true', help='Arguments are files which contain a list of G:A:Vs to import (one per line)')
 parser.add_option('-v', '--verbose', action='store_true', help='Verbose output')
 
 opts, args = parser.parse_args()
 if not args:
-    parser.error('You must provide a G:A:V to import')
+    if opts.file:
+        parser.error('You must provide a list of G:A:Vs to import')
+    else:
+        parser.error('You must provide a G:A:V to import')
 
-for gav in args:
+for gav in get_gavs(opts, args):
     success = download_and_import(opts, gav)
     if not success:
         sys.exit(1)
