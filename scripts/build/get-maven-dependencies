@@ -1,9 +1,10 @@
 #!/bin/bash
 #
-# Simple script to create a list of depndendancies in GAV format
+# Simple script to create a list of depedencies in GAV format
 
 mvn -o dependency:list \
 | grep ":.*:.*:.*" \
 | cut -d] -f2- \
 | sed 's/:[a-z]*$//g' \
-| sort -u
+| sed '/Finished/d'\
+| sort -u | tee dep.list
