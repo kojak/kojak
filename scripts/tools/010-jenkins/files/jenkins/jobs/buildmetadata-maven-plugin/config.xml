@@ -62,7 +62,8 @@
   </prebuilders>
   <postbuilders>
     <hudson.tasks.Shell>
-      <command>/opt/kojak/scripts/build/get-maven-dependencies &gt; /tmp/dep.list
+      <command>cd $WORKSPACE
+/opt/kojak/scripts/build/get-maven-dependencies &gt; /tmp/dep.list
 /opt/kojak/scripts/build/mead-download-and-import --recurse -f /tmp/dep.list
 koji add-pkg rcm-mw-tools-candidate  com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin --owner koji || exit 0
 </command>
