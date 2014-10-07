@@ -7,4 +7,4 @@ mvn -o dependency:list \
 | cut -d] -f2- \
 | sed 's/:[a-z]*$//g' \
 | sed '/Finished/d'\
-| sort -u | tee dep.list
+| sort -u > dep.list
