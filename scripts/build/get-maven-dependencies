@@ -2,7 +2,7 @@
 #
 # Simple script to create a list of depedencies in GAV format
 
-mvn -o dependency:list \
+mvn dependency:list \
 | grep ":.*:.*:.*" \
 | cut -d] -f2- \
 | sed 's/:[a-z]*$//g' \
