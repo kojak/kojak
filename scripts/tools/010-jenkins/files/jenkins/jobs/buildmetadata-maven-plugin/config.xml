@@ -30,7 +30,7 @@
     <groupId>com.redhat.rcm.maven.plugin</groupId>
     <artifactId>buildmetadata-maven-plugin</artifactId>
   </rootModule>
-  <goals>clean install -C -B -Dmaven.test.skip=true</goals>
+  <goals>clean install -C -B -Dmaven.test.skip=true dependency:resolve-plugins</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
   <localRepository class="hudson.maven.local_repo.PerJobLocalRepositoryLocator"/>
@@ -53,7 +53,7 @@
       <command>rm -rf $WORKSPACE/.repository</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Maven>
-      <targets>dependency:resolve-plugins</targets>
+      <targets>clean install -C -B -Dmaven.test.skip=true dependency:resolve-plugins</targets>
       <mavenName>(Default)</mavenName>
       <usePrivateRepository>true</usePrivateRepository>
       <settings class="jenkins.mvn.DefaultSettingsProvider"/>
@@ -74,7 +74,7 @@ koji add-pkg rcm-mw-tools-candidate  com.redhat.rcm.maven.plugin-buildmetadata-m
       <kojiOptions></kojiOptions>
       <kojiTask>mavenBuild</kojiTask>
       <kojiScratchBuild>false</kojiScratchBuild>
-      <kojiScmUrl>git+https://github.com/sbadakhc/buildmetadata-maven-plugin.git#3f036ee5d76a5bc8cc0374f6ad2316b9aa2177f6</kojiScmUrl>
+      <kojiScmUrl>git+https://github.com/sbadakhc/buildmetadata-maven-plugin.git#HEAD</kojiScmUrl>
     </org.jenkinsci.plugins.koji.KojiBuilder>
   </postbuilders>
   <runPostStepsIfResult>
