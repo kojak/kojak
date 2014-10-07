@@ -30,7 +30,7 @@
     <groupId>com.redhat.rcm.maven.plugin</groupId>
     <artifactId>buildmetadata-maven-plugin</artifactId>
   </rootModule>
-  <goals>clean install -C -B -Dmaven.test.skip=true dependency:resolve-plugins</goals>
+  <goals>clean install -Dmaven.test.skip=true dependency:resolve-plugins</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
   <localRepository class="hudson.maven.local_repo.PerJobLocalRepositoryLocator"/>
@@ -53,7 +53,7 @@
       <command>rm -rf $WORKSPACE/.repository</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Maven>
-      <targets>clean install -C -B -Dmaven.test.skip=true dependency:resolve-plugins</targets>
+      <targets>clean install -Dmaven.test.skip=true dependency:resolve-plugins</targets>
       <mavenName>(Default)</mavenName>
       <usePrivateRepository>true</usePrivateRepository>
       <settings class="jenkins.mvn.DefaultSettingsProvider"/>
