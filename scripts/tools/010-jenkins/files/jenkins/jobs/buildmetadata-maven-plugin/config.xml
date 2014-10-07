@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<maven2-moduleset plugin="maven-plugin@2.3">
+<maven2-moduleset plugin="maven-plugin@2.5">
   <actions/>
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties/>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.2">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.2.6">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -37,6 +37,7 @@
   <ignoreUpstremChanges>false</ignoreUpstremChanges>
   <archivingDisabled>false</archivingDisabled>
   <siteArchivingDisabled>false</siteArchivingDisabled>
+  <fingerprintingDisabled>false</fingerprintingDisabled>
   <resolveDependencies>false</resolveDependencies>
   <processPlugins>false</processPlugins>
   <mavenValidationLevel>-1</mavenValidationLevel>
@@ -52,7 +53,7 @@
       <command>rm -rf $WORKSPACE/.repository</command>
     </hudson.tasks.Shell>
     <hudson.tasks.Maven>
-      <targets>dependency:resolve-plugins -C -B</targets>
+      <targets>dependency:resolve-plugins</targets>
       <mavenName>(Default)</mavenName>
       <usePrivateRepository>true</usePrivateRepository>
       <settings class="jenkins.mvn.DefaultSettingsProvider"/>
@@ -61,7 +62,8 @@
   </prebuilders>
   <postbuilders>
     <hudson.tasks.Shell>
-      <command>/opt/kojak/scripts/build/import-local-repo rcm-mw-tools  ${WORKSPACE}/.repository
+      <command>/opt/kojak/scripts/build/get-maven-dependencies &gt; /tmp/dep.list
+/opt/kojak/scripts/build/mead-download-and-import --recurse -f /tmp/dep.list
 koji add-pkg rcm-mw-tools-candidate  com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin --owner koji || exit 0
 </command>
     </hudson.tasks.Shell>
