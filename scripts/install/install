@@ -155,21 +155,21 @@ echo -e "# 07. Patching koji.conf" >> ${LOG}
 cp -p /etc/koji.conf /etc/koji.conf.orig
 cat > /tmp/koji.conf.patch << 'EOF'
 --- /etc/koji.conf.orig 2014-09-26 14:01:58.000000000 -0400
-+++ /etc/koji.conf  2014-11-21 05:09:20.962000122 -0500
++++ /etc/koji.conf  2014-11-21 05:43:26.343999977 -0500
 @@ -3,13 +3,13 @@
  ;configuration for koji cli tool
  
  ;url of XMLRPC server
 -server = http://koji.fedoraproject.org/kojihub
-+server = http://koji.localdomain.org/kojihub
++server = http://koji.localdomain.com/kojihub
  
  ;url of web interface
 -weburl = http://koji.fedoraproject.org/koji
-+weburl = http://koji.localdomain.org/koji
++weburl = http://koji.localdomain.com/koji
  
  ;url of package download site
 -topurl = https://kojipkgs.fedoraproject.org/
-+topurl = https://kojipkgs.localdomain.org/
++topurl = https://kojipkgs.localdomain.com/
  
  ;path to the koji top directory
  ;topdir = /mnt/koji
