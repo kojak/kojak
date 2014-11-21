@@ -153,9 +153,8 @@ rm -f /tmp/limits.conf.patch
 
 echo -e "# 07. Patching koji.conf" >> ${LOG}
 cp -p /etc/koji.conf /etc/koji.conf.orig
-cat > /tmp/koji.conf.patch << 'EOF'
---- /etc/koji.conf.orig 2014-11-21 04:16:02.943999992 -0500
-+++ /etc/koji.conf  2014-11-21 04:31:41.374000593 -0500
+--- /etc/koji.conf.orig 2014-09-26 14:01:58.000000000 -0400
++++ /etc/koji.conf  2014-11-21 04:45:54.715999882 -0500
 @@ -3,13 +3,13 @@
  ;configuration for koji cli tool
  
@@ -173,6 +172,21 @@ cat > /tmp/koji.conf.patch << 'EOF'
  
  ;path to the koji top directory
  ;topdir = /mnt/koji
+@@ -22,11 +22,11 @@
+ ;configuration for SSL authentication
+ 
+ ;client certificate
+-cert = ~/.fedora.cert
++cert = ~/.koji.cert
+ 
+ ;certificate of the CA that issued the client certificate
+-ca = ~/.fedora-server-ca.cert
++ca = ~/.koji-server-ca.cert
+ 
+ ;certificate of the CA that issued the HTTP server certificate
+-serverca = ~/.fedora-server-ca.cert
++serverca = ~/.koji-server-ca.cert
+cat > /tmp/koji.conf.patch << 'EOF'
 EOF
 patch -p0 < /tmp/koji.conf.patch
 rm -f /tmp/koji.conf.patch
