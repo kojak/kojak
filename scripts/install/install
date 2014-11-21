@@ -155,7 +155,7 @@ echo -e "# 07. Patching koji.conf" >> ${LOG}
 cp -p /etc/koji.conf /etc/koji.conf.orig
 cat > /tmp/koji.conf.patch << 'EOF'
 --- /etc/koji.conf.orig 2014-09-26 14:01:58.000000000 -0400
-+++ /etc/koji.conf  2014-11-21 04:45:54.715999882 -0500
++++ /etc/koji.conf  2014-11-21 04:59:57.376000044 -0500
 @@ -3,13 +3,13 @@
  ;configuration for koji cli tool
  
@@ -182,11 +182,11 @@ cat > /tmp/koji.conf.patch << 'EOF'
  
  ;certificate of the CA that issued the client certificate
 -ca = ~/.fedora-server-ca.cert
-+ca = ~/.koji-server-ca.cert
++ca = ~/.koji_ca_cert
  
  ;certificate of the CA that issued the HTTP server certificate
 -serverca = ~/.fedora-server-ca.cert
-+serverca = ~/.koji-server-ca.cert
++serverca = ~/.koji_ca_cert
 EOF
 patch -p0 < /tmp/koji.conf.patch
 rm -f /tmp/koji.conf.patch
