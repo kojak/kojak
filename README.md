@@ -70,7 +70,7 @@ The VirtualBox installation will login you in automagically to your vitual machi
 ```
 cd /opt
 sudo yum -y install git
-sudo https://github.com/sbadakhc/kojak.git
+sudo git clone https://github.com/sbadakhc/kojak.git
 cd /opt/kojak
 sudo ./kojak
 2. Install
