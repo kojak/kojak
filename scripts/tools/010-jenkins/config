@@ -38,8 +38,7 @@ cp $files/fcinfo* /var/lib/jenkins/.java/fonts/${javaver}
 chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
 
 service jenkins start
-echo "Sleeping 30s to allow Jenkins to start... (shouldn't take anything like that long)"
-sleep 30
+while ! timeout 1 bash -c "echo > /dev/tcp/localhost/8080" > /dev/null 2>&1; do sleep 2; done
 
 cd /tmp
 

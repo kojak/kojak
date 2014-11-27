@@ -110,9 +110,7 @@ STORES_FSTAB_LINE='http://koji.localdomain/aprox/mavdav/stores    /aprox/stores 
 grep "$STORES_FSTAB_LINE" /etc/fstab > /dev/null || echo $STORES_FSTAB_LINE >> /etc/fstab
 
 service aprox restart
-
-echo "Sleeping 10s to allow AProx to start... (shouldn't take anything like that long)"
-sleep 10
+while ! timeout 1 bash -c "echo > /dev/tcp/localhost/8090" > /dev/null 2>&1; do sleep 2; done
 curl -I http://koji.localdomain:8090/aprox/mavdav/settings/group/settings-CIx-loop.xml
 
 echo "Setting up reverse proxy to AProx..."
