@@ -30,7 +30,7 @@ fi
 # Reset the terminal
 reset
 
-# Delcare the scripts directory
+# Declare the scripts directory
 SCRIPTS="`pwd`/scripts"
 
 # The menu header
