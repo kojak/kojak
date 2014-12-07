@@ -46,29 +46,6 @@ def run(cmd, fail=True):
         if fail:
             sys.exit(1)
 
-def check_and_append(opts, url_list, url):
-    tokens = url.split('/')
-    if len(tokens) < 3:
-        print >> sys.stderr, 'Skipping url %s, not enough tokens...' % url
-        return
-    if not url_list:
-        url_list.append(url)
-        return
-    last_tokens = url_list[-1].split('/')
-    if tokens[-3:] == last_tokens[-3:]:
-        # This url is the same as the previous url.  A repeat download, so the
-        # previous download must have failed.  Replace the previous URL with this one.
-        if url_list[-1] == url:
-            # exactly the same URL, so we don't need to do anything
-            pass
-        else:
-            if opts.debug:
-                print >> sys.stderr, 'Replacing: %s\n     with: %s' % (url_list[-1], url)
-            url_list[-1] = url
-    else:
-        # New url, append it to the list
-        url_list.append(url)
-
 parser = optparse.OptionParser(usage='%prog maven-build-log')
 parser.add_option('--urls', action='store_true',
                   help='The file passed in is a list of urls, one per line, rather than an unprocessed log file')
@@ -102,20 +79,20 @@ for log in args:
     fobj = file(log)
     for line in fobj:
         if opts.urls:
-            check_and_append(opts, urls, line.strip())
+            urls.append(line.strip())
         else:
             i = 0
             tokens = line.split()
             while i < len(tokens):
-                if tokens[i] == 'Downloading:':
+                if tokens[i] == 'Downloaded:':
                     if (i + 1) < len(tokens):
                         url = tokens[i + 1]
                         baseurl = os.path.dirname(url)
                         baseurl = NORM_RE.sub(r'\1/', baseurl)
-                        check_and_append(opts, urls, baseurl)
+                        urls.append(baseurl)
                         i += 1
                     else:
-                        print 'Downloading: is last token on the line: %s' % tokens
+                        print 'Downloaded: is last token on the line: %s' % tokens
                 i += 1
     fobj.close()
 
@@ -227,15 +204,16 @@ for baseurl in urls:
                         if overlap:
                             if opts.debug:
                                 build = session.getBuild(build_id)
-                                print '\n%s in available in %s (provides %s:%s:%s)' % (koji.buildLabel(build), ', '.join(overlap),
+                                print '\n%s is available in %s (provides %s:%s:%s)' % (koji.buildLabel(build), ', '.join(overlap),
                                                                                        maven_info['group_id'], maven_info['artifact_id'],
                                                                                        maven_info['version'])
                             break
                     else:
-                        # just take the highest numbered build
                         labels = []
                         for build_id in sorted(builds):
-                            labels.append(koji.buildLabel(session.getBuild(build_id)))
+                            build = session.getBuild(build_id)
+                            if build['state'] == koji.BUILD_STATES['COMPLETE']:
+                                labels.append(koji.buildLabel(build))
                         print '\n%s:%s:%s is missing from %s, is provided by: %s' % (maven_info['group_id'], maven_info['artifact_id'],
                                                                                      maven_info['version'],
                                                                                      opts.check_tag,

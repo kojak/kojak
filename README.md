@@ -1,7 +1,7 @@
 Kojak - "Koji in an box"
 ========================
 
-Kojak is a collection of scripts that can be used to automate the installation and configuration of the Koji build system. It is part of a productization effort to encourage the adoption of Koji for use in development, testing and staging environments.  The scripts included in this repository can be used to create a fully operational Koji instance on the local system or optionally as virtual machine utilizing the Libvirt visualization API and a Kickstart file.  The virtual machine is based on a stock vanilla CentOS installation, to provide an automated "out of the box" solution, which may be used for development, testing and educational purposes.
+Kojak is a collection of scripts that can be used to automate the installation and configuration of the Koji build system. It is part of a productization effort to encourage the adoption of Koji for use in development, testing and staging environments.  The scripts included in this repository can be used to create a fully operational Koji instance on the local system or optionally as virtual machine utilizing either the Libvirt visualization API and a Kickstart file or Vagrant and VirtualBox.  The virtual machine is based on a stock vanilla CentOS installation, to provide an automated "out of the box" solution, which may be used for development, testing and educational purposes.
 
 Tool Chain
 ----------
@@ -52,13 +52,31 @@ cd /opt/kojak
 ./kojak
 1. Create VM
 ```
-The select the default options:
 
+Select from a choice of Vitual machine types
+```
+1. Libvirt
+2. VirtualBox
+3. Quit
+```
+
+The VirtualBox installation ships as a fixed configuration.
+For Libvirt you can customise the installtion but selecting the default options is generaly good enough.
 ```
 1. Default
 ```
 
-Once the virtual machine is created you should login to the virtual machine on address 192.168.122.2 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the "Install" option from the menu.
+The VirtualBox installation will login you in automagically to your vitual machine were you will have to manually continue the configuration.
+```
+cd /opt
+sudo yum -y install git
+sudo git clone https://github.com/sbadakhc/kojak.git
+cd /opt/kojak
+sudo ./kojak
+2. Install
+```
+
+You can access the Libvirt virtual machine by logging in to the address 192.168.122.2 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the "Install" option from the menu.
 ```
 ssh root@192.168.122.2
 cd /opt/kojak

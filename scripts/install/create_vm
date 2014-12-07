@@ -254,6 +254,10 @@ main_header() {
     echo -e "#                                                                              #\n"
 }
 
+menu_msg_00() {
+    echo -e ">> Select virtualization engine you want to use.\n"
+}
+
 menu_msg_01() {
     echo -e ">> Select which configuration options you want to use.\n"
 }
@@ -267,89 +271,130 @@ if [ ! -d ${TMPDIR} ]; then
     mkdir -p ${TMPDIR} 
 fi
 welcome_header
-menu_msg_01
-PS3='Please select from the configuration options: '
-options=("Default" "Custom" "Saved" "Print" "Clear" "Quit")
+menu_msg_00
+PS3='Please select from the virtualization options: '
+options=("Libvirt" "VirtualBox" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
-        "Default")
-            echo "Default"
-            main
-            ;;
-        "Custom")
-            echo "Custom"
-            config
-            exit
-            ;;
-        "Saved")
-            CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
-            if [ ! -z "${CFG}" ]; then
+        "Libvirt")
+            echo "Libvirt"
+            clear
             welcome_header
-            menu_msg_02
-            prompt="Please select a file:"
-            options=( $(find "$TMPDIR" -type f  -name "kojak.cfg") )
-            PS3="$prompt "
-            select opt in "${options[@]}" "Quit" ; do
-                if (( REPLY == 1 + ${#options[@]} )) ; then
-                    clear && menu
-                elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
-                    export KJKCFG="$opt"
-                    main ${KJKCFG}
-                else
-                    echo "Invalid option."
-                fi
-                done
-            else
-                echo -e "\n>> No configuration files found!"
-                sleep 1
-                welcome_header
-                menu
-            fi
-            ;;
-        "Print")
-            if [ ! -f "${KJKCFG}" ]; then
-                welcome_header
-                echo -e "# Kojak DEFAULT configuration options.\n
-# VMNAME=${VMNAME}
-# VMHOME=${VMHOME}
-# TMPDIR=${TMPDIR}
-# DISTDIR=${DISTDIR}
-# SRCLOC=${SRCLOC}
-# CFGDIR=${CFGDIR}
-# KSCFG=${KSCFG}
-# KJKCFG=${KJKCFG}
-# OS_TYPE=${OS_TYPE}
-# OS_VARIANT=${OS_VARIANT}
-# ARCH=${ARCH}
-# VCPU=${VCPU}
-# VMMEM=${VMMEM}
-# VMDISK=${VMDISK}"
-            else
-                clear
-                welcome_header
-                cat ${KJKCFG}
-            fi
-            echo -e "\nPress any key to return to the configuration menu: "
-            read
-            menu
-            ;;
-        "Clear")
-            CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
-            rm -f /kojak-ks.cfg
-            if [ ! -z "${CFG}" ]; then
-                for cfg in ${CFG}; do
-                rm -rf ${cfg}
-                done
-                welcome_header
-                echo -e "\n>> Removed saved configuration files."
-                sleep 1
-                menu
-            else
-                echo -e "\n>> No saved configuration files found!"
-                sleep 1
-                menu
-            fi
+
+            menu_msg_01
+            PS3='Please select from the configuration options: '
+            options=("Default" "Custom" "Saved" "Print" "Clear" "Quit")
+            select opt in "${options[@]}"
+            do
+                case $opt in
+                    "Default")
+                        echo "Default"
+                        main
+                        ;;
+                    "Custom")
+                        echo "Custom"
+                        config
+                        exit
+                        ;;
+                    "Saved")
+                        CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
+                        if [ ! -z "${CFG}" ]; then
+                        welcome_header
+                        menu_msg_02
+                        prompt="Please select a file:"
+                        options=( $(find "$TMPDIR" -type f  -name "kojak.cfg") )
+                        PS3="$prompt "
+                        select opt in "${options[@]}" "Quit" ; do
+                            if (( REPLY == 1 + ${#options[@]} )) ; then
+                                clear && menu
+                            elif (( REPLY > 0 && REPLY <= ${#options[@]} )) ; then
+                                export KJKCFG="$opt"
+                                main ${KJKCFG}
+                            else
+                                echo "Invalid option."
+                            fi
+                            done
+                        else
+                            echo -e "\n>> No configuration files found!"
+                            sleep 1
+                            welcome_header
+                            menu
+                        fi
+                        ;;
+                    "Print")
+                        if [ ! -f "${KJKCFG}" ]; then
+                            welcome_header
+                            echo -e "# Kojak DEFAULT configuration options.\n
+            # VMNAME=${VMNAME}
+            # VMHOME=${VMHOME}
+            # TMPDIR=${TMPDIR}
+            # DISTDIR=${DISTDIR}
+            # SRCLOC=${SRCLOC}
+            # CFGDIR=${CFGDIR}
+            # KSCFG=${KSCFG}
+            # KJKCFG=${KJKCFG}
+            # OS_TYPE=${OS_TYPE}
+            # OS_VARIANT=${OS_VARIANT}
+            # ARCH=${ARCH}
+            # VCPU=${VCPU}
+            # VMMEM=${VMMEM}
+            # VMDISK=${VMDISK}"
+                        else
+                            clear
+                            welcome_header
+                            cat ${KJKCFG}
+                        fi
+                        echo -e "\nPress any key to return to the configuration menu: "
+                        read
+                        menu
+                        ;;
+                    "Clear")
+                        CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
+                        rm -f /kojak-ks.cfg
+                        if [ ! -z "${CFG}" ]; then
+                            for cfg in ${CFG}; do
+                            rm -rf ${cfg}
+                            done
+                            welcome_header
+                            echo -e "\n>> Removed saved configuration files."
+                            sleep 1
+                            menu
+                        else
+                            echo -e "\n>> No saved configuration files found!"
+                            sleep 1
+                            menu
+                        fi
+                        ;;
+                    "Quit")
+                        exit
+                        ;;
+                    *) echo -e ">> Invalid Option"
+                        ;;
+                esac
+            done
+            break
+                        ;;
+        "VirtualBox")
+            echo "VirtualBox"
+            OS="fedora"
+            ID=$(vagrant global-status | awk 'FNR == 4 {print}'| awk '{print $1}')
+            # Install packages
+            [[ ! "$(rpm -qa | grep vagrant)" ]] && yum -y install https://dl.bintray.com/mitchellh/vagrant/vagrant_1.6.5_x86_64.rpm
+            [[ ! -f /etc/yum.repos.d/virtualbox.repo ]] && wget -P /etc/yum.repos.d/ http://download.virtualbox.org/virtualbox/rpm/$OS/virtualbox.repo
+            [[ -d /opt/vm ]] && rm -rf /opt/vm
+            yum -y update
+            yum -y localinstall /tmp/vagrant_1.6.5_x86_64.rpm 
+            yum -y install VirtualBox
+            yum -y install kmod-VirtualBox
+            mkdir /opt/vm
+            cd /opt/vm
+            # Init virtual machine
+            vagrant init chef/centos-6.5
+            vagrant up
+            # Connect to virtual machine
+            vagrant ssh $ID
+            exit
             ;;
         "Quit")
             exit
@@ -363,6 +408,6 @@ break
 
 clear
 welcome_header
-menu_msg_01
+menu_msg_00
 menu
 
