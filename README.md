@@ -42,18 +42,18 @@ Installation Instructions
 
 Checkout the contents of the Kojak git repository to a suitable directory on your host.
 ```
-cd /opt
-git clone https://github.com/sbadakhc/kojak.git
+[root@localhost]# cd /opt
+[root@localhost]# git clone https://github.com/sbadakhc/kojak.git
 ```
 
 As the root user execute kojak script.  You will be prompted about the type of installation you want to conduct.  If you choose to create a virtual machine you will be further prompted to supply some configuration options.  You can simply accept the default options if you have no special requirements.
 ```
-cd /opt/kojak
-./kojak
+[root@localhost]# cd /opt/kojak
+[root@localhost]# ./kojak
 1. Create VM
 ```
 
-Select from a choice of Vitual machine types
+Select from a choice of Vitual machine types from the menu options.
 ```
 1. Libvirt
 2. VirtualBox
@@ -68,25 +68,25 @@ For Libvirt you can customise the installtion but selecting the default options 
 
 The VirtualBox installation will login you in automagically to your vitual machine were you will have to manually continue the configuration.
 ```
-cd /opt
-sudo yum -y install git
-sudo git clone https://github.com/sbadakhc/kojak.git
-cd /opt/kojak
-sudo ./kojak
+[root@localhost]# cd /opt
+[root@localhost]# sudo yum -y install git
+[root@localhost]# sudo git clone https://github.com/sbadakhc/kojak.git
+[root@localhost]# cd /opt/kojak
+[root@localhost]# sudo ./kojak
 2. Install
 ```
 
 You can access the Libvirt virtual machine by logging in to the address 192.168.122.2 as the root user and execute the Kojak script once again.  It will be located under /opt/kojak.  This time you can select the "Install" option from the menu.
 ```
-ssh root@192.168.122.2
-cd /opt/kojak
-./kojak
+[root@localhost]# ssh root@192.168.122.2
+[root@localhost]# cd /opt/kojak
+[root@localhost]# ./kojak
 2. Install
 ```
 
 After the installation is complete you can opt to configure the system with base rcm tagging heirarchy.  This will get you up and running and building packages quickly.  Simply execute the Kojak script again and select the "Configure" option from the menu.
 ```
-./kojak
+[root@localhost]# ./kojak
 3. Configure
 ```
 
