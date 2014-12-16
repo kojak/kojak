@@ -61,7 +61,7 @@ Select from a choice of Vitual machine types from the menu options.
 ```
 
 The VirtualBox installation ships as a fixed configuration.
-For Libvirt you can customise the installtion but selecting the default options is generaly good enough.
+For Libvirt you can customise the installation but selecting the default option is generaly good enough.
 ```
 1. Default
 ```
