@@ -9,6 +9,8 @@
 PROG="koji"
 PKG="$2"
 ARCH="none"
+JAVA="java-1.7.0-openjdk-devel"
+MAVEN="maven3-3.0.3-4"
 
 create_tag_base () {
 # Create base tags
@@ -25,10 +27,10 @@ $PROG add-tag-inheritance $PKG-build $PKG-override --priority 0
 $PROG add-tag-inheritance $PKG-build $PKG-deps --priority 10
 
 # Add the Maven build group
-$PROG add-pkg $PKG-build org.apache.maven-maven --owner $USER
-$PROG tag-build $PKG-candidate org.apache.maven-maven3-3.0.3-4
+$PROG add-pkg $PKG-build org.apache.maven-maven maven3 --owner $USER
+$PROG tag-build $PKG-candidate $MAVEN
 $PROG add-group $PKG-build maven-build
-$PROG add-group-pkg $PKG-build maven-build bash coreutils git java-1.7.0-openjdk-devel \
+$PROG add-group-pkg $PKG-build maven-build bash coreutils git $JAVA \
 liberation-mono-fonts liberation-sans-fonts liberation-serif-fonts maven3 perl shadow-utils subversion
 
 # Add the SRPM build group
