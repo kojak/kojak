@@ -31,7 +31,7 @@ $PROG add-pkg $PKG-build $MAVEN --owner kojiadmin
 $PROG tag-build $PKG-candidate $MAVEN
 $PROG add-group $PKG-build maven-build
 $PROG add-group-pkg $PKG-build maven-build bash coreutils git $JAVA \
-liberation-mono-fonts liberation-sans-fonts liberation-serif-fonts maven3 perl shadow-utils subversion
+liberation-mono-fonts liberation-sans-fonts liberation-serif-fonts maven perl shadow-utils subversion
 
 # Add the SRPM build group
 $PROG add-group $PKG-build srpm-build
