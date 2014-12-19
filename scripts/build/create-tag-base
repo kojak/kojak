@@ -12,37 +12,51 @@ ARCH="none"
 JAVA="java-1.7.0-openjdk-devel"
 MAVEN="maven3-3.0.3-4"
 
-create_tag_base () {
-# Create base tags
-$PROG add-tag $PKG --arches $ARCH --maven-support --include-all
-$PROG add-tag $PKG-candidate --arches $ARCH --maven-support --include-all
-$PROG add-tag $PKG-override --arches $ARCH --maven-support --include-all
-$PROG add-tag $PKG-build --arches $ARCH --maven-support --include-all
-$PROG add-tag $PKG-deps --arches $ARCH --maven-support --include-all
+create-tag-base() {
+# Add product tags
+${PROG} add-tag ${PKG} --arches ${ARCH} --maven-support --include-all
+${PROG} add-tag ${PKG}-candidate --arches ${ARCH} --maven-support --include-all
+${PROG} add-tag ${PKG}-build --arches ${ARCH} --maven-support --include-all
+${PROG} add-tag ${PKG}-deps --arches ${ARCH} --maven-support --include-all
 
-# Configure the tag inheritance
-$PROG add-tag-inheritance $PKG-candidate $PKG --priority 0
-$PROG add-tag-inheritance $PKG-override $PKG-candidate --priority 0
-$PROG add-tag-inheritance $PKG-build $PKG-override --priority 0
-$PROG add-tag-inheritance $PKG-build $PKG-deps --priority 10
+# Add tag inheritance
+${PROG} add-tag-inheritance ${PKG}-candidate ${PKG} --priority 0
+${PROG} add-tag-inheritance ${PKG}-build ${PKG}-candidate --priority 0
+${PROG} add-tag-inheritance ${PKG}-deps ${PKG}-build --priority 5
 
-# Add the Maven build group
-$PROG add-pkg $PKG-build $MAVEN --owner kojiadmin
-$PROG tag-build $PKG-candidate $MAVEN
-$PROG add-group $PKG-build maven-build
-$PROG add-group-pkg $PKG-build maven-build bash coreutils git $JAVA \
-liberation-mono-fonts liberation-sans-fonts liberation-serif-fonts maven perl shadow-utils subversion
+# Add target
+${PROG} add-target ${PKG}-candidate ${PKG}-build ${PKG}-candidate
 
-# Add the SRPM build group
-$PROG add-group $PKG-build srpm-build
-$PROG add-group-pkg $PKG-build srpm-build bash redhat-release redhat-release-server redhat-rpm-config rhpkg-simple rpm-build shadow-utils
+# Add external repo
+${PROG} add-external-repo -t ${PKG}-build centos-mirror http://mirror.centos.org/centos/6/os/x86_64/
 
-# Add the Wrapper RPM build group
-$PROG add-group $PKG-build wrapper-rpm-build
-$PROG add-group-pkg $PKG-build wrapper-rpm-build bash redhat-release redhat-release-server redhat-rpm-config rpm-build shadow-utils
+# Add groups
+# build
+${PROG} add-group ${PKG}-build build
+${PROG} add-group-pkg ${PKG}-build build bash bzip2 cpio diffutils fedora-release findutils gawk gcc gcc-c++ info make redhat-rpm-config rpm-build sed shadow-utils unzip util-linux-ng which xz
 
-# Add the candidate tag target
-$PROG add-target $PKG-candidate $PKG-build $PKG-candidate
+# srpm-build
+${PROG} add-group ${PKG}-build srpm-build
+${PROG} add-group-pkg ${PKG}-build srpm-build bash curl cvs fedora-release fedpkg gnupg2 make redhat-rpm-config rpm-build shadow-utils
+
+# appliance-build
+${PROG} add-group ${PKG}-build appliance-build
+${PROG} add-group-pkg ${PKG}-build appliance-build appliance-tools bash coreutils grub parted perl policycoreutils selinux-policy shadow-utils
+
+# maven-build
+${PROG} add-group ${PKG}-build maven-build
+${PROG} add-group-pkg ${PKG}-build maven-build bash coreutils java-1.7.0-openjdk-devel maven3 subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
+
+# livecd-build
+${PROG} add-group ${PKG}-build livecd-build
+${PROG} add-group-pkg ${PKG}-build livecd-build bash bzip2 coreutils cpio diffutils fedora-logos fedora-release findutils gawk gcc gcc-c++ grep gzip info livecd-tools make patch policycoreutils python-dbus redhat-rpm-config rpm-build sed selinux-policy-targeted shadow-utils squashfs-tools tar unzip util-linux which yum
+
+# wrapper-build
+${PROG} add-group ${PKG}-build wrapper-rpm-build
+${PROG} add-group-pkg ${PKG}-build wrapper-rpm-build bash redhat-release redhat-release-server redhat-rpm-config rpm-build shadow-utils
+
+# Add required build packages
+${PROG} add-pkg --owner=kojiadmin ${PKG} bash binutils
 
 # Lock the build tag
 #$PROG lock-tag --master $PKG-build
