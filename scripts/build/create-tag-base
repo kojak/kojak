@@ -27,7 +27,7 @@ $PROG add-tag-inheritance $PKG-build $PKG-override --priority 0
 $PROG add-tag-inheritance $PKG-build $PKG-deps --priority 10
 
 # Add the Maven build group
-$PROG add-pkg $PKG-build maven3 --owner $USER
+$PROG add-pkg $PKG-build maven3 --owner kojiadmin
 $PROG tag-build $PKG-candidate $MAVEN
 $PROG add-group $PKG-build maven-build
 $PROG add-group-pkg $PKG-build maven-build bash coreutils git $JAVA \
