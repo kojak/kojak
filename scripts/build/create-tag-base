@@ -3,7 +3,7 @@
 # Simple script to create tag base in Koji for a new build target
 
 # Debugging
-#set -x
+set -x
 
 # Declare variables
 PROG="koji"
@@ -26,9 +26,6 @@ ${PROG} add-tag-inheritance ${PKG}-deps ${PKG}-build --priority 5
 
 # Add target
 ${PROG} add-target ${PKG}-candidate ${PKG}-build ${PKG}-candidate
-
-# Add external repo
-${PROG} add-external-repo -t ${PKG}-build centos-mirror http://mirror.centos.org/centos/6/os/x86_64/
 
 # Add groups
 # build
