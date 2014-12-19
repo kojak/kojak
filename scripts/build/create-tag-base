@@ -75,7 +75,7 @@ case $key in
     -p|--package)
     PKG="$1"
     echo "Creating tag base for $1"
-    create_tag_base
+    create-tag-base
     shift
     ;;
     -h|--help)
