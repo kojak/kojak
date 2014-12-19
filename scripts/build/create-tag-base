@@ -1,0 +1,76 @@
+#!/bin/bash
+#
+# Simple script to create tag base in Koji for a new build target
+
+# Debugging
+#set -x
+
+# Declare variables
+PROG="koji"
+PKG="$2"
+ARCH="none"
+
+create_tag_base () {
+# Create base tags
+$PROG add-tag $PKG --arches $ARCH --maven-support --include-all
+$PROG add-tag $PKG-candidate --arches $ARCH --maven-support --include-all
+$PROG add-tag $PKG-override --arches $ARCH --maven-support --include-all
+$PROG add-tag $PKG-build --arches $ARCH --maven-support --include-all
+$PROG add-tag $PKG-deps --arches $ARCH --maven-support --include-all
+
+# Configure the tag inheritance
+$PROG add-tag-inheritance $PKG-candidate $PKG --priority 0
+$PROG add-tag-inheritance $PKG-override $PKG-candidate --priority 0
+$PROG add-tag-inheritance $PKG-build $PKG-override --priority 0
+$PROG add-tag-inheritance $PKG-build $PKG-deps --priority 10
+
+# Add the Maven build group
+$PROG add-pkg $PKG-build org.apache.maven-maven --owner $USER
+$PROG tag-build $PKG-candidate org.apache.maven-maven3-3.0.3-4
+$PROG add-group $PKG-build maven-build
+$PROG add-group-pkg $PKG-build maven-build bash coreutils git java-1.7.0-openjdk-devel \
+liberation-mono-fonts liberation-sans-fonts liberation-serif-fonts maven3 perl shadow-utils subversion
+
+# Add the SRPM build group
+$PROG add-group $PKG-build srpm-build
+$PROG add-group-pkg $PKG-build srpm-build bash redhat-release redhat-release-server redhat-rpm-config rhpkg-simple rpm-build shadow-utils
+
+# Add the Wrapper RPM build group
+$PROG add-group $PKG-build wrapper-rpm-build
+$PROG add-group-pkg $PKG-build wrapper-rpm-build bash redhat-release redhat-release-server redhat-rpm-config rpm-build shadow-utils
+
+# Add the candidate tag target
+$PROG add-target $PKG-candidate $PKG-build $PKG-candidate
+
+# Lock the build tag
+#$PROG lock-tag --master $PKG-build
+}
+
+read -d '' USAGE <<- EOF
+Usage: create_target [options] <user input> 
+-h, --help            show this help message and exit 
+-p, --package         prompt user for package name
+EOF
+
+if [[ $# < 2 ]]; then echo "$USAGE"; fi
+while [[ $# > 1 ]]; do key="$1"; shift
+
+case $key in
+    -p|--package)
+    PKG="$1"
+    echo "Creating tag base for $1"
+    create_tag_base
+    shift
+    ;;
+    -h|--help)
+    echo "Help options include"
+    shift
+    ;;
+    *)
+    echo "$USAGE" # unknown option
+    ;;
+    \?)
+    echo "$USAGE option" # unknown option
+    ;;
+esac
+done
