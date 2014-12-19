@@ -7,56 +7,56 @@ set -x
 
 # Declare variables
 PROG="koji"
-PKG="$2"
+PROD="$2"
 ARCH="none"
 JAVA="java-1.7.0-openjdk-devel"
 MAVEN="maven3-3.0.3-4"
 
 create-tag-base() {
 # Add product tags
-${PROG} add-tag ${PKG} --arches ${ARCH} --maven-support --include-all
-${PROG} add-tag ${PKG}-candidate --arches ${ARCH} --maven-support --include-all
-${PROG} add-tag ${PKG}-build --arches ${ARCH} --maven-support --include-all
-${PROG} add-tag ${PKG}-deps --arches ${ARCH} --maven-support --include-all
+${PROG} add-tag ${PROD} --arches ${ARCH} --maven-support --include-all
+${PROG} add-tag ${PROD}-candidate --arches ${ARCH} --maven-support --include-all
+${PROG} add-tag ${PROD}-build --arches ${ARCH} --maven-support --include-all
+${PROG} add-tag ${PROD}-deps --arches ${ARCH} --maven-support --include-all
 
 # Add tag inheritance
-${PROG} add-tag-inheritance ${PKG}-candidate ${PKG} --priority 0
-${PROG} add-tag-inheritance ${PKG}-build ${PKG}-candidate --priority 0
-${PROG} add-tag-inheritance ${PKG}-deps ${PKG}-build --priority 5
+${PROG} add-tag-inheritance ${PROD}-candidate ${PROD} --priority 0
+${PROG} add-tag-inheritance ${PROD}-build ${PROD}-candidate --priority 0
+${PROG} add-tag-inheritance ${PROD}-deps ${PROD}-build --priority 5
 
 # Add target
-${PROG} add-target ${PKG}-candidate ${PKG}-build ${PKG}-candidate
+${PROG} add-target ${PROD}-candidate ${PROD}-build ${PROD}-candidate
 
 # Add groups
 # build
-${PROG} add-group ${PKG}-build build
-${PROG} add-group-pkg ${PKG}-build build bash bzip2 cpio diffutils fedora-release findutils gawk gcc gcc-c++ info make redhat-rpm-config rpm-build sed shadow-utils unzip util-linux-ng which xz
+${PROG} add-group ${PROD}-build build
+${PROG} add-group-pkg ${PROD}-build build bash bzip2 cpio diffutils fedora-release findutils gawk gcc gcc-c++ info make redhat-rpm-config rpm-build sed shadow-utils unzip util-linux-ng which xz
 
 # srpm-build
-${PROG} add-group ${PKG}-build srpm-build
-${PROG} add-group-pkg ${PKG}-build srpm-build bash curl cvs fedora-release fedpkg gnupg2 make redhat-rpm-config rpm-build shadow-utils
+${PROG} add-group ${PROD}-build srpm-build
+${PROG} add-group-pkg ${PROD}-build srpm-build bash curl cvs fedora-release fedpkg gnupg2 make redhat-rpm-config rpm-build shadow-utils
 
 # appliance-build
-${PROG} add-group ${PKG}-build appliance-build
-${PROG} add-group-pkg ${PKG}-build appliance-build appliance-tools bash coreutils grub parted perl policycoreutils selinux-policy shadow-utils
+${PROG} add-group ${PROD}-build appliance-build
+${PROG} add-group-pkg ${PROD}-build appliance-build appliance-tools bash coreutils grub parted perl policycoreutils selinux-policy shadow-utils
 
 # maven-build
-${PROG} add-group ${PKG}-build maven-build
-${PROG} add-group-pkg ${PKG}-build maven-build bash coreutils java-1.7.0-openjdk-devel maven3 subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
+${PROG} add-group ${PROD}-build maven-build
+${PROG} add-group-pkg ${PROD}-build maven-build bash coreutils java-1.7.0-openjdk-devel maven3 subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
 
 # livecd-build
-${PROG} add-group ${PKG}-build livecd-build
-${PROG} add-group-pkg ${PKG}-build livecd-build bash bzip2 coreutils cpio diffutils fedora-logos fedora-release findutils gawk gcc gcc-c++ grep gzip info livecd-tools make patch policycoreutils python-dbus redhat-rpm-config rpm-build sed selinux-policy-targeted shadow-utils squashfs-tools tar unzip util-linux which yum
+${PROG} add-group ${PROD}-build livecd-build
+${PROG} add-group-pkg ${PROD}-build livecd-build bash bzip2 coreutils cpio diffutils fedora-logos fedora-release findutils gawk gcc gcc-c++ grep gzip info livecd-tools make patch policycoreutils python-dbus redhat-rpm-config rpm-build sed selinux-policy-targeted shadow-utils squashfs-tools tar unzip util-linux which yum
 
 # wrapper-build
-${PROG} add-group ${PKG}-build wrapper-rpm-build
-${PROG} add-group-pkg ${PKG}-build wrapper-rpm-build bash redhat-release redhat-release-server redhat-rpm-config rpm-build shadow-utils
+${PROG} add-group ${PROD}-build wrapper-rpm-build
+${PROG} add-group-pkg ${PROD}-build wrapper-rpm-build bash redhat-release redhat-release-server redhat-rpm-config rpm-build shadow-utils
 
 # Add required build packages
-${PROG} add-pkg --owner=kojiadmin ${PKG} bash binutils
+${PROG} add-pkg --owner=kojiadmin ${PROD} bash binutils
 
 # Lock the build tag
-#$PROG lock-tag --master $PKG-build
+#$PROG lock-tag --master $PROD-build
 }
 
 read -d '' USAGE <<- EOF
@@ -70,7 +70,7 @@ while [[ $# > 1 ]]; do key="$1"; shift
 
 case $key in
     -p|--package)
-    PKG="$1"
+    PROD="$1"
     echo "Creating tag base for $1"
     create-tag-base
     shift
