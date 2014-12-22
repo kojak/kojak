@@ -1,0 +1,12 @@
+#!/bin/bash
+#
+# Simple script to create a list of depedencies in GAV format
+#
+# This script uses the maven dependency plugin to generate a dependency list.
+
+mvn dependency:list \
+| grep ":.*:.*:.*" \
+| cut -d] -f2- \
+| sed 's/:[a-z]*$//g' \
+| sed '/Finished/d'\
+| sort -u > dep.list
