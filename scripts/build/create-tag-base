@@ -62,6 +62,7 @@ ${PROG} add-pkg --owner=kojiadmin ${PROD} bash binutils
 read -d '' USAGE <<- EOF
 Usage: create_target [options] <user input> 
 -h, --help            show this help message and exit 
+-p, --package         prompt user for package name
 EOF
 
 if [[ $# < 2 ]]; then echo "$USAGE"; fi
