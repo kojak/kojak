@@ -1,7 +1,7 @@
 #!/bin/sh
 
 APROX_FLAVOR=aprox-launcher-savant
-APROX_VERSION=0.14.7
+APROX_VERSION=0.17.0
 
 echo "Adding RPMForge yum repository for DAVfs support..."
 yum -y localinstall http://pkgs.repoforge.org/rpmforge-release/rpmforge-release-0.5.3-1.el6.rf.x86_64.rpm
