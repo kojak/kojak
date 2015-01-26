@@ -65,7 +65,7 @@
     <hudson.tasks.Shell>
       <command>cd $WORKSPACE
 /opt/kojak/scripts/build/create-dep-list &gt; /tmp/dep.list
-/opt/kojak/scripts/build/mead-download-and-import --recurse -f dep.list -t rcm-mw-tools-deps
+/opt/kojak/scripts/build/mead-download-and-import -f dep.list -t rcm-mw-tools-deps
 koji add-pkg rcm-mw-tools  com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin --owner koji || exit 0
 </command>
     </hudson.tasks.Shell>
