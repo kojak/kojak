@@ -5,85 +5,91 @@
 # Debugging
 #set -x
 
-# Declare variables
-PROG="koji"
-PROD="$2"
-ARCH="none"
-JAVA="java-1.7.0-openjdk-devel"
-MAVEN="maven3-3.0.3-4"
+if [[ $USER != koji ]]; then
+  echo "Please execute this script as koji usder " 2>&1
+  exit 1
+else
 
-create-tag-base() {
-# Add product tags
-${PROG} add-tag ${PROD} --arches ${ARCH} --maven-support --include-all
-${PROG} add-tag ${PROD}-candidate --arches ${ARCH} --maven-support --include-all
-${PROG} add-tag ${PROD}-build --arches ${ARCH} --maven-support --include-all
-${PROG} add-tag ${PROD}-deps --arches ${ARCH} --maven-support --include-all
+    # Declare variables
+    PROG="koji"
+    PROD="$2"
+    ARCH="none"
+    JAVA="java-1.7.0-openjdk-devel"
+    MAVEN="maven3-3.0.3-4"
 
-# Add tag inheritance
-${PROG} add-tag-inheritance ${PROD}-candidate ${PROD} --priority 0
-${PROG} add-tag-inheritance ${PROD}-build ${PROD}-candidate --priority 0
-${PROG} add-tag-inheritance ${PROD}-deps ${PROD}-build --priority 5
+    create-tag-base() {
+    # Add product tags
+    ${PROG} add-tag ${PROD} --arches ${ARCH} --maven-support --include-all
+    ${PROG} add-tag ${PROD}-candidate --arches ${ARCH} --maven-support --include-all
+    ${PROG} add-tag ${PROD}-build --arches ${ARCH} --maven-support --include-all
+    ${PROG} add-tag ${PROD}-deps --arches ${ARCH} --maven-support --include-all
 
-# Add target
-${PROG} add-target ${PROD}-candidate ${PROD}-build ${PROD}-candidate
+    # Add tag inheritance
+    ${PROG} add-tag-inheritance ${PROD}-candidate ${PROD} --priority 0
+    ${PROG} add-tag-inheritance ${PROD}-build ${PROD}-candidate --priority 0
+    ${PROG} add-tag-inheritance ${PROD}-deps ${PROD}-build --priority 5
 
-# Add groups
-# build
-${PROG} add-group ${PROD}-build build
-${PROG} add-group-pkg ${PROD}-build build bash bzip2 cpio diffutils fedora-release findutils gawk gcc gcc-c++ info make redhat-rpm-config rpm-build sed shadow-utils unzip util-linux-ng which xz
+    # Add target
+    ${PROG} add-target ${PROD}-candidate ${PROD}-build ${PROD}-candidate
 
-# srpm-build
-${PROG} add-group ${PROD}-build srpm-build
-${PROG} add-group-pkg ${PROD}-build srpm-build bash curl cvs fedora-release fedpkg gnupg2 make redhat-rpm-config rpm-build shadow-utils
+    # Add groups
+    # build
+    ${PROG} add-group ${PROD}-build build
+    ${PROG} add-group-pkg ${PROD}-build build bash bzip2 cpio diffutils fedora-release findutils gawk gcc gcc-c++ info make redhat-rpm-config rpm-build sed shadow-utils unzip util-linux-ng which xz
 
-# appliance-build
-${PROG} add-group ${PROD}-build appliance-build
-${PROG} add-group-pkg ${PROD}-build appliance-build appliance-tools bash coreutils grub parted perl policycoreutils selinux-policy shadow-utils
+    # srpm-build
+    ${PROG} add-group ${PROD}-build srpm-build
+    ${PROG} add-group-pkg ${PROD}-build srpm-build bash curl cvs fedora-release fedpkg gnupg2 make redhat-rpm-config rpm-build shadow-utils
 
-# maven-build
-${PROG} add-group ${PROD}-build maven-build
-${PROG} add-group-pkg ${PROD}-build maven-build bash coreutils java-1.7.0-openjdk-devel maven3 subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
+    # appliance-build
+    ${PROG} add-group ${PROD}-build appliance-build
+    ${PROG} add-group-pkg ${PROD}-build appliance-build appliance-tools bash coreutils grub parted perl policycoreutils selinux-policy shadow-utils
 
-# livecd-build
-${PROG} add-group ${PROD}-build livecd-build
-${PROG} add-group-pkg ${PROD}-build livecd-build bash bzip2 coreutils cpio diffutils fedora-logos fedora-release findutils gawk gcc gcc-c++ grep gzip info livecd-tools make patch policycoreutils python-dbus redhat-rpm-config rpm-build sed selinux-policy-targeted shadow-utils squashfs-tools tar unzip util-linux which yum
+    # maven-build
+    ${PROG} add-group ${PROD}-build maven-build
+    ${PROG} add-group-pkg ${PROD}-build maven-build bash coreutils java-1.7.0-openjdk-devel maven3 subversion liberation-sans-fonts liberation-serif-fonts liberation-mono-fonts git
 
-# wrapper-build
-${PROG} add-group ${PROD}-build wrapper-rpm-build
-${PROG} add-group-pkg ${PROD}-build wrapper-rpm-build bash redhat-release redhat-release-server redhat-rpm-config rpm-build shadow-utils
+    # livecd-build
+    ${PROG} add-group ${PROD}-build livecd-build
+    ${PROG} add-group-pkg ${PROD}-build livecd-build bash bzip2 coreutils cpio diffutils fedora-logos fedora-release findutils gawk gcc gcc-c++ grep gzip info livecd-tools make patch policycoreutils python-dbus redhat-rpm-config rpm-build sed selinux-policy-targeted shadow-utils squashfs-tools tar unzip util-linux which yum
 
-# Add required build packages
-${PROG} add-pkg --owner=kojiadmin ${PROD} bash binutils
+    # wrapper-build
+    ${PROG} add-group ${PROD}-build wrapper-rpm-build
+    ${PROG} add-group-pkg ${PROD}-build wrapper-rpm-build bash redhat-release redhat-release-server redhat-rpm-config rpm-build shadow-utils
 
-# Lock the build tag
-#$PROG lock-tag --master $PROD-build
-}
+    # Add required build packages
+    ${PROG} add-pkg --owner=kojiadmin ${PROD} bash binutils
 
-read -d '' USAGE <<- EOF
-Usage: create_target [options] <user input> 
--h, --help            show this help message and exit 
--p, --package         prompt user for package name
-EOF
+    # Lock the build tag
+    #$PROG lock-tag --master $PROD-build
+    }
 
-if [[ $# < 2 ]]; then echo "$USAGE"; fi
-while [[ $# > 1 ]]; do key="$1"; shift
+    read -d '' USAGE <<- EOF
+    Usage: create_target [options] <user input> 
+    -h, --help            show this help message and exit 
+    -p, --package         prompt user for package name
+    EOF
 
-case $key in
-    -p|--package)
-    PROD="$1"
-    echo "Creating tag base for $1"
-    create-tag-base
-    shift
-    ;;
-    -h|--help)
-    echo "Help options include"
-    shift
-    ;;
-    *)
-    echo "$USAGE" # unknown option
-    ;;
-    \?)
-    echo "$USAGE option" # unknown option
-    ;;
-esac
-done
+    if [[ $# < 2 ]]; then echo "$USAGE"; fi
+    while [[ $# > 1 ]]; do key="$1"; shift
+
+    case $key in
+        -p|--package)
+        PROD="$1"
+        echo "Creating tag base for $1"
+        create-tag-base
+        shift
+        ;;
+        -h|--help)
+        echo "Help options include"
+        shift
+        ;;
+        *)
+        echo "$USAGE" # unknown option
+        ;;
+        \?)
+        echo "$USAGE option" # unknown option
+        ;;
+    esac
+    done
+fi
