@@ -6,8 +6,8 @@
 #set -x
 
 if [[ $USER != koji ]]; then
-  echo "Please execute this script as koji usder " 2>&1
-  exit 1
+    echo "Please execute this script as koji usder " 2>&1
+    exit 1
 else
 
     # Declare variables
@@ -63,33 +63,33 @@ else
     # Lock the build tag
     #$PROG lock-tag --master $PROD-build
     }
-
-    read -d '' USAGE <<- EOF
-    Usage: create_target [options] <user input> 
-    -h, --help            show this help message and exit 
-    -p, --package         prompt user for package name
-    EOF
-
-    if [[ $# < 2 ]]; then echo "$USAGE"; fi
-    while [[ $# > 1 ]]; do key="$1"; shift
-
-    case $key in
-        -p|--package)
-        PROD="$1"
-        echo "Creating tag base for $1"
-        create-tag-base
-        shift
-        ;;
-        -h|--help)
-        echo "Help options include"
-        shift
-        ;;
-        *)
-        echo "$USAGE" # unknown option
-        ;;
-        \?)
-        echo "$USAGE option" # unknown option
-        ;;
-    esac
-    done
 fi
+
+read -d '' USAGE <<- EOF
+Usage: create_target [options] <user input> 
+-h, --help            show this help message and exit 
+-p, --package         prompt user for package name
+EOF
+
+if [[ $# < 2 ]]; then echo "$USAGE"; fi
+while [[ $# > 1 ]]; do key="$1"; shift
+
+case $key in
+    -p|--package)
+    PROD="$1"
+    echo "Creating tag base for $1"
+    create-tag-base
+    shift
+    ;;
+    -h|--help)
+    echo "Help options include"
+    shift
+    ;;
+    *)
+    echo "$USAGE" # unknown option
+    ;;
+    \?)
+    echo "$USAGE option" # unknown option
+    ;;
+esac
+done
