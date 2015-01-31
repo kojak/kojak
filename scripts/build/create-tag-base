@@ -6,7 +6,7 @@
 #set -x
 
 if [[ $USER != koji ]]; then
-    echo "Please execute this script as koji usder " 2>&1
+    echo "Please execute this script as koji user " 2>&1
     exit 1
 else
 
