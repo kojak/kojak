@@ -588,6 +588,23 @@ EOF
 patch -p0 < /tmp/httpd.conf.patch
 rm -f /tmp/httpd.conf.patch
 
+echo -e "# 19. Patching sudoers" >> ${LOG}
+cp -p /etc/sudoers /etc/sudoers.orig
+cat > /tmp/sudoers.patch << 'EOF'
+--- /etc/sudoers.orig   2012-03-01 12:18:24.000000000 -0500
++++ /etc/sudoers    2015-02-01 05:47:53.101000040 -0500
+@@ -96,6 +96,7 @@
+ ##
+ ## Allow root to run any commands anywhere 
+ root   ALL=(ALL)   ALL
++koji   ALL=(ALL)   ALL
+ 
+ ## Allows members of the 'sys' group to run networking, software, 
+ ## service management apps and more.
+EOF
+patch -p0 < /tmp/sudoers.patch
+rm -rf /tmp/sudoers.patch
+
 rm -rf /etc/pki/CA/serial*
 rm -rf /etc/pki/CA/index*
 mkdir -p /etc/pki/koji
@@ -653,7 +670,6 @@ cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/serverca.crt
 # Set the appropriate permissions
 chown -R koji:apache /home/koji/.koji/
 cd -
-
 
 echo -e "\nRunning tool installs..."
 eachTool install
