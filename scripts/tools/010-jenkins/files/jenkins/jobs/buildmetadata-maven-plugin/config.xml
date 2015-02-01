@@ -55,6 +55,7 @@
     <hudson.tasks.Shell>
       <command>cd $WORKSPACE
 /opt/kojak/scripts/build/import-local-repo -d rcm-mw-tools-deps ~/.m2/repository/
+      </command>
     </hudson.tasks.Shell>
     <org.jenkinsci.plugins.koji.KojiBuilder plugin="koji-plugin@0.2">
       <kojiBuild>buildmetadata-maven-plugin-1.5.1</kojiBuild>
