@@ -4,9 +4,48 @@
 #
 # This script uses the maven dependency plugin to generate a dependency list.
 
-mvn dependency:list \
-| grep ":.*:.*:.*" \
-| cut -d] -f2- \
-| sed 's/:[a-z]*$//g' \
-| sed '/Finished/d'\
-| sort -u > dep.list
+# Debugging
+set -x
+
+read -d '' USAGE <<- EOF
+Usage: create_target [options] <user input>
+-h, --help            show this help message and exit
+-p, --package         prompt user for package name
+EOF
+
+if [[ $# < 2 ]]; then echo "$USAGE"; fi
+while [[ $# > 1 ]]; do key="$1"; shift
+
+if [[ $USER != koji ]]; then
+    echo "Please execute this script as koji user " 2>&1
+    exit 1
+else
+    WORKSPACE="/var/lib/jenkins/jobs/$1/workspace"
+    cd $WORKSPACE
+    mvn dependency:list \
+    | grep ":.*:.*:.*" \
+    | cut -d] -f2- \
+    | sed 's/:[a-z]*$//g' \
+    | sed '/Finished/d'\
+    | sort -u > dep.list
+    cd -
+fi
+
+case $key in
+    -p|--package)
+    echo "Creating dep list $1"
+    #create-dep-list
+    shift
+    ;;
+    -h|--help)
+    echo "Help options include"
+    shift
+    ;;
+    *)
+    echo "$USAGE" # unknown option
+    ;;
+    \?)
+    echo "$USAGE option" # unknown option
+    ;;
+esac
+done
