@@ -54,9 +54,7 @@
   <postbuilders>
     <hudson.tasks.Shell>
       <command>cd $WORKSPACE
-rm -rf .repository
-rm -f consoleText
-curl -O $BUILD_URL/consoleText
+curl $BUILD_URL/consoleText > consoleText
 /opt/kojak/scripts/build/mead-load-build-dependencies --tag rcm-mw-tools-deps consoleText</command>
     </hudson.tasks.Shell>
     <org.jenkinsci.plugins.koji.KojiBuilder plugin="koji-plugin@0.2">
