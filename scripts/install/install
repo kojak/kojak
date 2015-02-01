@@ -591,7 +591,7 @@ rm -f /tmp/httpd.conf.patch
 echo -e "# 19. Patching sudoers" >> ${LOG}
 cp -p /etc/sudoers /etc/sudoers.orig
 cat > /tmp/sudoers.patch << 'EOF'
---- /etc/sudoers.orig   2012-03-01 12:18:24.000000000 -0500
+--- /etc/sudoers    2012-03-01 12:18:24.000000000 -0500
 +++ /etc/sudoers    2015-02-01 05:47:53.101000040 -0500
 @@ -96,6 +96,7 @@
  ##
