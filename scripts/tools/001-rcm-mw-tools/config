@@ -23,7 +23,7 @@ ${PROG} add-tag ${PRODUCT}-deps --arches ${ARCH} --maven-support --include-all
 # Add tag inheritance
 ${PROG} add-tag-inheritance ${PRODUCT}-candidate ${PRODUCT} --priority 0
 ${PROG} add-tag-inheritance ${PRODUCT}-build ${PRODUCT}-candidate --priority 0
-${PROG} add-tag-inheritance ${PRODUCT}-deps ${PRODUCT}-build --priority 5
+${PROG} add-tag-inheritance ${PRODUCT}-build ${PRODUCT}-deps --priority 5
 
 # Add target
 ${PROG} add-target ${PRODUCT}-candidate ${PRODUCT}-build ${PRODUCT}-candidate

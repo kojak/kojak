@@ -27,7 +27,7 @@ else
     # Add tag inheritance
     ${PROG} add-tag-inheritance ${PROD}-candidate ${PROD} --priority 0
     ${PROG} add-tag-inheritance ${PROD}-build ${PROD}-candidate --priority 0
-    ${PROG} add-tag-inheritance ${PROD}-deps ${PROD}-build --priority 5
+    ${PROG} add-tag-inheritance ${PROD}-build ${PROD}-deps --priority 5
 
     # Add target
     ${PROG} add-target ${PROD}-candidate ${PROD}-build ${PROD}-candidate
