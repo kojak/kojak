@@ -30,15 +30,17 @@
     <groupId>com.redhat.rcm.maven.plugin</groupId>
     <artifactId>buildmetadata-maven-plugin</artifactId>
   </rootModule>
+  <goals>clean install</goals>
+  <mavenOpts>-Dmaven.test.skip=true</mavenOpts>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
-  <localRepository class="hudson.maven.local_repo.PerJobLocalRepositoryLocator"/>
+  <localRepository class="hudson.maven.local_repo.DefaultLocalRepositoryLocator"/>
   <ignoreUpstremChanges>false</ignoreUpstremChanges>
   <archivingDisabled>false</archivingDisabled>
   <siteArchivingDisabled>false</siteArchivingDisabled>
   <fingerprintingDisabled>false</fingerprintingDisabled>
-  <resolveDependencies>false</resolveDependencies>
-  <processPlugins>false</processPlugins>
+  <resolveDependencies>true</resolveDependencies>
+  <processPlugins>true</processPlugins>
   <mavenValidationLevel>-1</mavenValidationLevel>
   <runHeadless>false</runHeadless>
   <disableTriggerDownstreamProjects>false</disableTriggerDownstreamProjects>
@@ -48,15 +50,15 @@
   <reporters/>
   <publishers/>
   <buildWrappers/>
-  <prebuilders>
-    <hudson.tasks.Shell>
-      <command>cd $WORKSPACE/
-rm -rf .repository
-mvn -C -B dependency:resolve-plugins clean install -Dmaven.test.skip=true | tee build.log
-/opt/kojak/scripts/build/mead-load-build-dependencies --tag rcm-mw-tools-deps build.log</command>
-    </hudson.tasks.Shell>
-  </prebuilders>
+  <prebuilders/>
   <postbuilders>
+    <hudson.tasks.Shell>
+      <command>cd $WORKSPACE
+rm -rf .repository
+rm -f consoleText
+curl -O $BUILD_URL/consoleText
+/opt/kojak/scripts/build/mead-load-build-dependencies --tag rcm-mw-tools-deps consoleText</command>
+    </hudson.tasks.Shell>
     <org.jenkinsci.plugins.koji.KojiBuilder plugin="koji-plugin@0.2">
       <kojiBuild>buildmetadata-maven-plugin-1.5.1</kojiBuild>
       <kojiTarget>rcm-mw-tools-candidate</kojiTarget>
