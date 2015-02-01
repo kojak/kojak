@@ -54,8 +54,7 @@
   <postbuilders>
     <hudson.tasks.Shell>
       <command>cd $WORKSPACE
-curl $BUILD_URL/consoleText > consoleText
-/opt/kojak/scripts/build/mead-load-build-dependencies --tag rcm-mw-tools-deps consoleText</command>
+/opt/kojak/scripts/build/import-local-repo -d rcm-mw-tools-deps ~/.m2/repository/
     </hudson.tasks.Shell>
     <org.jenkinsci.plugins.koji.KojiBuilder plugin="koji-plugin@0.2">
       <kojiBuild>buildmetadata-maven-plugin-1.5.1</kojiBuild>
