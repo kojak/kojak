@@ -30,7 +30,6 @@
     <groupId>com.redhat.rcm.maven.plugin</groupId>
     <artifactId>buildmetadata-maven-plugin</artifactId>
   </rootModule>
-  <goals>clean install -Dmaven.test.skip=true dependency:resolve-plugins</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
   <localRepository class="hudson.maven.local_repo.PerJobLocalRepositoryLocator"/>
@@ -51,24 +50,13 @@
   <buildWrappers/>
   <prebuilders>
     <hudson.tasks.Shell>
-      <command>rm -rf $WORKSPACE/.repository</command>
+      <command>cd $WORKSPACE/
+rm -rf .repository
+mvn -C -B dependency:resolve-plugins clean install -Dmaven.test.skip=true | tee build.log
+/opt/kojak/scripts/build/mead-load-build-dependencies --tag rcm-mw-tools-deps build.log</command>
     </hudson.tasks.Shell>
-    <hudson.tasks.Maven>
-      <targets>clean install -Dmaven.test.skip=true dependency:resolve-plugins</targets>
-      <mavenName>(Default)</mavenName>
-      <usePrivateRepository>true</usePrivateRepository>
-      <settings class="jenkins.mvn.DefaultSettingsProvider"/>
-      <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
-    </hudson.tasks.Maven>
   </prebuilders>
   <postbuilders>
-    <hudson.tasks.Shell>
-      <command>cd $WORKSPACE
-/opt/kojak/scripts/build/create-dep-list &gt; /tmp/dep.list
-/opt/kojak/scripts/build/mead-download-and-import -f dep.list -t rcm-mw-tools-deps
-koji add-pkg rcm-mw-tools com.redhat.rcm.maven.plugin-buildmetadata-maven-plugin --owner koji || exit 0
-</command>
-    </hudson.tasks.Shell>
     <org.jenkinsci.plugins.koji.KojiBuilder plugin="koji-plugin@0.2">
       <kojiBuild>buildmetadata-maven-plugin-1.5.1</kojiBuild>
       <kojiTarget>rcm-mw-tools-candidate</kojiTarget>
