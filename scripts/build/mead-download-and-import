@@ -223,26 +223,30 @@ def get_gavs(opts, args):
         gavs = args
     return gavs
 
-parser = optparse.OptionParser(usage='%prog groupId:artifactId:version...')
-parser.add_option('-t', '--tag', help='Tag to import into')
-parser.add_option('--repo', dest='repos', metavar='REPOURL',
-                  help='Additional repo to check (may be used multiple times)', action='append',
-                  default=[])
-parser.add_option('-r', '--recurse', action='store_true', help='Recursively import parent GAVs')
-parser.add_option('-k', '--keep', action='store_true', help='Keep downloaded artifacts')
-parser.add_option('-l', '--local-repo', help='Import downloaded artifacts into the given local repo')
-parser.add_option('--owner', default=os.environ['USER'], help='Owner of the package')
-parser.add_option('-f', '--file', action='store_true', help='Arguments are files which contain a list of G:A:Vs to import (one per line)')
-parser.add_option('-v', '--verbose', action='store_true', help='Verbose output')
+def main():
+    parser = optparse.OptionParser(usage='%prog groupId:artifactId:version...')
+    parser.add_option('-t', '--tag', help='Tag to import into')
+    parser.add_option('--repo', dest='repos', metavar='REPOURL',
+                      help='Additional repo to check (may be used multiple times)', action='append',
+                      default=[])
+    parser.add_option('-r', '--recurse', action='store_true', help='Recursively import parent GAVs')
+    parser.add_option('-k', '--keep', action='store_true', help='Keep downloaded artifacts')
+    parser.add_option('-l', '--local-repo', help='Import downloaded artifacts into the given local repo')
+    parser.add_option('--owner', default=os.environ['USER'], help='Owner of the package')
+    parser.add_option('-f', '--file', action='store_true', help='Arguments are files which contain a list of G:A:Vs to import (one per line)')
+    parser.add_option('-v', '--verbose', action='store_true', help='Verbose output')
 
-opts, args = parser.parse_args()
-if not args:
-    if opts.file:
-        parser.error('You must provide a list of G:A:Vs to import')
-    else:
-        parser.error('You must provide a G:A:V to import')
+    opts, args = parser.parse_args()
+    if not args:
+        if opts.file:
+            parser.error('You must provide a list of G:A:Vs to import')
+        else:
+            parser.error('You must provide a G:A:V to import')
 
-for gav in get_gavs(opts, args):
-    success = download_and_import(opts, gav)
-    if not success:
-        sys.exit(1)
+    for gav in get_gavs(opts, args):
+        success = download_and_import(opts, gav)
+        if not success:
+            sys.exit(1)
+
+if __name__ == "__main__":
+   main() 
