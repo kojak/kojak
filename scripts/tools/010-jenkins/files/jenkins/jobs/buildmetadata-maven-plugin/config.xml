@@ -30,7 +30,7 @@
     <groupId>com.redhat.rcm.maven.plugin</groupId>
     <artifactId>buildmetadata-maven-plugin</artifactId>
   </rootModule>
-  <goals>clean install</goals>
+  <goals>dependency:resolve-plugins clean install</goals>
   <mavenOpts>-Dmaven.test.skip=true</mavenOpts>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
