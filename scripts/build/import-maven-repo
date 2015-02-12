@@ -38,4 +38,4 @@ def main():
     print paths
 
 if __name__ == '__main__':
-
+    main()
