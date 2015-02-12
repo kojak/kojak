@@ -1,0 +1,41 @@
+#!/usr/bin/python -tt
+
+import os
+import os.path
+import sys
+import optparse
+import re
+
+def main():
+
+    def list_error(error):
+      print "ListError %s: %s" % (error.filename, error)
+
+    def get_artifacts(dirs):
+      for dir in dirs:
+        # Print "Looking for files in: %s" % str(dir)
+        for dirpath, dirnames, filenames in os.walk(str(dir), onerror=list_error):
+          for filename in filenames:
+            # Print "Including %s" % os.path.join(dirpath, filename)
+            yield os.path.join(dirpath, filename)
+
+    parser = optparse.OptionParser(usage='%prog <local-repo-directory>')
+
+    parser.add_option(
+        '-d', '--debug', 
+        action='store_true', 
+        help='Print verbose error messages'
+    )
+
+    opts, args = parser.parse_args()
+    if not args:
+      parser.error("No local maven repo directory provided")
+    artifact_list = list(get_artifacts(args))
+    artifact_list = [artifact for artifact in artifact_list if artifact.endswith('.pom')]
+    artifact_list = [artifact for artifact in artifact_list if ('SNAPSHOT') not in artifact]
+    paths,file = os.path.split(("\n".join(artifact_list)))
+    #path = paths.replace('/',':')
+    print paths
+
+if __name__ == '__main__':
+
