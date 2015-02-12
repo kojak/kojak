@@ -16,14 +16,14 @@ def main():
         # Print "Looking for files in: %s" % str(dir)
         for dirpath, dirnames, filenames in os.walk(str(dir), onerror=list_error):
           for filename in filenames:
-            # Print "Including %s" % os.path.join(dirpath, filename)
+            #print "Including %s" % os.path.join(dirpath, filename)
             yield os.path.join(dirpath, filename)
 
     parser = optparse.OptionParser(usage='%prog <local-repo-directory>')
 
     parser.add_option(
-        '-d', '--debug', 
-        action='store_true', 
+        '-d', '--debug',
+        action='store_true',
         help='Print verbose error messages'
     )
 
@@ -33,9 +33,8 @@ def main():
     artifact_list = list(get_artifacts(args))
     artifact_list = [artifact for artifact in artifact_list if artifact.endswith('.pom')]
     artifact_list = [artifact for artifact in artifact_list if ('SNAPSHOT') not in artifact]
-    paths,file = os.path.split(("\n".join(artifact_list)))
-    #path = paths.replace('/',':')
-    print paths
+    for artifact in artifact_list:
+      print artifact
 
 if __name__ == '__main__':
     main()
