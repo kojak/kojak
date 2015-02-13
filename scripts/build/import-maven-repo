@@ -12,12 +12,16 @@ def main():
       print "ListError %s: %s" % (error.filename, error)
 
     def get_artifacts(dirs):
+      exts = ('.sha1', '.repositories')
       for dir in dirs:
-        # Print "Looking for files in: %s" % str(dir)
+        # print "Looking for files in: %s" % str(dir)
         for dirpath, dirnames, filenames in os.walk(str(dir), onerror=list_error):
           for filename in filenames:
-            #print "Including %s" % os.path.join(dirpath, filename)
+            # print "Including %s" % os.path.join(dirpath, filename)
+            if any(filename.lower().endswith(ext) for ext in exts):
+              os.remove(os.path.join(dirpath, filename))
             yield os.path.join(dirpath, filename)
+
 
     parser = optparse.OptionParser(usage='%prog <local-repo-directory>')
 
@@ -34,7 +38,7 @@ def main():
     artifact_list = [artifact for artifact in artifact_list if artifact.endswith('.pom')]
     artifact_list = [artifact for artifact in artifact_list if ('SNAPSHOT') not in artifact]
     for artifact in artifact_list:
-      print artifact
+      print os.path.dirname(artifact)
 
 if __name__ == '__main__':
     main()

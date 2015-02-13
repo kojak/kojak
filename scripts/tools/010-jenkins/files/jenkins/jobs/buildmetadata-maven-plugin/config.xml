@@ -53,8 +53,7 @@
   <prebuilders/>
   <postbuilders>
     <hudson.tasks.Shell>
-      <command>cd $WORKSPACE
-GAVS=$(/opt/kojak/scripts/build/import-maven-repo ~/.m2/repository)
+      <command>GAVS=$(/opt/kojak/scripts/build/import-maven-repo ~/.m2/repository)
 for gav in $GAVS; do /opt/kojak/scripts/build/import-maven --tag rcm-mw-tools-deps --owner koji $gav; done
       </command>
     </hudson.tasks.Shell>
