@@ -30,11 +30,11 @@
     <groupId>com.redhat.rcm.maven.plugin</groupId>
     <artifactId>buildmetadata-maven-plugin</artifactId>
   </rootModule>
-  <goals>dependency:resolve-plugins clean install</goals>
+  <goals>-C dependency:resolve-plugins dependency:purge-local-repository clean install</goals>
   <mavenOpts>-Dmaven.test.skip=true</mavenOpts>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
-  <localRepository class="hudson.maven.local_repo.DefaultLocalRepositoryLocator"/>
+  <localRepository class="hudson.maven.local_repo.PerExecutorLocalRepositoryLocator"/>
   <ignoreUpstremChanges>false</ignoreUpstremChanges>
   <archivingDisabled>false</archivingDisabled>
   <siteArchivingDisabled>false</siteArchivingDisabled>
@@ -53,8 +53,8 @@
   <prebuilders/>
   <postbuilders>
     <hudson.tasks.Shell>
-      <command>GAVS=$(/opt/kojak/scripts/build/import-maven-repo ~/.m2/repository)
-for gav in $GAVS; do /opt/kojak/scripts/build/import-maven --tag rcm-mw-tools-deps --owner koji $gav; done
+      <command>GAVS=$(/opt/kojak/scripts/build/import-maven-repo /var/lib/jenkins/maven-repositories/1)
+for gav in $GAVS; do cd $gav &amp;&amp; /opt/kojak/scripts/build/import-maven --tag rcm-mw-tools-deps --owner koji * ; done
       </command>
     </hudson.tasks.Shell>
     <org.jenkinsci.plugins.koji.KojiBuilder plugin="koji-plugin@0.2">
