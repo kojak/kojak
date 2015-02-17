@@ -71,7 +71,6 @@ else
         yum -y localinstall /opt/kojak/pkgs/maven3-3.0.3-4.noarch.rpm
     fi
 
-
     MAVEN3=$(koji search package maven3)
     if [[ ! -z "$MAVEN3" ]]; then 
         echo "Maven already imported";
