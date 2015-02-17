@@ -42,13 +42,14 @@ eachService off
 eachService stop
 
 # Remove package
-yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder mock
+yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder mock jenkins
 
-echo -e "\nRunning tool uninstalls...\n"
-eachTool uninstall
+# Remove Jenkins repo
+rm -f /etc/yum.repos.d/jenkins.repo.*
+rm -rf /var/lib/jenkins.orig /var/cache/jenkins.orig
 
 # Remove configuration files
-CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /home/koji /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql /var/lib/mock"
+CFG_DIRS="/var/tmp/kojak /mnt/koji /etc/koji* /home/koji /etc/httpd /var/log/httpd /etc/pki/koji /tmp/*.patch /var/lib/pgsql /var/lib/mock /var/lib/jenkins /var/cache/jenkins /etc/sysconfig/jenkins*"
 for dir in ${CFG_DIRS}; do rm -rf $dir || echo "$dir not found"; done
 
 # Remove log files
@@ -60,7 +61,7 @@ ${HOME}/kojak.log
 for file in ${LOG_FILES}; do rm -f $file || echo "$file not found"; done
 
 # Remove users and groups
-USERS="koji mock kojibuilder postgres apache"
+USERS="koji mock kojibuilder postgres apache jenkins"
 for user in ${USERS}; do userdel -rf $user; groupdel $user; done
 
 rm -f /tmp/install /tmp/config
