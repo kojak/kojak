@@ -677,8 +677,9 @@ service ip6tables stop
 chkconfig ip6tables off
 
 echo -e "\nRestarting Services..."
-eachService on
-eachService restart
+service postgresql restart
+service kojid restart
+service kojija restart
 
 echo -e "\nCreating base config..."
 export PROG="koji"
