@@ -7,8 +7,8 @@ import tempfile
 import os.path
 import shutil
 import glob
-import xml.dom.minidom
 import hashlib
+import sgmllib
 
 SCRIPTDIR = os.path.abspath(os.path.dirname(sys.argv[0]))
 
@@ -43,16 +43,82 @@ def get_text(node):
         return node.firstChild.data
     return None
 
+class PomParser(sgmllib.SGMLParser):
+    def __init__(self, verbose=0, parent_wins=False):
+        sgmllib.SGMLParser.__init__(self, verbose)
+        self._proj_data = {}
+        self._parent_data = {}
+        self.groupId = None
+        self.artifactId = None
+        self.version = None
+        self._in_parent = False
+        self._in_project = False
+        self._parent_wins = parent_wins
+        self.data = None
+
+    def _get_data(self, attr):
+        if self._proj_data.has_key(attr) and not self._parent_wins:
+            return self._proj_data[attr]
+        elif self._parent_data.has_key(attr):
+            return self._parent_data[attr]
+        else:
+            return None
+
+    @property
+    def groupId(self):
+        self._get_data('groupId')
+
+    @property
+    def artifactId(self):
+        self._get_data('artifactId')
+
+    @property
+    def version(self):
+        self._get_data('version')
+
+    def handle_data(self, data):
+        if self.data is not None:
+            self.data.append(data)
+
+    def start_project(self, attrs):
+        self._in_project = True
+
+    def start_parent(self, attrs):
+        self._in_parent = True
+
+    def end_project(self):
+        self._in_project = False
+
+    def end_parent(self):
+        self._in_parent = False
+
+    def start_groupid(self, attrs):
+        self.data = []
+
+    def end_groupid(self):
+        self.groupId = "".join(self.data)
+
+    def start_artifactid(self, attrs):
+        self.data = []
+
+    def end_artifactid(self):
+        self.artifactId = "".join(self.data)
+
+    def start_version(self, attrs):
+        self.data = []
+
+    def end_version(self):
+        self.version = "".join(self.data)
+
 def parse_parent(pom):
-    doc = xml.dom.minidom.parse(pom)
-    project_node = get_child(doc, 'project')
-    parent_node = get_child(project_node, 'parent')
-    if not parent_node:
-        return None
-    g = get_text(get_child(parent_node, 'groupId'))
-    a = get_text(get_child(parent_node, 'artifactId'))
-    v = get_text(get_child(parent_node, 'version'))
-    return g, a, v
+    fd = open(pom, "r")
+    # custom parser because the xml on input is typically full of shit
+    parser = PomParser(parent_wins=True)
+    parser.feed(fd.read())
+    fd.close()
+    parser.close()
+    print "parse_parent: got groupId:", parser.groupId, "artifactid:", parser.artifactId, parser.version
+    return parser.groupId, parser.artifactId, parser.version
 
 def parent_gav(workdir):
     poms = glob.glob(os.path.join(workdir, '*.pom'))
@@ -61,19 +127,14 @@ def parent_gav(workdir):
     return parse_parent(poms[0])
 
 def parse_pom(pom):
-    doc = xml.dom.minidom.parse(pom)
-    project_node = get_child(doc, 'project')
-    parent = parse_parent(pom)
-    g = get_text(get_child(project_node, 'groupId'))
-    if not g:
-        g = parent[0]
-    a = get_text(get_child(project_node, 'artifactId'))
-    if not a:
-        a = parent[1]
-    v = get_text(get_child(project_node, 'version'))
-    if not v:
-        v = parent[2]
-    return g, a, v
+    fd = open(pom, "r")
+    # custom parser because the xml on input is typically full of shit
+    parser = PomParser(parent_wins=False)
+    parser.feed(fd.read())
+    fd.close()
+    parser.close()
+    print "parse_pom: got groupId:", parser.groupId, "artifactid:", parser.artifactId, parser.version
+    return parser.groupId, parser.artifactId, parser.version
 
 def repo_path(opts, pom):
     g, a, v = parse_pom(pom)
@@ -162,26 +223,30 @@ def get_gavs(opts, args):
         gavs = args
     return gavs
 
-parser = optparse.OptionParser(usage='%prog groupId:artifactId:version...')
-parser.add_option('-t', '--tag', help='Tag to import into')
-parser.add_option('--repo', dest='repos', metavar='REPOURL',
-                  help='Additional repo to check (may be used multiple times)', action='append',
-                  default=[])
-parser.add_option('-r', '--recurse', action='store_true', help='Recursively import parent GAVs')
-parser.add_option('-k', '--keep', action='store_true', help='Keep downloaded artifacts')
-parser.add_option('-l', '--local-repo', help='Import downloaded artifacts into the given local repo')
-parser.add_option('--owner', default=os.environ['USER'], help='Owner of the package')
-parser.add_option('-f', '--file', action='store_true', help='Arguments are files which contain a list of G:A:Vs to import (one per line)')
-parser.add_option('-v', '--verbose', action='store_true', help='Verbose output')
+def main():
+    parser = optparse.OptionParser(usage='%prog groupId:artifactId:version...')
+    parser.add_option('-t', '--tag', help='Tag to import into')
+    parser.add_option('--repo', dest='repos', metavar='REPOURL',
+                      help='Additional repo to check (may be used multiple times)', action='append',
+                      default=[])
+    parser.add_option('-r', '--recurse', action='store_true', help='Recursively import parent GAVs')
+    parser.add_option('-k', '--keep', action='store_true', help='Keep downloaded artifacts')
+    parser.add_option('-l', '--local-repo', help='Import downloaded artifacts into the given local repo')
+    parser.add_option('--owner', default=os.environ['USER'], help='Owner of the package')
+    parser.add_option('-f', '--file', action='store_true', help='Arguments are files which contain a list of G:A:Vs to import (one per line)')
+    parser.add_option('-v', '--verbose', action='store_true', help='Verbose output')
 
-opts, args = parser.parse_args()
-if not args:
-    if opts.file:
-        parser.error('You must provide a list of G:A:Vs to import')
-    else:
-        parser.error('You must provide a G:A:V to import')
+    opts, args = parser.parse_args()
+    if not args:
+        if opts.file:
+            parser.error('You must provide a list of G:A:Vs to import')
+        else:
+            parser.error('You must provide a G:A:V to import')
 
-for gav in get_gavs(opts, args):
-    success = download_and_import(opts, gav)
-    if not success:
-        sys.exit(1)
+    for gav in get_gavs(opts, args):
+        success = download_and_import(opts, gav)
+        if not success:
+            sys.exit(1)
+
+if __name__ == "__main__":
+   main() 
