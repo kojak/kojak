@@ -40,10 +40,6 @@ if [ -f "${INST_FILE}" ]; then
     exit
 fi
 
-# Load services configuration
-DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
-. $DIR/kojak-functions
-
 LOG="/root/kojak.log"
 TSTAMP=$(date '+_%Y%m%d%H%M%S')
 
