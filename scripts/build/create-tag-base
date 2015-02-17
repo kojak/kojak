@@ -70,12 +70,12 @@ else
         # Adding Maven
         if [ -d "/opt/kojak" ]; then
             ${PROG} import --create-build /opt/kojak/pkgs/${MAVEN}.src.rpm /opt/kojak/pkgs/${MAVEN}.noarch.rpm
-            ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} maven3
+            ${PROG} add-pkg --owner=kojiadmin ${PROD} maven3
             ${PROG} tag-build ${PROD}-candidate ${MAVEN}
         else
             git clone https://github.com/sbadakhc/kojak.git ~/workspace/kojak
             ${PROG} import --create-build ~/workspace/kojak/pkgs/${MAVEN}.src.rpm ~/workspace/kojak/pkgs/${MAVEN}.noarch.rpm
-            ${PROG} add-pkg --owner=kojiadmin ${PRODUCT} maven3
+            ${PROG} add-pkg --owner=kojiadmin ${PROD} maven3
             ${PROG} tag-build ${PROD}-candidate ${MAVEN}
         fi
 
