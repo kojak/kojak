@@ -72,8 +72,8 @@ else
     fi
 
     # Import Maven
-    MAVEN3=$(koji search package maven3)
-    if [[ ! -z "$MAVEN3" ]]; then 
+    MVNPKG=$(koji search package maven3)
+    if [[ ! -z "$MVNPKG" ]]; then 
         echo "Maven already imported";
     else
         # Adding Maven
