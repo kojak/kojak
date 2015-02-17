@@ -53,7 +53,7 @@
   <prebuilders/>
   <postbuilders>
     <hudson.tasks.Shell>
-      <command>GAVS=$(/opt/kojak/scripts/build/import-maven-repo /var/lib/jenkins/maven-repositories/1)
+      <command>GAVS=$(/opt/kojak/scripts/build/import-maven-repo /var/lib/jenkins/maven-repositories/0)
 for gav in $GAVS; do cd $gav &amp;&amp; /opt/kojak/scripts/build/import-maven --tag rcm-mw-tools-deps --owner koji * ; done
       </command>
     </hudson.tasks.Shell>
