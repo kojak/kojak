@@ -35,11 +35,11 @@ else
     # Add groups
     # build
     ${PROG} add-group ${PROD}-build build
-    ${PROG} add-group-pkg ${PROD}-build build bash bzip2 cpio diffutils fedora-release findutils gawk gcc gcc-c++ info make redhat-rpm-config rpm-build sed shadow-utils unzip util-linux-ng which xz
+    ${PROG} add-group-pkg ${PROD}-build build bash bzip2 cpio diffutils centos-release findutils gawk gcc gcc-c++ info make redhat-rpm-config rpm-build sed shadow-utils unzip util-linux-ng which xz
 
     # srpm-build
     ${PROG} add-group ${PROD}-build srpm-build
-    ${PROG} add-group-pkg ${PROD}-build srpm-build bash curl cvs fedora-release fedpkg gnupg2 make redhat-rpm-config rpm-build shadow-utils
+    ${PROG} add-group-pkg ${PROD}-build srpm-build bash curl cvs centos-release fedpkg gnupg2 make redhat-rpm-config rpm-build shadow-utils
 
     # appliance-build
     ${PROG} add-group ${PROD}-build appliance-build
@@ -51,7 +51,7 @@ else
 
     # livecd-build
     ${PROG} add-group ${PROD}-build livecd-build
-    ${PROG} add-group-pkg ${PROD}-build livecd-build bash bzip2 coreutils cpio diffutils fedora-logos fedora-release findutils gawk gcc gcc-c++ grep gzip info livecd-tools make patch policycoreutils python-dbus redhat-rpm-config rpm-build sed selinux-policy-targeted shadow-utils squashfs-tools tar unzip util-linux which yum
+    ${PROG} add-group-pkg ${PROD}-build livecd-build bash bzip2 coreutils cpio diffutils centos-logos centos-release findutils gawk gcc gcc-c++ grep gzip info livecd-tools make patch policycoreutils python-dbus redhat-rpm-config rpm-build sed selinux-policy-targeted shadow-utils squashfs-tools tar unzip util-linux which yum
 
     # wrapper-build
     ${PROG} add-group ${PROD}-build wrapper-rpm-build
