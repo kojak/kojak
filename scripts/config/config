@@ -36,7 +36,7 @@ if [ -f "${CFG_FILE}" ]; then
 fi
 
 # Create tag base
-/opt/kojak/scripts/build/create-tag-base -p rcm-mw-tools
+su -l koji -c /opt/kojak/scripts/build/create-tag-base -p rcm-mw-tools
 
 # Installing Jenkins Plugins"
 cd /tmp
@@ -88,7 +88,5 @@ cp $files/fcinfo* /var/lib/jenkins/.java/fonts/${javaver}
 chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
 
 service jenkins start
-
-
 
 echo -e "\nConfiguration complete...Kojak is AOK"
