@@ -34,12 +34,11 @@ if [ ! -f "${INST_FILE}" ]; then
     exit
 fi
 
-# Load services configuration
-DIR=$(dirname $( cd $(dirname $0) ; pwd -P ))
-. $DIR/kojak-functions
-
-eachService off
-eachService stop
+service postgresql stop
+service kojid stop
+service kojira stop
+service jenkins stop
+service httpd stop
 
 # Remove package
 yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder mock jenkins
