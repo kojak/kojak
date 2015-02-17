@@ -667,9 +667,6 @@ cp -f /etc/pki/koji/${CANAME}_ca_cert.crt /home/koji/.koji/serverca.crt
 chown -R koji:apache /home/koji/.koji/
 cd -
 
-echo -e "\nRunning tool installs..."
-eachTool install
-
 echo -e "\nDisabling firewall..."
 service iptables stop
 chkconfig iptables off
