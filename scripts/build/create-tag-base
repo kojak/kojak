@@ -13,7 +13,7 @@ else
     # Declare variables
     PROG="koji"
     PROD="$2"
-    ARCH="none"
+    ARCH="x86_64"
     JAVA="java-1.7.0-openjdk-devel"
     MAVEN="maven3-3.0.3-4"
 
