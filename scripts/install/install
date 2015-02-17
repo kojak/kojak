@@ -710,7 +710,10 @@ su -l koji -c "psql koji koji < /tmp/kojibuilder.sql"
 rm /tmp/kojibuilder.sql
 
 echo -e "\nService Status..."
-eachService status
+service postgresql restart
+service kojid restart
+service kojira restart
+
 touch /tmp/install
 
 echo -e "\nInstallation complete...Kojak is AOK"
