@@ -675,6 +675,8 @@ chkconfig ip6tables off
 
 echo -e "\nRestarting Services..."
 service postgresql restart
+service httpd restart
+service jenkins restart
 service kojid restart
 service kojira restart
 
