@@ -63,8 +63,17 @@ else
     # Lock the build tag
     #$PROG lock-tag --master $PROD-build
 
-    VAR=$(koji search package maven3)
-    if [[ ! -z "$VAR" ]]; then 
+    # Install Maven3
+    MVNRPM=$(rpm -q maven3)
+    if [ ! -z "${MVNRPM}" ]; then
+        echo -e "${MVNRPM} already installed"
+    else
+        yum -y localinstall /opt/kojak/pkgs/maven3-3.0.3-4.noarch.rpm
+    fi
+
+
+    MAVEN3=$(koji search package maven3)
+    if [[ ! -z "$MAVEN3" ]]; then 
         echo "Maven already imported";
     else
         # Adding Maven
@@ -79,13 +88,6 @@ else
             ${PROG} tag-build ${PROD}-candidate ${MAVEN}
         fi
 
-        # Install Maven3
-        MVNRPM=$(rpm -q maven3)
-        if [ ! -z "${MVNRPM}" ]; then
-            echo -e "${MVNRPM} already installed"
-        else
-            yum -y localinstall /opt/kojak/pkgs/maven3-3.0.3-4.noarch.rpm
-        fi
     fi
     }
 fi
