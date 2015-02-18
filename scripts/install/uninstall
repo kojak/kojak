@@ -59,6 +59,10 @@ ${HOME}/kojak.log
 /etc/yum.repos.d/epel.repo"
 for file in ${LOG_FILES}; do rm -f $file || echo "$file not found"; done
 
+# Remove users and groups
+USERS="koji mock kojibuilder postgres apache jenkins"
+for user in ${USERS}; do userdel -rf $user; groupdel $user; done > 2&>1 > /dev/null
+
 rm -f /tmp/install /tmp/config
 
 # Update mlocate database
