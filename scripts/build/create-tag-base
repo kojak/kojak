@@ -18,16 +18,15 @@ else
     MAVEN="maven3-3.0.3-4"
 
     create-tag-base() {
-    # Add product tags
-    ${PROG} add-tag ${PROD} --arches ${ARCH} --maven-support --include-all
-    ${PROG} add-tag ${PROD}-candidate --arches ${ARCH} --maven-support --include-all
-    ${PROG} add-tag ${PROD}-build --arches ${ARCH} --maven-support --include-all
-    ${PROG} add-tag ${PROD}-deps --arches ${ARCH} --maven-support --include-all
+    $PROG add-tag $PROD --arches $ARCH --maven-support --include-all
+    $PROG add-tag $PROD-candidate --arches $ARCH --maven-support --include-all
+    $PROG add-tag $PROD-override --arches $ARCH --maven-support --include-all
+    $PROG add-tag $PROD-build --arches $ARCH --maven-support --include-all
 
-    # Add tag inheritance
-    ${PROG} add-tag-inheritance ${PROD}-candidate ${PROD} --priority 0
-    ${PROG} add-tag-inheritance ${PROD}-build ${PROD}-candidate --priority 0
-    ${PROG} add-tag-inheritance ${PROD}-build ${PROD}-deps --priority 5
+    # Configure the tag inheritance
+    $PROG add-tag-inheritance $PROD-candidate $PROD --priority 0
+    $PROG add-tag-inheritance $PROD-override $PROD-candidate --priority 0
+    $PROG add-tag-inheritance $PROD-build $PROD-override --priority 0
 
     # Add target
     ${PROG} add-target ${PROD}-candidate ${PROD}-build ${PROD}-candidate

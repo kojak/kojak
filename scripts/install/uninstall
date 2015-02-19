@@ -61,7 +61,7 @@ for file in ${LOG_FILES}; do rm -f $file || echo "$file not found"; done
 
 # Remove users and groups
 USERS="koji mock kojibuilder postgres apache jenkins"
-for user in ${USERS}; do userdel -rf $user; groupdel $user; done > 2&>1 > /dev/null
+for user in ${USERS}; do userdel -rf $user; groupdel $user; done > /dev/null 2>&1  
 
 rm -f /tmp/install /tmp/config
 
