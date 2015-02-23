@@ -90,7 +90,7 @@ joda-time:joda-time:jar:1.6.2
 slide:slide-webdavlib:jar:2.1
 jdom:jdom:jar:1.0
 de.zeigermann.xml:xml-im-exporter:jar:1.1"
-CMD="/opt/kojak/scripts/build/mead-download-and-import -v -r -t rcm-mw-tools --owner koji"
+CMD="/opt/kojak/scripts/build/mead-download-and-import -v -t rcm-mw-tools --owner koji"
 $CMD $ARTIFACTS
 GAVS=$(/opt/kojak/scripts/build/import-maven-repo /var/lib/jenkins/maven-repositories/${EXECUTOR_NUMBER})
 for gav in $GAVS; do cd $gav &amp;&amp; /opt/kojak/scripts/build/import-maven --tag rcm-mw-tools --owner koji * ; done
