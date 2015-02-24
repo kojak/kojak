@@ -34,7 +34,7 @@ DISTDIR=${DISTDIR:="RedHat/CentOS/6.5/x86_64"}
 CFGDIR=${CFGDIR:="${TMPDIR}/cfg/${DISTDIR}"}
 KSCFG=${KSCFG:="${CFGDIR}/kojak-ks.cfg"}
 KSCFG=${KSCFG:="/kojak-ks.cfg"}
-KJKFG=${KJKCFG:="${CFGDIR}/kojak.cfg"}
+KJKCFG=${KJKCFG:="${CFGDIR}/kojak.cfg"}
 SRCLOC=${SRCLOC:="http://mirror.centos.org/centos/6/os/x86_64/"}
 
 # Virtual machine specifications
