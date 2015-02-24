@@ -21,11 +21,6 @@
 # Uncomment to debug script
 #set -x
 
-# Check user priviledges
-if [ "${USER}" != "root" ]; then
-    echo -e "\n# This script requires root priviledges to run"
-    exit
-fi
 
 ## Declare default configuration options
 
@@ -373,6 +368,11 @@ do
                         ;;
         "VirtualBox")
             echo "VirtualBox"
+            # Check user priviledges
+            if [ "$USER" != "root" ]; then
+                echo -e "\n# This script requires root priviledges to run"
+                exit
+            fi
             OS="fedora"
             ID=$(vagrant global-status | awk 'FNR == 4 {print}'| awk '{print $1}')
             # Install packages
