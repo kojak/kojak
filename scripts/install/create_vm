@@ -180,16 +180,17 @@ else
     source ${KJKCFG} > /dev/null 2>&1
 fi
 
-echo -e "# Checking for libvirt"
-LIBVIRT=$(which libvirtd)
-if [ ! ${LIBVIRT} ]; then
-    yum -y install libvirt
-fi
+MISSING_PKGS=0
+for BINARY in foo libvirtd virt-install fallocate virsh; do
+    if ! command -v "$BINARY" >/dev/null 2>&1; then
+        echo "Binary '$BINARY' missing." >&2
+        MISSING_PKGS=1
+    fi
+done
 
-echo -e "# Checking for virt-install"
-VIRT_INSTALL=$(which virt-install)
-if [ ! ${VIRT_INSTALL} ]; then
-    yum -y install virt-install
+if [[ "$MISSING_PKGS" -ne 0 ]]; then
+    echo "Cannot continue without required binaries." >&2
+    exit 1
 fi
 
 VMDOMAIN=$(virsh list --all | grep ${VMNAME})
@@ -212,13 +213,7 @@ echo -e "# Restarting virtualization services"
 service libvirtd restart > /dev/null 2>&1
 
 echo -e "# Allocating the diskspace"
-FALLOCATE=$(which fallocate)
-if  [ ! ${FALLOCATE} ]; then
-    yum -y install fallocate
-else
-    ${FALLOCATE} -l ${VMDISK} ${VMHOME}/${VMNAME}.img
-    chown qemu:qemu ${VMHOME}/${VMNAME}.img
-fi
+fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
 
 echo -e "# Initialising installation\n"
 virt-install \
