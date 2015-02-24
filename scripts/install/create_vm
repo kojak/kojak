@@ -37,6 +37,7 @@ DISTDIR=${DISTDIR:="RedHat/CentOS/6.5/x86_64"}
 
 # Sources and configuration
 CFGDIR=${CFGDIR:="${TMPDIR}/cfg/${DISTDIR}"}
+KSCFG=${KSCFG:="${CFGDIR}/kojak-ks.cfg"}
 KSCFG=${KSCFG:="/kojak-ks.cfg"}
 KJKFG=${KJKCFG:="${CFGDIR}/kojak.cfg"}
 SRCLOC=${SRCLOC:="http://mirror.centos.org/centos/6/os/x86_64/"}
@@ -162,15 +163,13 @@ main () {
 
 main_header
 
-if [ -f "/kojak-ks.cfg" ]; then
-    echo "# Removing pre-exiting Kickstart file"
-    rm -f /kojak-ks.cfg
-    echo "# Copying Kickstart file"
-    cp kojak-ks.cfg  /
-else
-    echo "# Copying Kickstart file"
-    cp kojak-ks.cfg  /
+if [ -z "${KSCFG}" ]; then
+    echo "# Missing path to Kickstart file"
+    exit 1
 fi
+
+echo "# Copying Kickstart file"
+cp -f kojak-ks.cfg "${KSCFG}"
 
 if [ ! -z "${KJKCFG}" ]; then
     echo -e "# Saved options in ${KJKCFG}"
@@ -227,7 +226,7 @@ virt-install \
 --disk ${VMHOME}/${VMNAME}.img \
 --initrd-inject "${KSCFG}" \
 --location ${SRCLOC} \
---extra-args "ks=file:${KSCFG} console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
+--extra-args "ks=file:/$(basename ${KSCFG}) console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
 --console pty \
 --nographics
 exit
@@ -346,7 +345,9 @@ do
                         ;;
                     "Clear")
                         CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
-                        rm -f /kojak-ks.cfg
+                        if [ -f "${KSCFG}" ]; then
+                            rm -f "${KSCFG}"
+                        fi
                         if [ ! -z "${CFG}" ]; then
                             for cfg in ${CFG}; do
                             rm -rf ${cfg}
