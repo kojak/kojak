@@ -115,9 +115,14 @@ def import_local(opts, gav, workdir):
             make_checksums(destfile)
     print '%s available at %s' % (gav, destdir)
 
-def download_and_import(opts, gav):
+def download_and_import(opts, gav, processed):
     workdir = tempfile.mkdtemp()
     success = False
+    if gav in processed:
+        print gav, 'has already been processed'
+        return True
+    else:
+        processed.add(gav)
     try:
         cmd = [os.path.join(SCRIPTDIR, 'get-maven-artifacts'), gav]
         for repo in opts.repos:
@@ -131,16 +136,15 @@ def download_and_import(opts, gav):
         if opts.owner:
             cmd.extend(['--owner', opts.owner])
         cmd.extend(glob.glob(os.path.join(workdir, '*')))
-        ret, output = run(cmd, verbose=opts.verbose)
+        ret, output = run(cmd, verbose=opts.verbose, fatal=False)
+        success = ret is None
         if not opts.verbose:
             print output.strip().splitlines()[-1]
-        if opts.local_repo:
+        if opts.local_repo and success:
             import_local(opts, gav, workdir)
         parent = parent_gav(workdir)
         if opts.recurse and parent:
-            success = download_and_import(opts, '%s:%s:%s' % parent)
-        else:
-            success = True
+            success &= download_and_import(opts, '%s:%s:%s' % parent, processed)
     except RuntimeError, e:
         print e.args[0]
     finally:
@@ -181,7 +185,9 @@ if not args:
     else:
         parser.error('You must provide a G:A:V to import')
 
+success = True
+processed = set()
 for gav in get_gavs(opts, args):
-    success = download_and_import(opts, gav)
-    if not success:
-        sys.exit(1)
+    success &= download_and_import(opts, gav, processed)
+if not success:
+    sys.exit(1)
