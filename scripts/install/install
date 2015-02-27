@@ -82,7 +82,7 @@ rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
 yum -y update
 yum -y install httpd mod_ssl openssl mod_auth_kerb mod_wsgi \
 yum-utils rpm-build mock createrepo git cvs svn pigz \
-libvirt virt-install qemu-img postgresql-server \
+libvirt virt-install virt-viewer qemu-img postgresql-server \
 screen vim tree links dos2unix mlocate htop iftop \
 postgresql-python pyOpenSSL python-krbV python-cheetah python-qpid libvirt-python python-virtinst \
 koji koji-builder koji-hub koji-hub-plugins koji-utils koji-vm koji-web \
