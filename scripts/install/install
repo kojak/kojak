@@ -510,12 +510,13 @@ sed -i -e "s/#listen_addresses = 'localhost'/listen_addresses = '*'/g" /var/lib/
 echo -e "# 16. Patching pg_hba.conf file" >> ${LOG}
 cp -p /var/lib/pgsql/data/pg_hba.conf /var/lib/pgsql/data/pg_hba.conf.orig
 cat > /tmp/pg_hba.conf.patch << 'EOF'
---- /var/lib/pgsql/data/pg_hba.conf.orig    2014-04-28 19:44:14.994000031 -0400
-+++ /var/lib/pgsql/data/pg_hba.conf         2014-04-28 20:03:58.424999683 -0400
-@@ -62,6 +62,17 @@
+--- /var/lib/pgsql/data/pg_hba.conf     2015-03-01 00:49:04.529000031 -0500
++++ /var/lib/pgsql/data/pg_hba.conf     2015-03-01 00:49:45.986000380 -0500
+@@ -62,7 +62,15 @@
  # or via the -i or -h command line switches.
  #
 
+-
 +# Koji
 +local   koji        koji                                         trust
 +local   koji        apache                                       trust
@@ -523,20 +524,18 @@ cat > /tmp/pg_hba.conf.patch << 'EOF'
 +host    koji        apache              127.0.0.1/32             trust
 +host    koji        koji                ::1/128                  trust
 +host    koji        apache              ::1/128                  trust
-+host    koji        koji                10.34.25.167/32         trust
-+host    koji        apache              10.34.25.167/32         trust
-+host    koji        koji                192.168.122.1/32         trust
-+
-
++host    koji        koji                192.168.122.2/32         trust
++host    koji        apache              192.168.122.2/32         trust
 
  # TYPE  DATABASE    USER        CIDR-ADDRESS          METHOD
+
 EOF
 patch -p0 < /tmp/pg_hba.conf.patch
 rm -f /tmp/pg_hba.conf.patch
 
-if [ "${IP_ADDR}" != "10.34.25.167" ]; then
+if [ "${IP_ADDR}" != "192.168.122.2" ]; then
     echo "Updating /var/lib/pgsql/data/pg_hba.conf with ${IP_ADDR}"
-    sed 's/10.34.25.167/'${IP_ADDR}'/' /var/lib/pgsql/data/pg_hba.conf > /var/lib/pgsql/data/pg_hba.conf.tmp
+    sed 's/192.168.122.2/'${IP_ADDR}'/' /var/lib/pgsql/data/pg_hba.conf > /var/lib/pgsql/data/pg_hba.conf.tmp
     cat /var/lib/pgsql/data/pg_hba.conf.tmp > /var/lib/pgsql/data/pg_hba.conf && rm -f /var/lib/pgsql/data/pg_hba.conf.tmp
 fi
 
@@ -584,23 +583,7 @@ EOF
 patch -p0 < /tmp/httpd.conf.patch
 rm -f /tmp/httpd.conf.patch
 
-echo -e "# 19. Patching sudoers" >> ${LOG}
-cp -p /etc/sudoers /etc/sudoers.orig
-cat > /tmp/sudoers.patch << 'EOF'
---- /etc/sudoers    2012-03-01 12:18:24.000000000 -0500
-+++ /etc/sudoers    2015-02-01 05:47:53.101000040 -0500
-@@ -96,6 +96,7 @@
- ##
- ## Allow root to run any commands anywhere 
- root   ALL=(ALL)   ALL
-+koji   ALL=(ALL)   ALL
- 
- ## Allows members of the 'sys' group to run networking, software, 
- ## service management apps and more.
-EOF
-patch -p0 < /tmp/sudoers.patch
-rm -rf /tmp/sudoers.patch
-
+# Provision SSL certs
 rm -rf /etc/pki/CA/serial*
 rm -rf /etc/pki/CA/index*
 mkdir -p /etc/pki/koji

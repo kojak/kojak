@@ -1,6 +1,11 @@
 #!/bin/bash
 #
 # Simple script to create tag base in Koji for a new build target
+#
+
+# Make sure to uncommet the PLATFORM tag to inherit from it when 
+# creating new targets.
+
 
 # Debugging
 set -x
@@ -18,6 +23,7 @@ else
     URL="http://mirror.centos.org/centos/6/os/${ARCH}/"
     JAVA="java-1.7.0-openjdk-devel"
     MAVEN="maven3-3.0.3-4"
+    PLATFORM="CENTOS-6"
 
     create-tag-base() {
     ${PROG} add-tag ${PROD} --arches $ARCH --maven-support --include-all
@@ -25,12 +31,14 @@ else
     ${PROG} add-tag ${PROD}-override --arches $ARCH --maven-support --include-all
     ${PROG} add-tag ${PROD}-build --arches $ARCH --maven-support --include-all
     ${PROG} add-tag ${PROD}-deps --arches $ARCH --maven-support --include-all
+    #${PROG} add-tag ${PLATFORM} --arches $ARCH --maven-support --include-all
 
     # Configure the tag inheritance
     ${PROG} add-tag-inheritance ${PROD}-candidate ${PROD} --priority 0
     ${PROG} add-tag-inheritance ${PROD}-override ${PROD}-candidate --priority 0
     ${PROG} add-tag-inheritance ${PROD}-build ${PROD}-override --priority 0
     ${PROG} add-tag-inheritance ${PROD}-build ${PROD}-deps --priority 5
+    #${PROG} add-tag-inheritance ${PROD}-build ${PLATFORM} --priority 100
     
     #Add repo
     ${PROG} add-external-repo -t ${PROD}-build ${REPO} ${URL}

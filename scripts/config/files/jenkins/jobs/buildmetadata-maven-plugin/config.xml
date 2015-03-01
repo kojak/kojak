@@ -4,7 +4,7 @@
   <description></description>
   <keepDependencies>false</keepDependencies>
   <properties/>
-  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.3.4">
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.3.5">
     <configVersion>2</configVersion>
     <userRemoteConfigs>
       <hudson.plugins.git.UserRemoteConfig>
@@ -30,7 +30,7 @@
     <groupId>com.redhat.rcm.maven.plugin</groupId>
     <artifactId>buildmetadata-maven-plugin</artifactId>
   </rootModule>
-  <goals>-C dependency:resolve-plugins dependency:purge-local-repository clean install</goals>
+  <goals>-C dependency:resolve-plugins clean install</goals>
   <mavenOpts>-Dmaven.test.skip=true</mavenOpts>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
@@ -53,48 +53,18 @@
   <prebuilders/>
   <postbuilders>
     <hudson.tasks.Shell>
-      <command>ARTIFACTS="org.apache.maven.plugins:maven-deploy-plugin:2.8.1
-org.apache.maven.plugin-tools:maven-plugin-tools-api:jar:2.5 
-org.apache.maven.plugin-tools:maven-plugin-tools-java:jar:2.5 
-org.apache.maven.plugin-tools:maven-plugin-tools-beanshell:jar:2.5 
-org.apache.maven.reporting:maven-reporting-impl:jar:2.1 
-org.apache.maven.reporting:maven-reporting-impl:jar:2.1 
-org.apache.maven.shared:maven-doxia-tools:jar:1.4 
-org.apache.maven.shared:maven-shared-jar:jar:1.1 
-org.apache.maven.wagon:wagon-file:jar:1.0 
-org.apache.maven.wagon:wagon-http-lightweight:jar:1.0
-org.apache.maven.wagon:wagon-webdav:jar:1.0-beta-2
-org.apache.maven.scm:maven-scm-api:jar:1.8 
-org.apache.maven.scm:maven-scm-manager-plexus:jar:1.8 
-org.apache.maven.scm:maven-scm-provider-hg:jar:1.8 
-org.apache.maven.scm:maven-scm-provider-perforce:jar:1.8 
-org.apache.maven.scm:maven-scm-provider-starteam:jar:1.8 
-org.apache.maven.scm:maven-scm-provider-svn-commons:jar:1.8 
-org.apache.maven.scm:maven-scm-provider-svnexe:jar:1.8            
-org.apache.maven.scm:maven-scm-provider-cvs-commons:jar:1.8 
-org.apache.maven.scm:maven-scm-provider-cvsexe:jar:1.8 
-org.apache.maven.scm:maven-scm-provider-cvsjava:jar:1.8 
-org.apache.maven.scm:maven-scm-provider-gitexe:jar:1.8 
-org.apache.maven.scm:maven-scm-provider-git-commons:jar:1.8 
-org.apache.maven.doxia:doxia-decoration-model:jar:1.2 
-org.apache.maven.doxia:doxia-site-renderer:jar:1.2
-org.apache.commons:commons-parent:pom:9
-org.codehaus.plexus:plexus:pom:1.0.11
-org.codehaus.plexus:plexus-interpolation:jar:1.9
-org.codehaus.plexus:plexus-utils:jar:1.5.1
-org.codehaus.plexus:plexus-containers:pom:1.0.3
-org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1
-commons-validator:commons-validator:jar:1.4.0
-commons-httpclient:commons-httpclient:jar:2.0.2
-joda-time:joda-time:jar:1.6.2
-slide:slide-webdavlib:jar:2.1
-jdom:jdom:jar:1.0
-de.zeigermann.xml:xml-im-exporter:jar:1.1"
-CMD="/opt/kojak/scripts/build/mead-download-and-import -v -t rcm-mw-tools-deps --owner koji"
-$CMD $ARTIFACTS
-GAVS=$(/opt/kojak/scripts/build/import-maven-repo /var/lib/jenkins/maven-repositories/${EXECUTOR_NUMBER})
-for gav in $GAVS; do cd $gav &amp;&amp; /opt/kojak/scripts/build/import-maven --tag rcm-mw-tools --owner koji * ; done
-      </command>
+      <command>DONE=&quot;${WORKSPACE}/DONE&quot;
+DEPS=&quot;${WORKSPACE}/DEPS&quot;
+if [[ ! -f $DONE ]] ; then
+    GAVS=$(/opt/kojak/scripts/build/import-maven-repo ${JENKINS_HOME}/maven-repositories/${EXECUTOR_NUMBER})
+    for gav in $GAVS; do cd $gav ; /opt/kojak/scripts/build/import-maven --tag rcm-mw-tools --owner koji * ; done
+    echo &quot;Completed repo import&quot; &gt; ${WORKSPACE}/DONE
+elif   
+    [[ -f $DEPS ]] ; then
+    echo &quot;Processing $DEPS.&quot;
+    /opt/kojak/scripts/build/mead-download-and-import -v -t rcm-mw-tools-deps --owner koji -f $DEPS
+fi
+</command>
     </hudson.tasks.Shell>
     <org.jenkinsci.plugins.koji.KojiBuilder plugin="koji-plugin@0.2">
       <kojiBuild>buildmetadata-maven-plugin-1.5.1</kojiBuild>

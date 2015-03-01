@@ -190,4 +190,4 @@ processed = set()
 for gav in get_gavs(opts, args):
     success &= download_and_import(opts, gav, processed)
 if not success:
-    sys.exit(1)
+    sys.exit(0)
