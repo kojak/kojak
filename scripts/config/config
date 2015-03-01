@@ -36,7 +36,7 @@ if [ -f "${CFG_FILE}" ]; then
 fi
 
 # Create tag base
-su -l koji -c "/opt/kojak/scripts/build/create-tag-base -p CENTOS-6-build"
+su -l koji -c "/opt/kojak/scripts/build/create-tag-base -p CENTOS-6"
 
 # Installing Jenkins Plugins"
 cd /tmp
