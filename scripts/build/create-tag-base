@@ -39,7 +39,7 @@ else
     ${PROG} add-tag-inheritance ${PROD}-build ${PROD}-deps --priority 5
     
     # Check for PLATFORM tag
-    if [ "$2" != "${PLATFORM}" ]; then
+    if [ "${PROD}" != "${PLATFORM}" ]; then
         ${PROG} add-tag-inheritance ${PROD}-build ${PLATFORM}-build --priority 100
     else
         ${PROG} add-external-repo -t ${PROD}-build ${REPO} ${URL}
