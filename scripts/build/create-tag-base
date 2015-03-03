@@ -37,11 +37,9 @@ else
     ${PROG} add-tag-inheritance ${PROD}-override ${PROD}-candidate --priority 0
     ${PROG} add-tag-inheritance ${PROD}-build ${PROD}-override --priority 0
     ${PROG} add-tag-inheritance ${PROD}-build ${PROD}-deps --priority 5
-    #${PROG} add-tag-inheritance ${PROD}-build ${PLATFORM}-build --priority 100
     
     # Check for PLATFORM tag
     if [ "$2" != "${PLATFORM}" ]; then
-        ${PROG} add-tag ${PLATFORM} --arches $ARCH --maven-support --include-all
         ${PROG} add-tag-inheritance ${PROD}-build ${PLATFORM}-build --priority 100
     else
         ${PROG} add-external-repo -t ${PROD}-build ${REPO} ${URL}
