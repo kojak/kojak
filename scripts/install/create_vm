@@ -163,8 +163,8 @@ if [ -z "${KSCFG}" ]; then
 fi
 
 echo "# Copying Kickstart file"
-if [ ! -d ${KSCFG} ]; then
-    mkdir -p ${KSCFG}
+if [ ! -d ${CFGDIR} ]; then
+    mkdir -p ${CFGDIR}
     cp -f kojak-ks.cfg "${KSCFG}"
 else
     cp -f kojak-ks.cfg "${KSCFG}"
@@ -214,7 +214,7 @@ echo -e "# Allocating the diskspace"
 sudo fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
 
 echo -e "# Initialising installation\n"
-virt-install \
+sudo virt-install \
 -n ${VMNAME} \
 --accelerate \
 --ram ${VMMEM} \
