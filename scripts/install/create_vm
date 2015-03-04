@@ -27,13 +27,12 @@
 # Distro information
 VMNAME=${VMNAME:="kojak-CentOS-6.6-x86_64"}
 VMHOME=${VMHOME:="/var/lib/libvirt/images"}
-TMPDIR=${TMPDIR:="/var/tmp/kojak"}
+TMPDIR=${TMPDIR:="${HOME}/kojak"}
 DISTDIR=${DISTDIR:="CentOS/6.6/x86_64"}
 
 # Sources and configuration
 CFGDIR=${CFGDIR:="${TMPDIR}/cfg/${DISTDIR}"}
 KSCFG=${KSCFG:="${CFGDIR}/kojak-ks.cfg"}
-KSCFG=${KSCFG:="/kojak-ks.cfg"}
 KJKCFG=${KJKCFG:="${CFGDIR}/kojak.cfg"}
 SRCLOC=${SRCLOC:="http://mirror.centos.org/centos/6/os/x86_64/"}
 
@@ -164,7 +163,12 @@ if [ -z "${KSCFG}" ]; then
 fi
 
 echo "# Copying Kickstart file"
-cp -f kojak-ks.cfg "${KSCFG}"
+if [ ! -d ${KSCFG} ]; then
+    mkdir -p ${KSCFG}
+    cp -f kojak-ks.cfg "${KSCFG}"
+else
+    cp -f kojak-ks.cfg "${KSCFG}"
+fi
 
 if [ ! -z "${KJKCFG}" ]; then
     echo -e "# Saved options in ${KJKCFG}"
@@ -200,14 +204,14 @@ if [ ! "${VMHOME}/${VMNAME}.img" ]; then
     echo -e "# No pre-existing Kojak image"
 else
     echo -e "# Removing pre-existing Kojak image"
-    rm ${VMHOME}/${VMNAME}.img > /dev/null 2>&1
+    sudo rm ${VMHOME}/${VMNAME}.img > /dev/null 2>&1
 fi
 
 echo -e "# Restarting virtualization services"
 service libvirtd restart > /dev/null 2>&1
 
 echo -e "# Allocating the diskspace"
-fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
+sudo fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
 
 echo -e "# Initialising installation\n"
 virt-install \
