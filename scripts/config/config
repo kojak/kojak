@@ -38,7 +38,8 @@ fi
 # Check SELinux
 STATUS=$(sestatus | grep enabled)
 if [ -z $STATUS ]; then
-    echo "off"
+    echo "\n# SELinux disabled."
+
 else
     echo -e "\n# Configuring SELinux Policiy"
     setsebool -P allow_httpd_anon_write=1
