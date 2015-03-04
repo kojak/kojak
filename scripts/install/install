@@ -698,6 +698,8 @@ service postgresql restart
 service kojid restart
 service kojira restart
 
+yum -y update
+
 touch /tmp/install
 
 echo -e "\nInstallation complete...Kojak is AOK"
