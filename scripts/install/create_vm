@@ -175,7 +175,7 @@ else
 fi
 
 MISSING_PKGS=0
-for BINARY in foo libvirtd virt-install fallocate virsh; do
+for BINARY in libvirtd virt-install fallocate virsh; do
     if ! command -v "$BINARY" >/dev/null 2>&1; then
         echo "Binary '$BINARY' missing." >&2
         MISSING_PKGS=1
