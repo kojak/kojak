@@ -28,7 +28,7 @@
 VMNAME=${VMNAME:="kojak-CentOS-6.5-x86_64"}
 VMHOME=${VMHOME:="/var/lib/libvirt/images"}
 TMPDIR=${TMPDIR:="/var/tmp/kojak"}
-DISTDIR=${DISTDIR:="RedHat/CentOS/6.5/x86_64"}
+DISTDIR=${DISTDIR:="CentOS/6.5/x86_64"}
 
 # Sources and configuration
 CFGDIR=${CFGDIR:="${TMPDIR}/cfg/${DISTDIR}"}
