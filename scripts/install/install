@@ -658,10 +658,15 @@ chkconfig ip6tables off
 
 echo -e "\nRestarting Services..."
 service postgresql restart
+chkconfig postgresql on
 service httpd restart
+chkconfig httpd on
 service jenkins restart
+chkconfig jenkins on
 service kojid restart
+chkconfig kojid on
 service kojira restart
+chkconfig kojira on
 
 echo -e "\nCreating base config..."
 export PROG="koji"
