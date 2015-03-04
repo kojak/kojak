@@ -35,6 +35,16 @@ if [ -f "${CFG_FILE}" ]; then
     exit
 fi
 
+# Check SELinux
+STATUS=$(sestatus | grep enabled)
+if [ -z $STATUS ]; then
+    echo "off"
+else
+    echo -e "\n# Configuring SELinux Policiy"
+    setsebool -P allow_httpd_anon_write=1
+    chcon -R -t public_content_rw_t /mnt/koji/*
+fi
+
 # Create tag base
 su -l koji -c "/opt/kojak/scripts/build/create-tag-base -p CENTOS-6"
 
