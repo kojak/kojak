@@ -21,11 +21,6 @@
 # Uncomment to debug script
 #set -x
 
-# Check user priviledges
-if [ "${USER}" != "root" ]; then
-    echo -e "\n# This script requires root priviledges to run"
-    exit
-fi
 
 ## Declare default configuration options
 
@@ -37,8 +32,9 @@ DISTDIR=${DISTDIR:="RedHat/CentOS/6.5/x86_64"}
 
 # Sources and configuration
 CFGDIR=${CFGDIR:="${TMPDIR}/cfg/${DISTDIR}"}
+KSCFG=${KSCFG:="${CFGDIR}/kojak-ks.cfg"}
 KSCFG=${KSCFG:="/kojak-ks.cfg"}
-KJKFG=${KJKCFG:="${CFGDIR}/kojak.cfg"}
+KJKCFG=${KJKCFG:="${CFGDIR}/kojak.cfg"}
 SRCLOC=${SRCLOC:="http://mirror.centos.org/centos/6/os/x86_64/"}
 
 # Virtual machine specifications
@@ -162,15 +158,13 @@ main () {
 
 main_header
 
-if [ -f "/kojak-ks.cfg" ]; then
-    echo "# Removing pre-exiting Kickstart file"
-    rm -f /kojak-ks.cfg
-    echo "# Copying Kickstart file"
-    cp kojak-ks.cfg  /
-else
-    echo "# Copying Kickstart file"
-    cp kojak-ks.cfg  /
+if [ -z "${KSCFG}" ]; then
+    echo "# Missing path to Kickstart file"
+    exit 1
 fi
+
+echo "# Copying Kickstart file"
+cp -f kojak-ks.cfg "${KSCFG}"
 
 if [ ! -z "${KJKCFG}" ]; then
     echo -e "# Saved options in ${KJKCFG}"
@@ -180,16 +174,17 @@ else
     source ${KJKCFG} > /dev/null 2>&1
 fi
 
-echo -e "# Checking for libvirt"
-LIBVIRT=$(which libvirtd)
-if [ ! ${LIBVIRT} ]; then
-    yum -y install libvirt
-fi
+MISSING_PKGS=0
+for BINARY in foo libvirtd virt-install fallocate virsh; do
+    if ! command -v "$BINARY" >/dev/null 2>&1; then
+        echo "Binary '$BINARY' missing." >&2
+        MISSING_PKGS=1
+    fi
+done
 
-echo -e "# Checking for virt-install"
-VIRT_INSTALL=$(which virt-install)
-if [ ! ${VIRT_INSTALL} ]; then
-    yum -y install virt-install
+if [[ "$MISSING_PKGS" -ne 0 ]]; then
+    echo "Cannot continue without required binaries." >&2
+    exit 1
 fi
 
 VMDOMAIN=$(virsh list --all | grep ${VMNAME})
@@ -212,13 +207,7 @@ echo -e "# Restarting virtualization services"
 service libvirtd restart > /dev/null 2>&1
 
 echo -e "# Allocating the diskspace"
-FALLOCATE=$(which fallocate)
-if  [ ! ${FALLOCATE} ]; then
-    yum -y install fallocate
-else
-    ${FALLOCATE} -l ${VMDISK} ${VMHOME}/${VMNAME}.img
-    chown qemu:qemu ${VMHOME}/${VMNAME}.img
-fi
+fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
 
 echo -e "# Initialising installation\n"
 virt-install \
@@ -232,7 +221,7 @@ virt-install \
 --disk ${VMHOME}/${VMNAME}.img \
 --initrd-inject "${KSCFG}" \
 --location ${SRCLOC} \
---extra-args "ks=file:${KSCFG} console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
+--extra-args "ks=file:/$(basename ${KSCFG}) console=tty0 console=ttyS0,115200 serial rd_NO_PLYMOUTH" \
 --console pty \
 --nographics
 exit
@@ -351,7 +340,9 @@ do
                         ;;
                     "Clear")
                         CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
-                        rm -f /kojak-ks.cfg
+                        if [ -f "${KSCFG}" ]; then
+                            rm -f "${KSCFG}"
+                        fi
                         if [ ! -z "${CFG}" ]; then
                             for cfg in ${CFG}; do
                             rm -rf ${cfg}
@@ -377,6 +368,11 @@ do
                         ;;
         "VirtualBox")
             echo "VirtualBox"
+            # Check user priviledges
+            if [ "$USER" != "root" ]; then
+                echo -e "\n# This script requires root priviledges to run"
+                exit
+            fi
             OS="fedora"
             ID=$(vagrant global-status | awk 'FNR == 4 {print}'| awk '{print $1}')
             # Install packages

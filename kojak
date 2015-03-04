@@ -21,12 +21,6 @@
 # Uncomment to debug script
 #set -x
 
-# Check user priviledges
-if [ "$USER" != "root" ]; then
-echo -e "\n# This script requires root priviledges to run"
-    exit
-fi
-
 # Reset the terminal
 reset
 
