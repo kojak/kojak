@@ -92,8 +92,8 @@ java-1.7.0-openjdk-devel jenkins
 JDK=$(rpm -qa | grep openjdk | sort -n | tail -1)
 alternatives --install /usr/bin/java java /usr/lib/jvm/${JDK}/bin/java 0
 
-# Install Maven
-yum -y localinstall /opt/kojak/pkgs/maven3-*.noarch.rpm
+# Install third party packages
+yum -y localinstall /opt/kojak/pkgs/*.rpm
 
 echo -e "# 03. Creating Koji user directories" >> ${LOG}
 useradd koji
