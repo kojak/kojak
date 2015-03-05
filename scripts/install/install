@@ -663,6 +663,8 @@ service httpd restart
 chkconfig httpd on
 service jenkins restart
 chkconfig jenkins on
+service artifactory start
+chkconfig artifactory on
 service kojid restart
 chkconfig kojid on
 service kojira restart
