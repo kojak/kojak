@@ -27,8 +27,8 @@
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <rootModule>
-    <groupId>org.candlepin</groupId>
-    <artifactId>candlepin-common</artifactId>
+    <groupId>com.example</groupId>
+    <artifactId>product</artifactId>
   </rootModule>
   <goals>-C dependency:resolve-plugins clean install</goals>
   <mavenOpts>-Dmaven.test.skip=true</mavenOpts>
