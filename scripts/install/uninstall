@@ -41,7 +41,7 @@ service kojid stop
 service kojira stop
 
 # Remove package
-yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder mock jenkins
+yum -y remove httpd postgresql-server koji koji-hub koji-web koji-utils koji-hub-plugins koji-vm koji-builder mock jenkins artifactory
 
 # Remove Jenkins repo
 rm -f /etc/yum.repos.d/jenkins.repo.*
