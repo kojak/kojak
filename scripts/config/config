@@ -81,23 +81,23 @@ EOF
 patch -p0 < /tmp/jenkins.patch
 rm -f /tmp/jenkins.patch
 
-#dir=$( cd $(dirname $0) ; pwd -P )
-#files="${dir}/files"
+dir=$( cd $(dirname $0) ; pwd -P )
+files="${dir}/files"
 
-#echo "Copying jenkins overlay files from ${files}/jenkins/* to /var/lib/jenkins..."
-#cp -af $files/jenkins/* /var/lib/jenkins
-#mkdir -p /var/lib/jenkins/.pki/nssdb
+echo "Copying jenkins overlay files from ${files}/jenkins/* to /var/lib/jenkins..."
+cp -af $files/jenkins/* /var/lib/jenkins
+mkdir -p /var/lib/jenkins/.pki/nssdb
 
-#javaver=$(java -version 2>&1 | head -1 | awk '{print $3}')
-#javaver="${javaver%\"}"
-#javaver="${javaver#\"}"
+javaver=$(java -version 2>&1 | head -1 | awk '{print $3}')
+javaver="${javaver%\"}"
+javaver="${javaver#\"}"
 
-#mkdir -p /var/lib/jenkins/.java/fonts/${javaver}
+mkdir -p /var/lib/jenkins/.java/fonts/${javaver}
 
-#echo "Setting up font config in /var/lib/jenkins/.java/fonts/${javaver}..."
-#cp $files/fcinfo* /var/lib/jenkins/.java/fonts/${javaver}
+echo "Setting up font config in /var/lib/jenkins/.java/fonts/${javaver}..."
+cp $files/fcinfo* /var/lib/jenkins/.java/fonts/${javaver}
 
-#chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
+chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
 
 service jenkins start
 
