@@ -46,7 +46,7 @@
   <disableTriggerDownstreamProjects>false</disableTriggerDownstreamProjects>
   <blockTriggerWhenBuilding>true</blockTriggerWhenBuilding>
   <settings class="jenkins.mvn.FilePathSettingsProvider">
-    <path>${WORKSPACE}/settings.xml</path>
+    <path>${WORKSPACE}/bld/settings.xml</path>
   </settings>
   <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
   <reporters/>
@@ -87,7 +87,7 @@ fi
       <kojiOptions></kojiOptions>
       <kojiTask>mavenBuild</kojiTask>
       <kojiScratchBuild>false</kojiScratchBuild>
-      <kojiScmUrl>git+https://github.com/sbadakhc/app.git#02a1eae3b085ccb8a78f301add64613b3f0547a4</kojiScmUrl>
+      <kojiScmUrl>git+https://github.com/sbadakhc/app.git#2d36b616c9a94cb37998e79c231c03c8522774a0</kojiScmUrl>
     </org.jenkinsci.plugins.koji.KojiBuilder>
   </postbuilders>
   <runPostStepsIfResult>
