@@ -38,7 +38,7 @@ fi
 # Check SELinux
 STATUS=$(sestatus | grep enabled)
 if [ -z $STATUS ]; then
-    echo "\n# SELinux disabled."
+    echo -e "\n# SELinux disabled."
 
 else
     echo -e "\n# Configuring SELinux Policiy"
