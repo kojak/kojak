@@ -87,7 +87,7 @@ fi
       <kojiOptions></kojiOptions>
       <kojiTask>mavenBuild</kojiTask>
       <kojiScratchBuild>false</kojiScratchBuild>
-      <kojiScmUrl>git+https://github.com/sbadakhc/app.git#2d36b616c9a94cb37998e79c231c03c8522774a0</kojiScmUrl>
+      <kojiScmUrl>git+https://github.com/sbadakhc/app.git#db55c4f4893d0f2f4c881f8f9cc19f1777597221</kojiScmUrl>
     </org.jenkinsci.plugins.koji.KojiBuilder>
   </postbuilders>
   <runPostStepsIfResult>
