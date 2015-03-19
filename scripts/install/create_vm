@@ -44,6 +44,12 @@ VCPU=${VCPU:="2"}
 VMMEM=${VMMEM:="4096"}
 VMDISK=${VMDISK:="32768M"}
 
+# Check user priviledges
+if [ "$USER" != "root" ]; then
+    echo -e "\n# This script requires root priviledges to run"
+exit
+fi
+
 ## Interactive configuration options
 
 config() {
@@ -371,11 +377,6 @@ do
                         ;;
         "VirtualBox")
             echo "VirtualBox"
-            # Check user priviledges
-            if [ "$USER" != "root" ]; then
-                echo -e "\n# This script requires root priviledges to run"
-                exit
-            fi
             OS="fedora"
             ID=$(vagrant global-status | awk 'FNR == 4 {print}'| awk '{print $1}')
             # Install packages
