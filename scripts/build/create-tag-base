@@ -26,11 +26,11 @@ else
     PLATFORM="CENTOS-6"
 
     create-tag-base() {
-    ${PROG} add-tag ${PROD} --arches $ARCH --maven-support --include-all
-    ${PROG} add-tag ${PROD}-candidate --arches $ARCH --maven-support --include-all
-    ${PROG} add-tag ${PROD}-override --arches $ARCH --maven-support --include-all
+    ${PROG} add-tag ${PROD} --maven-support --include-all
+    ${PROG} add-tag ${PROD}-candidate --maven-support --include-all
+    ${PROG} add-tag ${PROD}-override --maven-support --include-all
     ${PROG} add-tag ${PROD}-build --arches $ARCH --maven-support --include-all
-    ${PROG} add-tag ${PROD}-deps --arches $ARCH --maven-support --include-all
+    ${PROG} add-tag ${PROD}-deps --maven-support --include-all
 
     # Configure the tag inheritance
     ${PROG} add-tag-inheritance ${PROD}-candidate ${PROD} --priority 0
