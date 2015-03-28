@@ -124,14 +124,14 @@ config() {
     VMDISK="${VMDISK}"
     
     echo
-    read -n1 -p ">> Do you want to save the configuration options supplied? [Y/n]" OPTS 
-    
-    echo
-    case $OPTS in  
-        y|Y) save && echo -e "\n>> Configuration saved..." && sleep 1 && welcome_header && menu ;; 
-        n|N) welcome_header && menu ;; 
-        *) echo -e ">> Invalid Option" ;; 
-    esac
+    while true; do
+    read -p ">> Do you want to save the configuration options supplied? [Y/n]" OPTS
+        case $OPTS in
+            [Yy]* ) save && echo -e "\n>> Configuration saved..." && sleep 1 && menu ;;
+            [Nn]* ) menu ;;
+            * ) echo ">> Invalid Option";;
+        esac
+    done
 
     done
     exit
@@ -197,19 +197,21 @@ if [[ "$MISSING_PKGS" -ne 0 ]]; then
     exit 1
 fi
 
-VMDOMAIN=$(virsh list --all | grep ${VMNAME})
+VMDOMAIN=$(virsh list --all | grep ${VMNAME} | awk '{print $(NF-2)}')
 if [ ! "${VMDOMAIN}" ]; then
     echo -e "# No pre-existing Kojak vm"
 else 
-    echo -e "# Removing pre-existing Kojak vm"
-    virsh destroy ${VMNAME} && virsh undefine ${VMNAME} > /dev/null 2>&1
-fi
-
-if [ ! "${VMHOME}/${VMNAME}.img" ]; then
-    echo -e "# No pre-existing Kojak image"
-else
-    echo -e "# Removing pre-existing Kojak image"
-    rm ${VMHOME}/${VMNAME}.img > /dev/null 2>&1
+    while true; do
+    read -p "# Found an existing VM with the same name...Do you want to destroy it?`echo $'\n>> '` [Y/n] " yn
+    case $yn in
+        [Yy]* ) virsh destroy ${VMNAME} && virsh undefine ${VMNAME} && virsh vol-delete --pool default ${VMNAME}.img > /dev/null 2>&1
+	break
+	;;
+        [Nn]* ) menu
+	;;
+        * ) echo ">> Invalid Option";;
+    esac
+    done
 fi
 
 echo -e "# Restarting virtualization services"
@@ -219,7 +221,7 @@ echo -e "# Allocating the diskspace"
 sudo fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
 
 echo -e "# Initialising installation\n"
-sudo virt-install \
+virt-install \
 -n ${VMNAME} \
 --accelerate \
 --ram ${VMMEM} \

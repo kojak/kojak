@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+# Simple script to import Jenkins build file
+
+# Debugging
+#set -x
+
+read -d '' USAGE <<- EOF
+Usage: import-build [options] <user input>
+-h, --help            show this help message and exit
+-p, --package         prompt user for package name
+EOF
+
+if [[ $# < 2 ]]; then echo "${USAGE}"; fi
+while [[ $# > 1 ]]; do OPTS="${1}"; shift
+
+if [[ ${USER} != koji ]]; then
+    echo "Please execute this script as koji user " 2>&1
+    exit 1
+else
+    WORKSPACE="${HOME}/workspace"
+    cd $WORKSPACE
+    git clone https://github.com/sbadakhc/${1}.git
+    /opt/kojak/scripts/build/create-tag-base -p ${1}
+    java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ copy-job app ${1}
+    cp ${WORKSPACE}/${1}/bld/config.xml /var/lib/jenkins/jobs/${1}/config.xml
+    cd -
+    echo "Please restart the Jenkins service"
+fi
+
+case $OPTS in
+    -p|--package)
+    echo "Importing build file for ${1}"
+    shift
+    ;;
+    -h|--help)
+    echo "Help options include"
+    shift
+    ;;
+    *)
+    echo "${USAGE}" # unknown option
+    ;;
+    \?)
+    echo "${USAGE} option" # unknown option
+    ;;
+esac
+done

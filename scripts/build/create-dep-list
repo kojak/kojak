@@ -8,20 +8,20 @@
 set -x
 
 read -d '' USAGE <<- EOF
-Usage: create_target [options] <user input>
+Usage: create-dep-list [options] <user input>
 -h, --help            show this help message and exit
 -p, --package         prompt user for package name
 EOF
 
-if [[ $# < 2 ]]; then echo "$USAGE"; fi
-while [[ $# > 1 ]]; do key="$1"; shift
+if [[ $# < 2 ]]; then echo "${USAGE}"; fi
+while [[ $# > 1 ]]; do OPTS="$1"; shift
 
-if [[ $USER != koji ]]; then
+if [[ ${USER} != koji ]]; then
     echo "Please execute this script as koji user " 2>&1
     exit 1
 else
-    WORKSPACE="/var/lib/jenkins/jobs/$1/workspace"
-    cd $WORKSPACE
+    WORKSPACE="/var/lib/jenkins/jobs/${1}/workspace"
+    cd ${WORKSPACE}
     mvn dependency:list \
     | grep ":.*:.*:.*" \
     | cut -d] -f2- \
@@ -31,9 +31,9 @@ else
     cd -
 fi
 
-case $key in
+case $OPTS in
     -p|--package)
-    echo "Creating dep list $1"
+    echo "Creating dep list ${1}"
     #create-dep-list
     shift
     ;;
@@ -42,10 +42,10 @@ case $key in
     shift
     ;;
     *)
-    echo "$USAGE" # unknown option
+    echo "${USAGE}" # unknown option
     ;;
     \?)
-    echo "$USAGE option" # unknown option
+    echo "${USAGE} option" # unknown option
     ;;
 esac
 done

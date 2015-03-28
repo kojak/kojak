@@ -10,14 +10,14 @@
 # Debugging
 #set -x
 
-if [[ $USER != koji ]]; then
+if [[ ${USER} != koji ]]; then
     echo "Please execute this script as koji user " 2>&1
     exit 1
 else
 
     # Declare variables
     PROG="koji"
-    PROD="$2"
+    PROD="${2}"
     ARCH="x86_64"
     REPO="centos-6-x86_64-external-repo"
     URL="http://mirror.centos.org/centos/6/os/${ARCH}/"
@@ -29,7 +29,7 @@ else
     ${PROG} add-tag ${PROD} --maven-support --include-all
     ${PROG} add-tag ${PROD}-candidate --maven-support --include-all
     ${PROG} add-tag ${PROD}-override --maven-support --include-all
-    ${PROG} add-tag ${PROD}-build --arches $ARCH --maven-support --include-all
+    ${PROG} add-tag ${PROD}-build --arches ${ARCH} --maven-support --include-all
     ${PROG} add-tag ${PROD}-deps --maven-support --include-all
 
     # Configure the tag inheritance
@@ -77,7 +77,7 @@ else
     ${PROG} add-pkg --owner=kojiadmin ${PROD} bash binutils
 
     # Lock the build tag
-    #$PROG lock-tag --master $PROD-build
+    #${PROG} lock-tag --master ${PROD}-build
 
     # Install Maven
     MVNRPM=$(rpm -q maven3)
@@ -89,7 +89,7 @@ else
 
     # Import Maven
     MVNPKG=$(koji search package maven3)
-    if [[ ! -z "$MVNPKG" ]]; then 
+    if [[ ! -z "${MVNPKG}" ]]; then 
         echo "Maven already imported";
     else
         # Adding Maven
@@ -114,10 +114,10 @@ Usage: create_target [options] <user input>
 -p, --package         prompt user for package name
 EOF
 
-if [[ $# < 2 ]]; then echo "$USAGE"; fi
-while [[ $# > 1 ]]; do key="$1"; shift
+if [[ $# < 2 ]]; then echo "${USAGE}"; fi
+while [[ $# > 1 ]]; do OPTS="$1"; shift
 
-case $key in
+case $OPTS in
     -p|--package)
     PROD="$1"
     echo "Creating tag base for $1"
@@ -129,10 +129,10 @@ case $key in
     shift
     ;;
     *)
-    echo "$USAGE" # unknown option
+    echo "${USAGE}" # unknown option
     ;;
     \?)
-    echo "$USAGE option" # unknown option
+    echo "${USAGE} option" # unknown option
     ;;
 esac
 done
