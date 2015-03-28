@@ -50,7 +50,7 @@ name=Extra Packages for Enterprise Linux 6 - $basearch
 #baseurl=http://download.fedoraproject.org/pub/epel/6/$basearch
 mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch
 failovermethod=priority
-enabled=1
+enabled=0
 gpgcheck=0
 gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
 
@@ -83,7 +83,7 @@ yum -y update
 yum -y install httpd mod_ssl openssl mod_auth_kerb mod_wsgi \
 yum-utils rpm-build mock createrepo git cvs svn pigz \
 libvirt virt-install virt-viewer qemu-img postgresql-server \
-screen vim tree links dos2unix mlocate htop iftop net-tools \
+screen vim tree links dos2unix mlocate htop iftop net-tools docker-io \
 postgresql-python pyOpenSSL python-krbV python-cheetah python-qpid libvirt-python python-virtinst \
 koji koji-builder koji-hub koji-hub-plugins koji-utils koji-vm koji-web \
 java-1.7.0-openjdk-devel jenkins
