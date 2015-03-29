@@ -191,7 +191,7 @@ else
     while true; do
     read -p "# Found an existing VM with the same name...Do you want to destroy it?`echo $'\n>> '` [Y/n] " yn
     case $yn in
-        [Yy]* ) virsh destroy ${VMNAME} && virsh undefine ${VMNAME} && virsh vol-delete --pool default ${VMNAME}.img > /dev/null 2>&1
+        [Yy]* ) virsh undefine ${VMNAME} && virsh destroy ${VMNAME} && virsh vol-delete --pool default ${VMNAME}.img > /dev/null 2>&1
 	break
 	;;
         [Nn]* ) menu
