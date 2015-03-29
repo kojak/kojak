@@ -184,19 +184,6 @@ else
     source ${KJKCFG} > /dev/null 2>&1
 fi
 
-MISSING_PKGS=0
-for BINARY in libvirtd virt-install fallocate virsh; do
-    if ! command -v "$BINARY" >/dev/null 2>&1; then
-        echo "Binary '$BINARY' missing." >&2
-        MISSING_PKGS=1
-    fi
-done
-
-if [[ "$MISSING_PKGS" -ne 0 ]]; then
-    echo "Cannot continue without required binaries." >&2
-    exit 1
-fi
-
 VMDOMAIN=$(virsh list --all | grep ${VMNAME} | awk '{print $(NF-2)}')
 if [ ! "${VMDOMAIN}" ]; then
     echo -e "# No pre-existing Kojak vm"
