@@ -70,13 +70,13 @@
       <command>DONE=&quot;${WORKSPACE}/DONE&quot;
 DEPS=&quot;${WORKSPACE}/bld/DEPS&quot;
 if [[ ! -f $DONE ]] ; then
-    GAVS=$(/opt/kojak/scripts/build/import-maven-repo ${WORKSPACE}/.repository)
-    for gav in ${GAVS}; do cd ${gav}; /opt/kojak/scripts/build/import-maven --tag app --owner koji * ; done
+    GAVS=$(/home/koji/workspace/kojak/scripts/build/import-maven-repo ${WORKSPACE}/.repository)
+    for gav in ${GAVS}; do cd ${gav}; /home/koji/workspace/kojak/scripts/build/import-maven --tag app --owner koji * ; done
     echo &quot;Completed repo import&quot; &gt; ${WORKSPACE}/DONE
 elif
     [[ -f $DEPS ]] ; then
     echo &quot;Processing $DEPS&quot;;
-    /opt/kojak/scripts/build/mead-download-and-import -v -t app-deps --owner koji -f $DEPS 
+    /home/koji/workspace/kojak/scripts/build/mead-download-and-import -v -t app-deps --owner koji -f $DEPS 
 fi
       </command>
     </hudson.tasks.Shell>

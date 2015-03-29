@@ -19,9 +19,9 @@ if [[ ${USER} != koji ]]; then
     exit 1
 else
     WORKSPACE="${HOME}/workspace"
-    cd $WORKSPACE
+    cd ${WORKSPACE}
     git clone https://github.com/release-engineering/${1}.git
-    /opt/kojak/scripts/build/create-tag-base -p ${1}
+    ${WORKSPACE}/kojak/scripts/build/create-tag-base -p ${1}
     java -jar /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar -s http://localhost:8080/ copy-job app ${1}
     cp ${WORKSPACE}/${1}/bld/config.xml /var/lib/jenkins/jobs/${1}/config.xml
     cd -

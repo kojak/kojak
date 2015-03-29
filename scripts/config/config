@@ -47,7 +47,7 @@ else
 fi
 
 # Create tag base
-su -l koji -c "/opt/kojak/scripts/build/create-tag-base -p CENTOS-6"
+su -l koji -c "${HOME}/workspace/kojak/scripts/build/create-tag-base -p CENTOS-6"
 
 # Installing Jenkins Plugins"
 cd /tmp
