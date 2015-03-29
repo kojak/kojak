@@ -201,13 +201,13 @@ else
     done
 fi
 
-echo -e "# Restarting virtualization services"
+echo -e "# Restarting Virtualization"
 sudo service libvirtd restart > /dev/null 2>&1
 
-echo -e "# Allocating the diskspace"
+echo -e "# Allocating Diskspace"
 sudo fallocate -l ${VMDISK} ${VMHOME}/${VMNAME}.img
 
-echo -e "# Initialising installation\n"
+echo -e "# Installating Packages\n"
 virt-install \
 -n ${VMNAME} \
 --accelerate \
@@ -371,13 +371,13 @@ do
             # Install packages
             [[ ! "$(rpm -qa | grep vagrant)" ]] && yum -y install https://dl.bintray.com/mitchellh/vagrant/vagrant_1.6.5_x86_64.rpm
             [[ ! -f /etc/yum.repos.d/virtualbox.repo ]] && wget -P /etc/yum.repos.d/ http://download.virtualbox.org/virtualbox/rpm/$OS/virtualbox.repo
-            [[ -d /opt/vm ]] && rm -rf /opt/vm
+            [[ -d /root/workspace/vm ]] && rm -rf /root/workspace/vm
             yum -y update
             yum -y localinstall /tmp/vagrant_1.6.5_x86_64.rpm 
             yum -y install VirtualBox
             yum -y install kmod-VirtualBox
-            mkdir /opt/vm
-            cd /opt/vm
+            mkdir -p /root/workspace/vm
+            cd /root/workspace/vm
             # Init virtual machine
             vagrant init chef/centos-6.5
             vagrant up

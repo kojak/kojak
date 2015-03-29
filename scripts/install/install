@@ -43,37 +43,10 @@ fi
 LOG="/root/kojak.log"
 TSTAMP=$(date '+_%Y%m%d%H%M%S')
 
-echo -e "# 01. Creating yum repo" > ${LOG}
-cat > /etc/yum.repos.d/epel.repo << 'EOF'
-[epel]
-name=Extra Packages for Enterprise Linux 6 - $basearch
-#baseurl=http://download.fedoraproject.org/pub/epel/6/$basearch
-mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch
-failovermethod=priority
-enabled=0
-gpgcheck=0
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
+echo -e "# 01. Installing packages" >> ${LOG}
+# Install epel yum
+rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
-[epel-debuginfo]
-name=Extra Packages for Enterprise Linux 6 - $basearch - Debug
-#baseurl=http://download.fedoraproject.org/pub/epel/6/$basearch/debug
-mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-debug-6&arch=$basearch
-failovermethod=priority
-enabled=0
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
-gpgcheck=0
-
-[epel-source]
-name=Extra Packages for Enterprise Linux 6 - $basearch - Source
-#baseurl=http://download.fedoraproject.org/pub/epel/6/SRPMS
-mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-source-6&arch=$basearch
-failovermethod=priority
-enabled=0
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-6
-gpgcheck=1
-EOF
-
-echo -e "# 02. Installing packages" >> ${LOG}
 # Install Jenkins repo
 wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
 rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
@@ -93,7 +66,7 @@ JDK=$(rpm -qa | grep openjdk | sort -n | tail -1)
 alternatives --install /usr/bin/java java /usr/lib/jvm/${JDK}/bin/java 0
 
 # Install third party packages
-yum -y localinstall /opt/kojak/pkgs/*.rpm
+yum -y localinstall ${HOME}/workspace/kojak/pkgs/*.rpm
 
 echo -e "# 03. Creating Koji user directories" >> ${LOG}
 useradd koji
@@ -582,6 +555,24 @@ cat > /tmp/httpd.conf.patch << 'EOF'
 EOF
 patch -p0 < /tmp/httpd.conf.patch
 rm -f /tmp/httpd.conf.patch
+
+echo -e "# 19. Patching sudoers.conf" >> ${LOG}
+cp -p /etc/sudoers /etc/sudoers.orig
+cat > /tmp/sudoers.patch << 'EOF'
+--- /etc/sudoers.orig   2012-03-01 12:18:24.000000000 -0500
++++ /etc/sudoers    2015-03-29 09:50:20.531963467 -0400
+@@ -96,6 +96,7 @@
+ ##
+ ## Allow root to run any commands anywhere 
+ root   ALL=(ALL)   ALL
++koji   ALL=(ALL)   ALL
+ 
+ ## Allows members of the 'sys' group to run networking, software, 
+ ## service management apps and more.
+EOF
+patch -p0 < /tmp/sudoers.patch
+rm -f /tmp/sudoers.patch
+
 
 # Provision SSL certs
 rm -rf /etc/pki/CA/serial*
