@@ -48,7 +48,7 @@ Checkout the contents of the Kojak git repository to a suitable directory on you
 
 As the root user execute kojak script.  You will be prompted about the type of installation you want to conduct.  If you choose to create a virtual machine you will be further prompted to supply some configuration options.  You can simply accept the default options if you have no special requirements.
 ```
-[root@localhost]# cd ~/workspace
+[root@localhost]# cd ~/kojak
 [root@localhost]# ./kojak
 1. Create VM
 ```
