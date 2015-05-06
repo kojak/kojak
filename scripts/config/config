@@ -61,6 +61,8 @@ wget http://localhost:8080/jnlpJars/jenkins-cli.jar
 java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin git
 java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin koji-plugin
 java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin artifactory
+java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin openshift-deployer
+java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin build-pipeline-plugin
 
 rm -f default.js* jenkins-cli.jar
 cd -
