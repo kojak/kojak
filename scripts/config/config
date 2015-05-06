@@ -63,6 +63,11 @@ java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin koji-plugin
 java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin artifactory
 java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin openshift-deployer
 java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin build-pipeline-plugin
+java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin email-ext
+java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin promoted-builds
+java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin copyartifact
+java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin authorize-project
+
 
 rm -f default.js* jenkins-cli.jar
 cd -
