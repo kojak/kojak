@@ -243,8 +243,8 @@ rm -f /tmp/kojiweb.conf.patch
 echo -e "# 10. Patching kojid.conf" >> ${LOG}
 cp -p /etc/kojid/kojid.conf /etc/kojid/kojid.conf.orig
 cat > /tmp/kojid.conf.patch << 'EOF'
---- /etc/kojid/kojid.conf   2014-02-26 14:22:18.000000000 -0500
-+++ /etc/kojid/kojid.conf   2014-04-07 16:17:42.124000014 -0400
+--- /etc/kojid.conf.orig 2015-01-27 23:41:00.000000000 -0500
++++ /etc/kojid.conf  2015-05-06 05:57:20.124000042 -0400
 @@ -3,7 +3,7 @@
  ; sleeptime=15
  
@@ -254,8 +254,8 @@ cat > /tmp/kojid.conf.patch << 'EOF'
  
  ; The minimum amount of free space (in MBs) required for each build root
  ; minspace=8192
-@@ -33,23 +33,24 @@
- ; mockhost=koji-linux-gnu
+@@ -36,10 +36,10 @@
+ ; rpmbuild_timeout=86400
  
  ; The URL for the xmlrpc server
 -server=http://hub.example.com/kojihub
@@ -265,13 +265,13 @@ cat > /tmp/kojid.conf.patch << 'EOF'
 -topurl=http://hub.example.com/kojifiles
 +topurl=http://koji.localdomain/kojifiles
  
- ; A space-separated list of hostname:repository[:use_common] tuples that kojid is authorized to checkout from (no quotes).
- ; Wildcards (as supported by fnmatch) are allowed.
- ; If use_common is specified and is one of "false", "no", "off", or "0" (without quotes), then kojid will not attempt to checkout
- ; a common/ dir when checking out sources from the source control system.  Otherwise, it will attempt to checkout a common/
- ; dir, and will raise an exception if it cannot.
+ ; A space-separated list of tuples from which kojid is allowed to checkout.
+ ; The format of those tuples is:
+@@ -56,13 +56,13 @@
+ ; to run before building the srpm. It is generally used to retrieve source
+ ; files from a remote location.  If no source_cmd is specified, "make sources"
+ ; is run by default.
 -allowed_scms=scm.example.com:/cvs/example git.example.org:/example svn.example.org:/users/*:no
-+;allowed_scms=scm.localdomain:/cvs/example git.example.org:/example svn.example.org:/users/*:no
 +allowed_scms=koji.localdomain:/rpms/*:false:rhpkg,sources svn.apache.org:/repos/*:no git.app.eng.bos.redhat.com:*:false:rhpkg,sources git.engineering.redhat.com:*:false:rhpkg,sources github.com:*:false:rhpkg,sources forge.fusesource.com:*:false:rhpkg,sources
  
  ; The mail host to use for sending email notifications
@@ -284,7 +284,7 @@ cat > /tmp/kojid.conf.patch << 'EOF'
  
  ;configuration for Kerberos authentication
  
-@@ -66,10 +67,10 @@
+@@ -79,10 +79,10 @@
  ;configuration for SSL authentication
  
  ;client certificate
