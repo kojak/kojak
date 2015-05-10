@@ -243,8 +243,8 @@ rm -f /tmp/kojiweb.conf.patch
 echo -e "# 10. Patching kojid.conf" >> ${LOG}
 cp -p /etc/kojid/kojid.conf /etc/kojid/kojid.conf.orig
 cat > /tmp/kojid.conf.patch << 'EOF'
---- /etc/kojid.conf 2015-01-27 23:41:00.000000000 -0500
-+++ /etc/kojid.conf  2015-05-06 05:57:20.124000042 -0400
+--- /etc/kojid/kojid.conf 2015-01-27 23:41:00.000000000 -0500
++++ /etc/kojid/kojid.conf 2015-05-06 05:57:20.124000042 -0400
 @@ -3,7 +3,7 @@
  ; sleeptime=15
  
