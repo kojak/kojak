@@ -163,7 +163,7 @@ rm -f /tmp/koji.conf.patch
 echo -e "# 08. Patching kojihub.conf" >> ${LOG}
 cp /etc/httpd/conf.d/kojihub.conf /etc/httpd/conf.d/kojihub.conf.orig
 cat > /tmp/kojihub.conf.patch << 'EOF'
---- /etc/httpd/conf.d/kojihub.conf.orig 2014-04-29 19:22:48.488789753 +0200
+--- /etc/httpd/conf.d/kojihub.conf      2014-04-29 19:22:48.488789753 +0200
 +++ /etc/httpd/conf.d/kojihub.conf      2014-04-29 20:38:28.421956276 +0200
 @@ -26,18 +26,18 @@
  Alias /kojifiles "/mnt/koji/"
@@ -197,7 +197,7 @@ rm -f /tmp/kojihub.conf.patch
 echo -e "# 09. Patching kojiweb.conf" >> ${LOG}
 cp /etc/httpd/conf.d/kojiweb.conf /etc/httpd/conf.d/kojiweb.conf.orig
 cat > /tmp/kojiweb.conf.patch << 'EOF'
---- /etc/httpd/conf.d/kojiweb.conf.orig 2014-04-26 00:34:40.642976946 +0200
+--- /etc/httpd/conf.d/kojiweb.conf      2014-04-26 00:34:40.642976946 +0200
 +++ /etc/httpd/conf.d/kojiweb.conf      2014-04-26 00:34:40.644976870 +0200
 @@ -1,4 +1,4 @@
 -#We use wsgi by default
@@ -559,7 +559,7 @@ rm -f /tmp/httpd.conf.patch
 echo -e "# 19. Patching sudoers.conf" >> ${LOG}
 cp -p /etc/sudoers /etc/sudoers.orig
 cat > /tmp/sudoers.patch << 'EOF'
---- /etc/sudoers.orig   2012-03-01 12:18:24.000000000 -0500
+--- /etc/sudoers    2012-03-01 12:18:24.000000000 -0500
 +++ /etc/sudoers    2015-03-29 09:50:20.531963467 -0400
 @@ -96,6 +96,7 @@
  ##
