@@ -519,14 +519,13 @@ fi
 chown -R postgres:postgres /var/lib/pgsql/data
 
 echo -e "# 17. Create the database tables" >> ${LOG} 
-KOJI_VERSION=$(rpm -q  koji --queryformat '%{name}-%{version}\n')
 echo -e "insert into users (name, password, status, usertype) values ('koji', 'koji', 0, 0);
 insert into user_perms (user_id, perm_id, creator_id) values (1, 1, 1);
 insert into users (name, status, usertype) values ('kojiadmin', 0, 0);
 insert into user_perms (user_id, perm_id, creator_id) values (2, 1, 1);
 \q" >> /tmp/users.sql
 su -l postgres -c "createuser -s -d -r koji; createdb -O koji koji"
-su -l koji -c "psql koji koji < /usr/share/doc/$KOJI_VERSION/docs/schema.sql"
+su -l koji -c "psql koji koji < /usr/share/doc/koji*/docs/schema.sql"
 su -l koji -c "psql koji koji < /tmp/users.sql"
 rm /tmp/users.sql
 
