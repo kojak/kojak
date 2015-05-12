@@ -66,7 +66,7 @@ JDK=$(rpm -qa | grep openjdk | sort -n | tail -1)
 alternatives --install /usr/bin/java java /usr/lib/jvm/${JDK}/bin/java 0
 
 # Install third party packages
-yum -y localinstall ${HOME}/workspace/kojak/pkgs/*.rpm
+yum -y localinstall $(dirname $0)/../../pkgs/*.rpm
 
 echo -e "# 03. Creating Koji user directories" >> ${LOG}
 useradd koji
