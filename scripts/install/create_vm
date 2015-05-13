@@ -369,18 +369,19 @@ do
             OS="fedora"
             ID=$(vagrant global-status | awk 'FNR == 4 {print}'| awk '{print $1}')
             # Install packages
-            [[ ! "$(rpm -qa | grep vagrant)" ]] && yum -y install https://dl.bintray.com/mitchellh/vagrant/vagrant_1.6.5_x86_64.rpm
-            [[ ! -f /etc/yum.repos.d/virtualbox.repo ]] && wget -P /etc/yum.repos.d/ http://download.virtualbox.org/virtualbox/rpm/$OS/virtualbox.repo
-            [[ -d /root/workspace/vm ]] && rm -rf /root/workspace/vm
             yum -y update
-            yum -y localinstall /tmp/vagrant_1.6.5_x86_64.rpm 
-            yum -y install VirtualBox
-            yum -y install kmod-VirtualBox
+            [[ ! "$(rpm -qa | grep vagrant)" ]] && yum -y install https://dl.bintray.com/mitchellh/vagrant/vagrant_1.6.5_x86_64.rpm
+            if [ ! $(which VBoxManage) ]
+            then
+                [[ ! -f /etc/yum.repos.d/virtualbox.repo ]] && wget -P /etc/yum.repos.d/ http://download.virtualbox.org/virtualbox/rpm/$OS/virtualbox.repo
+                yum -y install VirtualBox kmod-VirtualBox
+            fi
+            [[ -d /root/workspace/vm ]] && rm -rf /root/workspace/vm
             mkdir -p /root/workspace/vm
             cd /root/workspace/vm
             # Init virtual machine
             vagrant init chef/centos-6.5
-            vagrant up
+            vagrant up --provider=virtualbox
             # Connect to virtual machine
             vagrant ssh $ID
             exit
