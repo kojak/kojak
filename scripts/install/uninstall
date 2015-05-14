@@ -63,8 +63,6 @@ for file in ${LOG_FILES}; do rm -f $file || echo "$file not found"; done
 USERS="koji mock kojibuilder postgres apache jenkins"
 for user in ${USERS}; do userdel -rf $user; groupdel $user; done > /dev/null 2>&1  
 
-rm -f /tmp/install /tmp/config
-
 # Update mlocate database
 echo -e "\nUpdating file datatabse...please be patient."
 cd /
