@@ -71,7 +71,8 @@ ORIG_FILES=$(locate *.orig)
 for file in ${ORIG_FILES}; do cat $file > $(echo $file | sed "s/\.orig$//") && rm -f $file || echo "$file not found"; done
 
 # Remove theme files
-rm -rf /usr/share/koji-themes/fedora-koji/
+rm -rf /usr/share/koji-themes/fedora-koji
+rm -rf /workspace/koji-theme-fedora
 
 rm -f /tmp/install /tmp/config
 updatedb
