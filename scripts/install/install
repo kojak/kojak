@@ -592,6 +592,40 @@ patch -p0 < /tmp/yum.conf.patch
 rm -f /tmp/yum.conf.patch
 yum makecache
 
+echo -e "# 20. Installing theme" >> ${LOG}
+cat > /etc/httpd/conf.d/kojitheme.conf << 'EOF'
+#Override a few static items with our theme
+Alias /koji-static/images/koji.png "/usr/share/koji-themes/fedora-koji/images/fedora-koji.png"
+Alias /koji-static/images/powered-by-koji.png "/usr/share/koji-themes/fedora-koji/images/Powered-by-koji_button.png"
+Alias /koji-static/images/koji.ico "/usr/share/koji-themes/fedora-koji/images/fedora-koji.ico"
+Alias /koji-static/koji.css "/usr/share/koji-themes/fedora-koji/koji.css"
+Alias /koji-static/errors/unauthorized.html "/usr/share/koji-themes/fedora-koji/errors/unauthorized.html"
+Alias /koji-static/images/header-bg.png "/usr/share/koji-themes/fedora-koji/images/header-bg.png"
+Alias /koji-static/images/complete.png "/usr/share/koji-themes/fedora-koji/images/tick.png"
+Alias /koji-static/images/yes.png "/usr/share/koji-themes/fedora-koji/images/tick.png"
+Alias /koji-static/images/closed.png "/usr/share/koji-themes/fedora-koji/images/tick.png"
+Alias /koji-static/images/ready.png "/usr/share/koji-themes/fedora-koji/images/tick.png"
+Alias /koji-static/images/no.png "/usr/share/koji-themes/fedora-koji/images/minus.png"
+Alias /koji-static/images/failed.png "/usr/share/koji-themes/fedora-koji/images/minus.png"
+Alias /koji-static/images/building.png "/usr/share/koji-themes/fedora-koji/images/spanner.png"
+Alias /koji-static/images/deleted.png "/usr/share/koji-themes/fedora-koji/images/rubbishbin.png"
+Alias /koji-static/images/free.png "/usr/share/koji-themes/fedora-koji/images/clock.png"
+Alias /koji-static/images/waiting.png "/usr/share/koji-themes/fedora-koji/images/clock.png"
+Alias /koji-static/images/open.png "/usr/share/koji-themes/fedora-koji/images/arrowcircle.png"
+
+<Directory "/usr/share/koji-themes/fedora-koji">
+    Options None
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+</Directory>
+EOF
+
+cd ~/workspace
+git clone http://fedorapeople.org/cgit/ausil/public_git/koji-theme-fedora.git
+mkdir -p /usr/share/koji-themes/fedora-koji
+cp -r ~/workspace/koji-theme-fedora/www/static/ /usr/share/koji-themes/fedora-koji
+
 # Provision SSL certs
 rm -rf /etc/pki/CA/serial*
 rm -rf /etc/pki/CA/index*
