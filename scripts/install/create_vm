@@ -369,7 +369,6 @@ do
             OS="fedora"
             ID=$(vagrant global-status | awk 'FNR == 4 {print}'| awk '{print $1}')
             # Install packages
-            yum -y update
             [[ ! "$(rpm -qa | grep vagrant)" ]] && yum -y install https://dl.bintray.com/mitchellh/vagrant/vagrant_1.6.5_x86_64.rpm
             if [ ! $(which VBoxManage) ]
             then
