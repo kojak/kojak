@@ -163,17 +163,36 @@ rm -f /tmp/koji.conf.patch
 echo -e "# 08. Patching kojihub.conf" >> ${LOG}
 cp /etc/httpd/conf.d/kojihub.conf /etc/httpd/conf.d/kojihub.conf.orig
 cat > /tmp/kojihub.conf.patch << 'EOF'
---- /etc/httpd/conf.d/kojihub.conf    2015-01-27 23:41:00.000000000 -0500
-+++ /etc/httpd/conf.d/kojihub.conf    2015-05-11 05:40:39.857000012 -0400
-@@ -6,6 +6,7 @@
- 
+--- /etc/httpd/conf.d/kojihub.conf  2015-05-14 18:29:15.263000010 +0200
++++ /etc/httpd/conf.d/kojihub.conf  2015-05-14 19:20:14.685000099 +0200
+@@ -7,11 +7,8 @@
  <Directory "/usr/share/koji-hub">
      Options ExecCGI
-+    Options Indexes FollowSymLinks
      SetHandler wsgi-script
-     Require all granted
-     #If you have httpd <= 2.2, you'll want the following two lines instead
-@@ -39,16 +40,16 @@
+-    Require all granted
+-    #If you have httpd <= 2.2, you'll want the following two lines instead
+-    #of the one above:
+-    #Order allow,deny
+-    #Allow from all
++    Order allow,deny
++    Allow from all
+ </Directory>
+ 
+ # Support for mod_python is DEPRECATED. If you still need mod_python support,
+@@ -29,21 +26,18 @@
+ Alias /kojifiles "/mnt/koji/"
+ 
+ <Directory "/mnt/koji">
+-    Options Indexes
++    Options Indexes FollowSymLinks
+     AllowOverride None
+-    Require all granted
+-    #If you have httpd <= 2.2, you'll want the following two lines instead
+-    #of the one above:
+-    #Order allow,deny
+-    #Allow from all
++    Order allow,deny
++    Allow from all
  </Directory>
  
  # uncomment this to enable authentication via SSL client certificates
@@ -187,17 +206,7 @@ cat > /tmp/kojihub.conf.patch << 'EOF'
 +        SSLVerifyDepth  10
 +        SSLOptions +StdEnvVars
 +</Location>
- 
- # If you need to support koji < 1.4.0 clients using SSL authentication, then use the following instead:
--# <Location /kojihub>
--#         SSLOptions +StdEnvVars
--# </Location>
-+<Location /kojihub>
-+        SSLOptions +StdEnvVars
-+</Location>
- # In this case, you will need to enable these options globally (in ssl.conf):
- # SSLVerifyClient require
- # SSLVerifyDepth  10
+
 EOF
 patch -p0 < /tmp/kojihub.conf.patch
 rm -f /tmp/kojihub.conf.patch
@@ -205,24 +214,23 @@ rm -f /tmp/kojihub.conf.patch
 echo -e "# 09. Patching kojiweb.conf" >> ${LOG}
 cp /etc/httpd/conf.d/kojiweb.conf /etc/httpd/conf.d/kojiweb.conf.orig
 cat > /tmp/kojiweb.conf.patch << 'EOF'
---- /etc/httpd/conf.d/kojiweb.conf      2014-04-26 00:34:40.642976946 +0200
-+++ /etc/httpd/conf.d/kojiweb.conf      2014-04-26 00:34:40.644976870 +0200
-@@ -1,4 +1,4 @@
--#We use wsgi by default
-+# We use wsgi by default
- Alias /koji "/usr/share/koji-web/scripts/wsgi_publisher.py"
- #(configuration goes in /etc/kojiweb/web.conf)
- 
-@@ -9,7 +9,7 @@
-     #If you have httpd <= 2.2, you'll want the following two lines instead
-     #of the one above:
-     #Order allow,deny
+--- /etc/httpd/conf.d/kojiweb.conf  2015-05-14 18:29:15.266000011 +0200
++++ /etc/httpd/conf.d/kojiweb.conf  2015-05-14 19:20:25.116999935 +0200
+@@ -5,11 +5,8 @@
+ <Directory "/usr/share/koji-web/scripts/">
+     Options ExecCGI
+     SetHandler wsgi-script
+-    Require all granted
+-    #If you have httpd <= 2.2, you'll want the following two lines instead
+-    #of the one above:
+-    #Order allow,deny
 -    #Allow from all
++    Order allow,deny
 +    Allow from all
  </Directory>
  
  # Support for mod_python is DEPRECATED. If you still need mod_python support,
-@@ -43,11 +43,11 @@
+@@ -43,11 +40,11 @@
  # </Location>
  
  # uncomment this to enable authentication via SSL client certificates
@@ -238,7 +246,16 @@ cat > /tmp/kojiweb.conf.patch << 'EOF'
 +</Location>
  
  Alias /koji-static/ "/usr/share/koji-web/static/"
-
+ 
+@@ -57,6 +54,6 @@
+     Require all granted
+     #If you have httpd <= 2.2, you'll want the following two lines instead
+     #of the one above:
+-    #Order allow,deny
+-    #Allow from all
++    Order allow,deny
++    Allow from all
+ </Directory>
 EOF
 patch -p0 < /tmp/kojiweb.conf.patch 
 rm -f /tmp/kojiweb.conf.patch
