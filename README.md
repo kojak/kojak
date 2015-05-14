@@ -113,7 +113,7 @@ Currently Kojak uses SSL certificates as the preferred method of authentication.
 
 The Koji web interface is accessible via http://koji.localdomain/koji
 
-Jenkins configured with the Koji plugin can be configured via the Jenkins GUI via http://koji.localdomain:8080
+Jenkins configured with the Koji plugin can be configured via the Jenkins GUI via http://koji.localdomain:8081
 
 Artifcatory configured with a standard set of repos is available via http://koji.localdomain:8090
 
