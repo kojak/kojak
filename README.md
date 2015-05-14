@@ -8,7 +8,7 @@ Tool Chain
 
 Future implementations of Kojak will ship with a standardised tool chain designed to allow developers to build, test, deploy, verify and replicate product builds and their associated repositories in a consistent way.  The long term goal is to provide a development/staging platform to allow users to familiarize themselves with the build system and allow them access to Koji outside of prodcution environments.   
 
-The current tool chain integrates Jenkins, Jenkins Koji Plugin and Aprox.  Kojak also ships with a growing catalog of tried and tested product builds.  The buildmetadata-maven-plugin is the first example of this type and can be utilised to report a host of data about a build and the environment it was conducted in.
+The current tool chain integrates Jenkins, Jenkins Koji Plugin and Artifactory repository manager.  Kojak also ships with a growing catalog of tried and tested product builds.  The buildmetadata-maven-plugin is the first example of this type and can be utilised to report a host of data about a build and the environment it was conducted in.
 
 Installation Prerequisites
 ---------------------------
@@ -115,7 +115,7 @@ The Koji web interface is accessible via http://koji.localdomain/koji
 
 Jenkins configured with the Koji plugin can be configured via the Jenkins GUI via http://koji.localdomain:8080
 
-Aprox configured with a standard set of repos is available via http://koji.localdomain:8090
+Artifcatory configured with a standard set of repos is available via http://koji.localdomain:8090
 
 Known Issues
 ------------
