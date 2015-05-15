@@ -575,23 +575,6 @@ EOF
 patch -p0 < /tmp/httpd.conf.patch
 rm -f /tmp/httpd.conf.patch
 
-echo -e "# 19. Patching yum.conf" >> ${LOG}
-cp -p /etc/yum.conf /etc/yum.conf.orig
-cat > /tmp/yum.conf.patch << 'EOF'
-+++ /etc/yum.conf   2015-05-14 12:31:13.391000096 +0200
-@@ -1,6 +1,6 @@
- [main]
- cachedir=/var/cache/yum/$basearch/$releasever
--keepcache=0
-+keepcache=1
- debuglevel=2
- logfile=/var/log/yum.log
- exactarch=1
-EOF
-patch -p0 < /tmp/yum.conf.patch
-rm -f /tmp/yum.conf.patch
-yum makecache
-
 echo -e "# 20. Installing theme" >> ${LOG}
 cat > /etc/httpd/conf.d/kojitheme.conf << 'EOF'
 #Override a few static items with our theme
