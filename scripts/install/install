@@ -723,8 +723,6 @@ rm /tmp/kojibuilder.sql
 
 echo -e "\nService Status..."
 service postgresql restart
-service kojid restart
-service kojira restart
 
 touch /tmp/install
 

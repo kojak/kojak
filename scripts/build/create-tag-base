@@ -22,7 +22,7 @@ else
     ARCH="x86_64"
     REPO="centos-6-x86_64-external-repo"
     URL="http://mirror.centos.org/centos/6/os/${ARCH}/"
-    JAVA="java-1.7.0-openjdk-devel"
+    JAVA=$(rpm -qa --qf "%{NAME}\n" | grep openjdk | head -1)
     MAVEN="maven3-3.0.3-4"
     PLATFORM="CENTOS-6"
 
@@ -99,7 +99,7 @@ else
             ${PROG} add-pkg --owner=kojiadmin ${PROD} maven3
             ${PROG} tag-build ${PROD}-candidate ${MAVEN}
         else
-            git clone https://github.com/sbadakhc/kojak.git ~/workspace/kojak
+            git clone https://github.com/sbadakhc/kojak.git ${WORKSPACE}/kojak
             ${PROG} import --create-build ${WORKSPACE}/kojak/pkgs/${MAVEN}.src.rpm ${WORKSPACE}/kojak/pkgs/${MAVEN}.noarch.rpm
             ${PROG} add-pkg --owner=kojiadmin ${PROD} maven3
             ${PROG} tag-build ${PROD}-candidate ${MAVEN}
