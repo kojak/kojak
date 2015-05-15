@@ -121,3 +121,8 @@ Known Issues
 ------------
 
 See http://github.com/sbadakhc/kojak/issues?state=open
+
+Discussion
+----------
+
+Join our coomunity at https://plus.google.com/u/0/communities/103028582394768375364
