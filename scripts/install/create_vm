@@ -42,7 +42,7 @@ OS_VARIANT=${OS_VARIANT:="rhel6"}
 ARCH=${ARCH:="x86_64"}
 VCPU=${VCPU:="2"}
 VMMEM=${VMMEM:="4096"}
-VMDISK=${VMDISK:="32768M"}
+VMDISK=${VMDISK:="8192M"}
 
 # Check user priviledges
 if [ "$USER" != "root" ]; then
