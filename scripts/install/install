@@ -683,17 +683,16 @@ service ip6tables stop
 chkconfig ip6tables off
 
 echo -e "\nRestarting Services..."
-service postgresql restart
 chkconfig postgresql on
-service httpd restart
+service httpd start
 chkconfig httpd on
-service jenkins restart
+service jenkins start
 chkconfig jenkins on
 service artifactory start
 chkconfig artifactory on
-service kojid restart
+service kojid start
 chkconfig kojid on
-service kojira restart
+service kojira start
 chkconfig kojira on
 
 echo -e "\nCreating base config..."
