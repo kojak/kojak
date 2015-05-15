@@ -607,7 +607,7 @@ EOF
 cd ~/workspace
 git clone http://fedorapeople.org/cgit/ausil/public_git/koji-theme-fedora.git
 mkdir -p /usr/share/koji-themes/fedora-koji
-cp -r ~/workspace/koji-theme-fedora/www/static/ /usr/share/koji-themes/fedora-koji
+cp -r ~/workspace/koji-theme-fedora/www/static/* /usr/share/koji-themes/fedora-koji
 
 # Provision SSL certs
 rm -rf /etc/pki/CA/serial*
