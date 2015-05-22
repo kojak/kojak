@@ -1,0 +1,184 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson>
+  <disabledAdministrativeMonitors>
+    <string>OldData</string>
+  </disabledAdministrativeMonitors>
+  <version>1.596.2</version>
+  <numExecutors>2</numExecutors>
+  <mode>NORMAL</mode>
+  <useSecurity>true</useSecurity>
+  <authorizationStrategy class="com.michelin.cio.hudson.plugins.rolestrategy.RoleBasedAuthorizationStrategy">
+    <roleMap type="projectRoles">
+      <role name="dev" pattern="DEV">
+        <permissions>
+          <permission>hudson.model.Item.Cancel</permission>
+          <permission>hudson.model.Item.Delete</permission>
+          <permission>hudson.model.Item.Read</permission>
+          <permission>hudson.model.Item.Create</permission>
+          <permission>hudson.model.Run.Delete</permission>
+          <permission>hudson.model.Item.Workspace</permission>
+          <permission>hudson.model.Item.Build</permission>
+          <permission>hudson.scm.SCM.Tag</permission>
+          <permission>hudson.model.Item.Configure</permission>
+          <permission>hudson.model.Item.Discover</permission>
+          <permission>hudson.model.Run.Update</permission>
+        </permissions>
+        <assignedSIDs/>
+      </role>
+      <role name="ops" pattern="OPS">
+        <permissions>
+          <permission>hudson.model.Item.Cancel</permission>
+          <permission>hudson.model.Item.Delete</permission>
+          <permission>hudson.model.Item.Read</permission>
+          <permission>hudson.model.Item.Create</permission>
+          <permission>hudson.model.Run.Delete</permission>
+          <permission>hudson.model.Item.Workspace</permission>
+          <permission>hudson.model.Item.Build</permission>
+          <permission>hudson.scm.SCM.Tag</permission>
+          <permission>hudson.model.Item.Configure</permission>
+          <permission>hudson.model.Item.Discover</permission>
+          <permission>hudson.model.Run.Update</permission>
+        </permissions>
+        <assignedSIDs/>
+      </role>
+      <role name="test" pattern="TEST">
+        <permissions>
+          <permission>hudson.model.Item.Cancel</permission>
+          <permission>hudson.model.Item.Delete</permission>
+          <permission>hudson.model.Item.Read</permission>
+          <permission>hudson.model.Item.Create</permission>
+          <permission>hudson.model.Run.Delete</permission>
+          <permission>hudson.model.Item.Workspace</permission>
+          <permission>hudson.model.Item.Build</permission>
+          <permission>hudson.scm.SCM.Tag</permission>
+          <permission>hudson.model.Item.Configure</permission>
+          <permission>hudson.model.Item.Discover</permission>
+          <permission>hudson.model.Run.Update</permission>
+        </permissions>
+        <assignedSIDs/>
+      </role>
+    </roleMap>
+    <roleMap type="globalRoles">
+      <role name="admin" pattern=".*">
+        <permissions>
+          <permission>hudson.model.View.Delete</permission>
+          <permission>hudson.model.Computer.Connect</permission>
+          <permission>hudson.model.Run.Delete</permission>
+          <permission>hudson.model.Hudson.UploadPlugins</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.ManageDomains</permission>
+          <permission>hudson.model.Computer.Create</permission>
+          <permission>hudson.model.View.Configure</permission>
+          <permission>hudson.model.Hudson.ConfigureUpdateCenter</permission>
+          <permission>hudson.model.Computer.Build</permission>
+          <permission>hudson.model.Item.Configure</permission>
+          <permission>hudson.model.Hudson.Administer</permission>
+          <permission>hudson.model.Item.Cancel</permission>
+          <permission>hudson.model.Item.Read</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.View</permission>
+          <permission>hudson.model.Computer.Delete</permission>
+          <permission>hudson.model.Item.Build</permission>
+          <permission>hudson.scm.SCM.Tag</permission>
+          <permission>hudson.model.Item.Discover</permission>
+          <permission>hudson.model.Hudson.Read</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Update</permission>
+          <permission>hudson.model.Item.Create</permission>
+          <permission>hudson.model.Item.Workspace</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Delete</permission>
+          <permission>hudson.model.View.Read</permission>
+          <permission>hudson.model.Hudson.RunScripts</permission>
+          <permission>hudson.model.View.Create</permission>
+          <permission>hudson.model.Item.Delete</permission>
+          <permission>hudson.model.Computer.Configure</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Create</permission>
+          <permission>hudson.model.Computer.Disconnect</permission>
+          <permission>hudson.model.Run.Update</permission>
+        </permissions>
+        <assignedSIDs>
+          <sid>admin</sid>
+        </assignedSIDs>
+      </role>
+      <role name="users" pattern=".*">
+        <permissions>
+          <permission>hudson.model.Hudson.Read</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Update</permission>
+          <permission>hudson.model.Computer.Connect</permission>
+          <permission>hudson.model.Run.Delete</permission>
+          <permission>hudson.model.Item.Workspace</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Delete</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.ManageDomains</permission>
+          <permission>hudson.model.Computer.Create</permission>
+          <permission>hudson.model.Computer.Build</permission>
+          <permission>hudson.model.Item.Read</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.View</permission>
+          <permission>hudson.model.Computer.Configure</permission>
+          <permission>com.cloudbees.plugins.credentials.CredentialsProvider.Create</permission>
+          <permission>hudson.model.Computer.Delete</permission>
+          <permission>hudson.model.Computer.Disconnect</permission>
+          <permission>hudson.model.Item.Discover</permission>
+          <permission>hudson.model.Run.Update</permission>
+        </permissions>
+        <assignedSIDs>
+          <sid>ops</sid>
+          <sid>dev</sid>
+          <sid>test</sid>
+          <sid>anonymous</sid>
+        </assignedSIDs>
+      </role>
+    </roleMap>
+    <roleMap type="slaveRoles"/>
+  </authorizationStrategy>
+  <securityRealm class="hudson.security.HudsonPrivateSecurityRealm">
+    <disableSignup>false</disableSignup>
+    <enableCaptcha>false</enableCaptcha>
+  </securityRealm>
+  <disableRememberMe>false</disableRememberMe>
+  <projectNamingStrategy class="jenkins.model.ProjectNamingStrategy$DefaultProjectNamingStrategy"/>
+  <workspaceDir>${ITEM_ROOTDIR}/workspace</workspaceDir>
+  <buildsDir>${ITEM_ROOTDIR}/builds</buildsDir>
+  <markupFormatter class="hudson.markup.EscapedMarkupFormatter"/>
+  <jdks/>
+  <viewsTabBar class="hudson.views.DefaultViewsTabBar"/>
+  <myViewsTabBar class="hudson.views.DefaultMyViewsTabBar"/>
+  <clouds/>
+  <slaves/>
+  <quietPeriod>5</quietPeriod>
+  <scmCheckoutRetryCount>0</scmCheckoutRetryCount>
+  <views>
+    <hudson.model.AllView>
+      <owner class="hudson" reference="../../.."/>
+      <name>All</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+    </hudson.model.AllView>
+    <se.diabol.jenkins.pipeline.DeliveryPipelineView plugin="delivery-pipeline-plugin@0.9.1">
+      <owner class="hudson" reference="../../.."/>
+      <name>OSE DEMO</name>
+      <filterExecutors>false</filterExecutors>
+      <filterQueue>false</filterQueue>
+      <properties class="hudson.model.View$PropertyList"/>
+      <componentSpecs>
+        <se.diabol.jenkins.pipeline.DeliveryPipelineView_-ComponentSpec>
+          <name>DevOps Continuous Delivery</name>
+          <firstJob>DEV</firstJob>
+        </se.diabol.jenkins.pipeline.DeliveryPipelineView_-ComponentSpec>
+      </componentSpecs>
+      <noOfPipelines>3</noOfPipelines>
+      <showAggregatedPipeline>true</showAggregatedPipeline>
+      <noOfColumns>1</noOfColumns>
+      <sorting>none</sorting>
+      <showAvatars>true</showAvatars>
+      <updateInterval>2</updateInterval>
+      <showChanges>false</showChanges>
+      <allowManualTriggers>true</allowManualTriggers>
+      <allowRebuild>false</allowRebuild>
+      <allowPipelineStart>false</allowPipelineStart>
+      <regexpFirstJobs/>
+    </se.diabol.jenkins.pipeline.DeliveryPipelineView>
+  </views>
+  <primaryView>OSE DEMO</primaryView>
+  <slaveAgentPort>0</slaveAgentPort>
+  <label></label>
+  <nodeProperties/>
+  <globalNodeProperties/>
+</hudson>

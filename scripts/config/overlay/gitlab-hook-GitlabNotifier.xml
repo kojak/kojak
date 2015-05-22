@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson.model.Descriptor plugin='gitlab-notifier'>
+  <gitlab_url></gitlab_url>
+  <token></token>
+  <commit_status>false</commit_status>
+  <mr_status_only>false</mr_status_only>
+</hudson.model.Descriptor>

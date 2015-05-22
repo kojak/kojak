@@ -1,0 +1,11 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson.model.Descriptor plugin='gitlab-hook'>
+  <merge_request_processing>true</merge_request_processing>
+  <automatic_project_creation>false</automatic_project_creation>
+  <master_branch>master</master_branch>
+  <use_master_project_name>false</use_master_project_name>
+  <description>Automatically created by Gitlab Web Hook plugin</description>
+  <template></template>
+  <templates/>
+  <group_templates/>
+</hudson.model.Descriptor>
