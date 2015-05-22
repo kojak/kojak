@@ -50,24 +50,6 @@ fi
 cp -a /root/workspace/kojak /home/koji/workspace && chown -R koji:koji /home/koji/workspace/kojak
 su -l koji -c "/home/koji/workspace/kojak/scripts/build/create-tag-base -p CENTOS-6"
 
-service jenkins stop
-cp -p /etc/sysconfig/jenkins /etc/sysconfig/jenkins.orig
-cat > /tmp/jenkins.patch << 'EOF'
---- /etc/sysconfig/jenkins.orig 2014-06-02 17:19:23.000000000 +0200
-+++ /etc/sysconfig/jenkins  2014-06-05 15:22:00.665823455 +0200
-@@ -26,7 +26,7 @@
- # Be careful when you change this, as you need to update
- # permissions of $JENKINS_HOME and /var/log/jenkins.
- #
--JENKINS_USER="jenkins"
-+JENKINS_USER="koji"
-
- ## Type:        string
- ## Default:     "-Djava.awt.headless=true"
-EOF
-patch -p0 < /tmp/jenkins.patch
-rm -f /tmp/jenkins.patch
-
 service jenkins start
 echo -e "# Initialising plugin list..."
 while ! timeout 1 bash -c "echo > /dev/tcp/localhost/8080"; do echo -e "# Retrying...please be patient" && sleep 12 ; done
@@ -94,6 +76,25 @@ artifactory \
 role-strategy"
 
 java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin ${PLUGINS}
+
+service jenkins stop
+
+cp -p /etc/sysconfig/jenkins /etc/sysconfig/jenkins.orig
+cat > /tmp/jenkins.patch << 'EOF'
+--- /etc/sysconfig/jenkins.orig 2014-06-02 17:19:23.000000000 +0200
++++ /etc/sysconfig/jenkins  2014-06-05 15:22:00.665823455 +0200
+@@ -26,7 +26,7 @@
+ # Be careful when you change this, as you need to update
+ # permissions of $JENKINS_HOME and /var/log/jenkins.
+ #
+-JENKINS_USER="jenkins"
++JENKINS_USER="koji"
+
+ ## Type:        string
+ ## Default:     "-Djava.awt.headless=true"
+EOF
+patch -p0 < /tmp/jenkins.patch
+rm -f /tmp/jenkins.patch
 
 # Configure Jenkins
 "cp" -af /root/workspace/kojak/scripts/config/overlay/* /var/lib/jenkins/
