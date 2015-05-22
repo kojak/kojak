@@ -98,13 +98,7 @@ rm -f /tmp/jenkins.patch
 
 # Configure Jenkins
 "cp" -af /root/workspace/kojak/scripts/config/overlay/* /var/lib/jenkins/
-
-DIRS="/var/log/jenkins \
-/var/lib/jenkins \
-/var/run/jenkins \
-/var/cache/jenkins"
-for dir in ${DIRS}; do chown -R koji:koji $dir; done
-
+chown -R koji:koji /var/log/jenkins /var/lib/jenkins /var/cache/jenkins
 
 # Restart Jenkins server
 service jenkins start
