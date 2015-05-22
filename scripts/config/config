@@ -90,6 +90,7 @@ github \
 ssh-agent \
 matrix-project \
 koji-plugin \
+artifactory \
 role-strategy"
 
 java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin ${PLUGINS}
