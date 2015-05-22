@@ -96,7 +96,8 @@ role-strategy"
 java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin ${PLUGINS}
 
 # Configure Jenkins
-"cp" -afp /home/koji/kojak/scripts/config/overlay/* /var/lib/jenkins/
+"cp" -af /root/workspace/kojak/scripts/config/overlay/* /var/lib/jenkins/
+chown -R koji:koji /var/lib/jenkins/
 
 # Restart Jenkins server
 service jenkins start
