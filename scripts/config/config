@@ -50,28 +50,9 @@ fi
 cp -a /root/workspace/kojak /home/koji/workspace && chown -R koji:koji /home/koji/workspace/kojak
 su -l koji -c "/home/koji/workspace/kojak/scripts/build/create-tag-base -p CENTOS-6"
 
-# Installing Jenkins Plugins"
-cd /tmp
-
-# Initialise plugin list
-curl  -L http://updates.jenkins-ci.org/update-center.json | sed '1d;$d' | curl -X POST -H 'Accept: application/json' -d @- http://localhost:8080/updateCenter/byId/default/postBack
-
-# Retrieve plugins
-wget http://localhost:8080/jnlpJars/jenkins-cli.jar
-java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin git
-java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin koji-plugin
-java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin artifactory
-java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin openshift-deployer
-java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin build-pipeline-plugin
-java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin email-ext
-java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin promoted-builds
-java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin copyartifact
-java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin authorize-project
-
-
-rm -f default.js* jenkins-cli.jar
-cd -
 service jenkins stop
+
+# Patch Jenkins 
 cp -p /etc/sysconfig/jenkins /etc/sysconfig/jenkins.orig
 cat > /tmp/jenkins.patch << 'EOF'
 --- /etc/sysconfig/jenkins.orig 2014-06-02 17:19:23.000000000 +0200
@@ -89,24 +70,11 @@ EOF
 patch -p0 < /tmp/jenkins.patch
 rm -f /tmp/jenkins.patch
 
-dir=$( cd $(dirname $0) ; pwd -P )
-files="${dir}/files"
+# Configure Jenkins
+"cp" -af /root/workspace/kojak/scripts/config/overlay/* /var/lib/jenkins/
+chown -R koji:koji /var/log/jenkins /var/lib/jenkins /var/cache/jenkins
 
-echo "Copying jenkins overlay files from ${files}/jenkins/* to /var/lib/jenkins..."
-cp -af $files/jenkins/* /var/lib/jenkins
-mkdir -p /var/lib/jenkins/.pki/nssdb
-
-javaver=$(java -version 2>&1 | head -1 | awk '{print $3}')
-javaver="${javaver%\"}"
-javaver="${javaver#\"}"
-
-mkdir -p /var/lib/jenkins/.java/fonts/${javaver}
-
-echo "Setting up font config in /var/lib/jenkins/.java/fonts/${javaver}..."
-cp $files/fcinfo* /var/lib/jenkins/.java/fonts/${javaver}
-
-chown -R koji:koji /var/lib/jenkins /var/cache/jenkins /var/log/jenkins
-
+# Restart Jenkins server
 service jenkins start
 
 echo -e "\nConfiguration complete...Kojak is AOK"

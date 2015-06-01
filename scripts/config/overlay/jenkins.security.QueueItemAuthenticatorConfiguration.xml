@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jenkins.security.QueueItemAuthenticatorConfiguration>
+  <authenticators>
+    <org.jenkinsci.plugins.authorizeproject.ProjectQueueItemAuthenticator plugin="authorize-project@1.0.3"/>
+  </authenticators>
+</jenkins.security.QueueItemAuthenticatorConfiguration>

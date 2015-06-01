@@ -1,0 +1,9 @@
+Started on May 19, 2015 10:44:05 AM
+Using strategy: Default
+[poll] Last Built Revision: Revision 8b8fb2884ca5c7a83d9750c168f8d1332ddd2de5 (refs/remotes/origin/master)
+using GIT_SSH to set credentials 
+ > git --version # timeout=10
+ > git ls-remote -h git@github.vps.no:vsxxblu/helloworld.git # timeout=10
+[poll] Latest remote head revision on origin/master is: bf1dbcdae7e4ba5f288032d2a13d58daa78cd6a4
+Done. Took 0.17 sec
+Changes found

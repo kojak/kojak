@@ -5,7 +5,7 @@ import optparse
 import os
 import sys
 
-KOJI_HUB = 'http://koji.localdomain/kojihub'
+KOJI_HUB = 'http://devops.example.com/kojihub'
 KOJI_CMD = 'koji'
 
 def run(cmd, fail=True):

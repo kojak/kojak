@@ -10,22 +10,21 @@
 # Debugging
 #set -x
 
-if [[ ${USER} != koji ]]; then
-    echo "Please execute this script as koji user " 2>&1
-    exit 1
-else
-
-    # Declare variables
+# Declare variables
     WORKPSACE="$HOME/workspace"
     PROG="koji"
     PROD="${2}"
     ARCH="x86_64"
     REPO="centos-6-x86_64-external-repo"
     URL="http://mirror.centos.org/centos/6/os/${ARCH}/"
-    JAVA="java-1.7.0-openjdk-devel"
+    JAVA=$(rpm -qa --qf "%{NAME}\n" | grep openjdk | head -1)
     MAVEN="maven3-3.0.3-4"
     PLATFORM="CENTOS-6"
 
+if [[ ${USER} != koji ]]; then
+    echo "Please execute this script as koji user " 2>&1
+    exit 1
+else
     create-tag-base() {
     ${PROG} add-tag ${PROD} --maven-support --include-all
     ${PROG} add-tag ${PROD}-candidate --maven-support --include-all
@@ -95,12 +94,12 @@ else
     else
         # Adding Maven
         if [ -d "${WORKSPACE}/kojak" ]; then
-            ${PROG} import --create-build ${WORKSPACE}/kojak/pkgs/${MAVEN}.src.rpm ${WORKSPACE}/kojak/pkgs/${MAVEN}.noarch.rpm
+            ${PROG} import --create-build /home/koji/kojak/pkgs/${MAVEN}.src.rpm /home/koji/kojak/pkgs/${MAVEN}.noarch.rpm
             ${PROG} add-pkg --owner=kojiadmin ${PROD} maven3
             ${PROG} tag-build ${PROD}-candidate ${MAVEN}
         else
-            git clone https://github.com/sbadakhc/kojak.git ~/workspace/kojak
-            ${PROG} import --create-build ${WORKSPACE}/kojak/pkgs/${MAVEN}.src.rpm ${WORKSPACE}/kojak/pkgs/${MAVEN}.noarch.rpm
+            git clone https://github.com/sbadakhc/kojak.git /home/koji/kojak
+            ${PROG} import --create-build /home/koji/kojak/pkgs/${MAVEN}.src.rpm /home/koji/kojak/pkgs/${MAVEN}.noarch.rpm
             ${PROG} add-pkg --owner=kojiadmin ${PROD} maven3
             ${PROG} tag-build ${PROD}-candidate ${MAVEN}
         fi

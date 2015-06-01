@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<maven2-moduleset plugin="maven-plugin@2.7.1">
+  <actions/>
+  <description>Execute maven build and deploy helloworld war to Openshift devdemo environment.</description>
+  <logRotator class="hudson.tasks.LogRotator">
+    <daysToKeep>-1</daysToKeep>
+    <numToKeep>-1</numToKeep>
+    <artifactDaysToKeep>-1</artifactDaysToKeep>
+    <artifactNumToKeep>-1</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.authorizeproject.AuthorizeProjectProperty plugin="authorize-project@1.0.3">
+      <strategy class="org.jenkinsci.plugins.authorizeproject.strategy.SpecificUsersAuthorizationStrategy">
+        <userid>dev</userid>
+        <noNeedReauthentication>false</noNeedReauthentication>
+      </strategy>
+    </org.jenkinsci.plugins.authorizeproject.AuthorizeProjectProperty>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.11.3">
+      <projectUrl>https://github.vps.no/vsxxblu/helloworld/</projectUrl>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.9.1">
+      <taskName>DEVELOPMENT</taskName>
+      <stageName>DEV</stageName>
+    </se.diabol.jenkins.pipeline.PipelineProperty>
+    <hudson.plugins.promoted__builds.JobPropertyImpl plugin="promoted-builds@2.21">
+      <activeProcessNames>
+        <string>BUILD</string>
+      </activeProcessNames>
+    </hudson.plugins.promoted__builds.JobPropertyImpl>
+  </properties>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.3.5">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>https://github.com/sbadakhc/HelloWorld.git</url>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/master</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.11.3">
+      <spec></spec>
+    </com.cloudbees.jenkins.GitHubPushTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <rootModule>
+    <groupId>com.example</groupId>
+    <artifactId>HelloWorld</artifactId>
+  </rootModule>
+  <goals>clean install</goals>
+  <aggregatorStyleBuild>true</aggregatorStyleBuild>
+  <incrementalBuild>false</incrementalBuild>
+  <ignoreUpstremChanges>true</ignoreUpstremChanges>
+  <archivingDisabled>false</archivingDisabled>
+  <siteArchivingDisabled>false</siteArchivingDisabled>
+  <fingerprintingDisabled>false</fingerprintingDisabled>
+  <resolveDependencies>false</resolveDependencies>
+  <processPlugins>false</processPlugins>
+  <mavenValidationLevel>-1</mavenValidationLevel>
+  <runHeadless>false</runHeadless>
+  <disableTriggerDownstreamProjects>false</disableTriggerDownstreamProjects>
+  <blockTriggerWhenBuilding>true</blockTriggerWhenBuilding>
+  <settings class="jenkins.mvn.DefaultSettingsProvider"/>
+  <globalSettings class="jenkins.mvn.DefaultGlobalSettingsProvider"/>
+  <reporters>
+    <hudson.maven.reporters.MavenMailer>
+      <recipients>root@localhost</recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>true</sendToIndividuals>
+      <perModuleEmail>true</perModuleEmail>
+    </hudson.maven.reporters.MavenMailer>
+  </reporters>
+  <publishers>
+    <au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger plugin="build-pipeline-plugin@1.4.7">
+      <configs/>
+      <downstreamProjectNames>UAT-DEPLOY</downstreamProjectNames>
+    </au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
+  </publishers>
+  <buildWrappers/>
+  <prebuilders/>
+  <postbuilders>
+    <org.jenkinsci.plugins.openshift.DeployApplication plugin="openshift-deployer@1.2.0">
+      <serverName>OSE VPS DEMO</serverName>
+      <cartridges>jbossews-2.0</cartridges>
+      <domain>devdemo</domain>
+      <gearProfile>dev-medium</gearProfile>
+      <appName>helloworld</appName>
+      <deploymentPackage>/var/lib/jenkins/jobs/DEV-BUILD/workspace/target/HelloWorld.war</deploymentPackage>
+      <environmentVariables></environmentVariables>
+      <autoScale>false</autoScale>
+      <deploymentType>GIT</deploymentType>
+      <openshiftDirectory>src/main/resources/openshift</openshiftDirectory>
+    </org.jenkinsci.plugins.openshift.DeployApplication>
+    <hudson.tasks.Shell>
+      <command>echo &quot;${BUILD_URL}&quot; &gt; mail.txt ; mail -s &quot;DEV BUILD - CANDIDATE PENDING APPROVAL&quot; root@localhost &lt; mail.txt ; rm -f mail.txt
+</command>
+    </hudson.tasks.Shell>
+  </postbuilders>
+  <runPostStepsIfResult>
+    <name>SUCCESS</name>
+    <ordinal>0</ordinal>
+    <color>BLUE</color>
+    <completeBuild>true</completeBuild>
+  </runPostStepsIfResult>
+</maven2-moduleset>

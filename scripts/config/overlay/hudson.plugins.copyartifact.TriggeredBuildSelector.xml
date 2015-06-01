@@ -1,0 +1,4 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<hudson.plugins.copyartifact.TriggeredBuildSelector_-DescriptorImpl plugin="copyartifact@1.35.1">
+  <globalUpstreamFilterStrategy>UseOldest</globalUpstreamFilterStrategy>
+</hudson.plugins.copyartifact.TriggeredBuildSelector_-DescriptorImpl>

@@ -1,0 +1,60 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Deploy helloworld war to Openshift prodemo environment.</description>
+  <logRotator class="hudson.tasks.LogRotator">
+    <daysToKeep>-1</daysToKeep>
+    <numToKeep>-1</numToKeep>
+    <artifactDaysToKeep>-1</artifactDaysToKeep>
+    <artifactNumToKeep>-1</artifactNumToKeep>
+  </logRotator>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.authorizeproject.AuthorizeProjectProperty plugin="authorize-project@1.0.3">
+      <strategy class="org.jenkinsci.plugins.authorizeproject.strategy.SpecificUsersAuthorizationStrategy">
+        <userid>ops</userid>
+        <noNeedReauthentication>false</noNeedReauthentication>
+      </strategy>
+    </org.jenkinsci.plugins.authorizeproject.AuthorizeProjectProperty>
+    <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.11.3">
+      <projectUrl>https://github.vps.no/vsxxblu/helloworld/</projectUrl>
+    </com.coravy.hudson.plugins.github.GithubProjectProperty>
+    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.9.1">
+      <taskName>PRODUCTION</taskName>
+      <stageName>OPS</stageName>
+    </se.diabol.jenkins.pipeline.PipelineProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <org.jenkinsci.plugins.openshift.DeployApplication plugin="openshift-deployer@1.2.0">
+      <serverName>OSE VPS DEMO</serverName>
+      <cartridges>jbossews-2.0</cartridges>
+      <domain>prodemo</domain>
+      <gearProfile>prod-medium</gearProfile>
+      <appName>helloworld</appName>
+      <deploymentPackage>/var/lib/jenkins/jobs/DEV-BUILD/workspace/target/HelloWorld.war</deploymentPackage>
+      <environmentVariables></environmentVariables>
+      <autoScale>false</autoScale>
+      <deploymentType>GIT</deploymentType>
+      <openshiftDirectory>src/main/resources/openshift</openshiftDirectory>
+    </org.jenkinsci.plugins.openshift.DeployApplication>
+    <hudson.tasks.Shell>
+      <command>echo &quot;${BUILD_URL}&quot; &gt; mail.txt ; mail -s &quot;PROD DEPLOY - APPLICATION LIVE!!!&quot; root@localhost &lt; mail.txt ; rm -f mail.txt
+</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.Mailer plugin="mailer@1.11">
+      <recipients>blu@vps.no</recipients>
+      <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
+      <sendToIndividuals>true</sendToIndividuals>
+    </hudson.tasks.Mailer>
+  </publishers>
+  <buildWrappers/>
+</project>

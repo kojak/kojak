@@ -63,13 +63,17 @@ for file in ${LOG_FILES}; do rm -f $file || echo "$file not found"; done
 USERS="koji mock kojibuilder postgres apache jenkins"
 for user in ${USERS}; do userdel -rf $user; groupdel $user; done > /dev/null 2>&1  
 
-rm -f /tmp/install /tmp/config
-
 # Update mlocate database
 echo -e "\nUpdating file datatabse...please be patient."
 cd /
 updatedb
 ORIG_FILES=$(locate *.orig)
 for file in ${ORIG_FILES}; do cat $file > $(echo $file | sed "s/\.orig$//") && rm -f $file || echo "$file not found"; done
+
+# Remove theme files
+rm -rf /usr/share/koji-themes/fedora-koji
+rm -rf /workspace/koji-theme-fedora
+
+rm -f /tmp/install /tmp/config
 updatedb
 echo -e "Uninstalltion complete."

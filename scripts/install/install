@@ -48,8 +48,8 @@ echo -e "# 01. Installing packages" >> ${LOG}
 rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 
 # Install Jenkins repo
-wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
-rpm --import http://pkg.jenkins-ci.org/redhat/jenkins-ci.org.key
+wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
 
 # Install RPMS
 yum -y update
@@ -61,12 +61,35 @@ postgresql-python pyOpenSSL python-krbV python-cheetah python-qpid libvirt-pytho
 koji koji-builder koji-hub koji-hub-plugins koji-utils koji-vm koji-web \
 java-1.7.0-openjdk-devel jenkins
 
+if [ -f ! /etc/yum.conf.save ]; then
+    echo -e "# 00. Patching yum.conf" >> ${LOG}
+    cp -p /etc/yum.conf /etc/yum.conf.save
+    cat > /tmp/yum.conf.patch << 'EOF'
+[root@koji /]# diff -u /etc/yum.conf.save /etc/yum.conf
+--- /etc/yum.conf   2014-10-16 11:15:03.000000000 -0400
++++ /etc/yum.conf   2015-05-16 12:57:15.488999996 -0400
+@@ -1,6 +1,6 @@
+ [main]
+ cachedir=/var/cache/yum/$basearch/$releasever
+-keepcache=0
++keepcache=1
+ debuglevel=2
+ logfile=/var/log/yum.log
+ exactarch=1
+EOF
+    patch -p0 < /tmp/yum.conf.patch
+    rm -f /tmp/yum.conf.patch
+    yum makecache
+else
+    echo -e "# Yum already patched"
+fi
+
 # Configrue Java
 JDK=$(rpm -qa | grep openjdk | sort -n | tail -1)
 alternatives --install /usr/bin/java java /usr/lib/jvm/${JDK}/bin/java 0
 
 # Install third party packages
-yum -y localinstall ${HOME}/workspace/kojak/pkgs/*.rpm
+yum -y localinstall $(dirname $0)/../../pkgs/*.rpm
 
 echo -e "# 03. Creating Koji user directories" >> ${LOG}
 useradd koji
@@ -91,7 +114,7 @@ cat > /tmp/hosts.patch << 'EOF'
 @@ -1,2 +1,3 @@
  127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
  ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
-+10.34.25.167   koji koji.localdomain
++10.34.25.167   koji devops.example.com
 EOF
 patch -p0 < /tmp/hosts.patch
 rm -f /tmp/hosts.patch
@@ -123,18 +146,18 @@ rm -f /tmp/limits.conf.patch
 echo -e "# 07. Patching koji.conf" >> ${LOG}
 cp -p /etc/koji.conf /etc/koji.conf.orig
 cat > /tmp/koji.conf.patch << 'EOF'
---- /etc/koji.conf.orig 2014-09-26 14:01:58.000000000 -0400
+--- /etc/koji.conf  2014-09-26 14:01:58.000000000 -0400
 +++ /etc/koji.conf  2014-11-21 05:49:31.763999450 -0500
 @@ -3,13 +3,13 @@
  ;configuration for koji cli tool
  
  ;url of XMLRPC server
 -server = http://koji.fedoraproject.org/kojihub
-+server = http://koji.localdomain/kojihub
++server = http://devops.example.com/kojihub
  
  ;url of web interface
 -weburl = http://koji.fedoraproject.org/koji
-+weburl = http://koji.localdomain/koji
++weburl = http://devops.example.com/koji
  
  ;url of package download site
 -topurl = https://kojipkgs.fedoraproject.org/
@@ -163,19 +186,38 @@ rm -f /tmp/koji.conf.patch
 echo -e "# 08. Patching kojihub.conf" >> ${LOG}
 cp /etc/httpd/conf.d/kojihub.conf /etc/httpd/conf.d/kojihub.conf.orig
 cat > /tmp/kojihub.conf.patch << 'EOF'
---- /etc/httpd/conf.d/kojihub.conf.orig 2014-04-29 19:22:48.488789753 +0200
-+++ /etc/httpd/conf.d/kojihub.conf      2014-04-29 20:38:28.421956276 +0200
-@@ -26,18 +26,18 @@
+--- /etc/httpd/conf.d/kojihub.conf  2015-05-14 18:29:15.263000010 +0200
++++ /etc/httpd/conf.d/kojihub.conf  2015-05-14 19:20:14.685000099 +0200
+@@ -7,11 +7,8 @@
+ <Directory "/usr/share/koji-hub">
+     Options ExecCGI
+     SetHandler wsgi-script
+-    Require all granted
+-    #If you have httpd <= 2.2, you'll want the following two lines instead
+-    #of the one above:
+-    #Order allow,deny
+-    #Allow from all
++    Order allow,deny
++    Allow from all
+ </Directory>
+ 
+ # Support for mod_python is DEPRECATED. If you still need mod_python support,
+@@ -29,21 +26,18 @@
  Alias /kojifiles "/mnt/koji/"
-
+ 
  <Directory "/mnt/koji">
 -    Options Indexes
 +    Options Indexes FollowSymLinks
      AllowOverride None
-     Order allow,deny
-     Allow from all
+-    Require all granted
+-    #If you have httpd <= 2.2, you'll want the following two lines instead
+-    #of the one above:
+-    #Order allow,deny
+-    #Allow from all
++    Order allow,deny
++    Allow from all
  </Directory>
-
+ 
  # uncomment this to enable authentication via SSL client certificates
 -# <Location /kojihub/ssllogin>
 -#         SSLVerifyClient require
@@ -188,8 +230,6 @@ cat > /tmp/kojihub.conf.patch << 'EOF'
 +        SSLOptions +StdEnvVars
 +</Location>
 
- # If you need to support koji < 1.4.0 clients using SSL authentication, then use the following instead:
- # <Location /kojihub>
 EOF
 patch -p0 < /tmp/kojihub.conf.patch
 rm -f /tmp/kojihub.conf.patch
@@ -197,23 +237,23 @@ rm -f /tmp/kojihub.conf.patch
 echo -e "# 09. Patching kojiweb.conf" >> ${LOG}
 cp /etc/httpd/conf.d/kojiweb.conf /etc/httpd/conf.d/kojiweb.conf.orig
 cat > /tmp/kojiweb.conf.patch << 'EOF'
---- /etc/httpd/conf.d/kojiweb.conf.orig 2014-04-26 00:34:40.642976946 +0200
-+++ /etc/httpd/conf.d/kojiweb.conf      2014-04-26 00:34:40.644976870 +0200
-@@ -1,4 +1,4 @@
--#We use wsgi by default
-+# We use wsgi by default
- Alias /koji "/usr/share/koji-web/scripts/wsgi_publisher.py"
- #(configuration goes in /etc/kojiweb/web.conf)
- 
-@@ -7,6 +7,7 @@
+--- /etc/httpd/conf.d/kojiweb.conf  2015-05-14 18:29:15.266000011 +0200
++++ /etc/httpd/conf.d/kojiweb.conf  2015-05-14 19:20:25.116999935 +0200
+@@ -5,11 +5,8 @@
+ <Directory "/usr/share/koji-web/scripts/">
+     Options ExecCGI
      SetHandler wsgi-script
-     Order allow,deny
-     Allow from all
-+    # Require all granted # Apache 2.4 Compatibility
+-    Require all granted
+-    #If you have httpd <= 2.2, you'll want the following two lines instead
+-    #of the one above:
+-    #Order allow,deny
+-    #Allow from all
++    Order allow,deny
++    Allow from all
  </Directory>
  
  # Support for mod_python is DEPRECATED. If you still need mod_python support,
-@@ -40,11 +41,11 @@
+@@ -43,11 +40,11 @@
  # </Location>
  
  # uncomment this to enable authentication via SSL client certificates
@@ -230,11 +270,14 @@ cat > /tmp/kojiweb.conf.patch << 'EOF'
  
  Alias /koji-static/ "/usr/share/koji-web/static/"
  
-@@ -53,4 +54,5 @@
-     AllowOverride None
-     Order allow,deny
-     Allow from all
-+    # Require all granted # Apache 2.4 Compatibility
+@@ -57,6 +54,6 @@
+     Require all granted
+     #If you have httpd <= 2.2, you'll want the following two lines instead
+     #of the one above:
+-    #Order allow,deny
+-    #Allow from all
++    Order allow,deny
++    Allow from all
  </Directory>
 EOF
 patch -p0 < /tmp/kojiweb.conf.patch 
@@ -259,11 +302,11 @@ cat > /tmp/kojid.conf.patch << 'EOF'
  
  ; The URL for the xmlrpc server
 -server=http://hub.example.com/kojihub
-+server=http://koji.localdomain/kojihub
++server=http://devops.example.com/kojihub
  
  ; The URL for the file access
 -topurl=http://hub.example.com/kojifiles
-+topurl=http://koji.localdomain/kojifiles
++topurl=http://devops.example.com/kojifiles
  
  ; A space-separated list of tuples from which kojid is allowed to checkout.
  ; The format of those tuples is:
@@ -272,11 +315,11 @@ cat > /tmp/kojid.conf.patch << 'EOF'
  ; files from a remote location.  If no source_cmd is specified, "make sources"
  ; is run by default.
 -allowed_scms=scm.example.com:/cvs/example git.example.org:/example svn.example.org:/users/*:no
-+allowed_scms=koji.localdomain:/rpms/*:false:rhpkg,sources svn.apache.org:/repos/*:no git.app.eng.bos.redhat.com:*:false:rhpkg,sources git.engineering.redhat.com:*:false:rhpkg,sources github.com:*:false:rhpkg,sources forge.fusesource.com:*:false:rhpkg,sources
++allowed_scms=devops.example.com:/rpms/*:false:rhpkg,sources svn.apache.org:/repos/*:no git.app.eng.bos.redhat.com:*:false:rhpkg,sources git.engineering.redhat.com:*:false:rhpkg,sources github.com:*:false:rhpkg,sources forge.fusesource.com:*:false:rhpkg,sources
  
  ; The mail host to use for sending email notifications
 -smtphost=example.com
-+smtphost=koji.localdomain
++smtphost=devops.example.com
  
  ; The From address used when sending email notifications
 -from_addr=Koji Build System <buildsys@example.com>
@@ -330,7 +373,7 @@ cat > /tmp/hub.conf.patch << 'EOF'
  # DNUsernameComponent = CN
  ## separate multiple DNs with |
  # ProxyDNs = /C=US/ST=Massachusetts/O=Example Org/OU=Example User/CN=example/emailAddress=example@example.com
-+ProxyDNs = /C=XX/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=kojiweb/emailAddress=koji@localdomain
++ProxyDNs = /C=XX/ST=SomeState/L=SomeCity/O=SomeOrganization/OU=SomeOrganizationalUnit/CN=kojiweb/emailAddress=devops.example.com
  
  ## end SSL client certificate auth configuration
  
@@ -375,7 +418,7 @@ cat > /tmp/kojira.conf.patch << 'EOF'
  
  ; The URL for the koji hub server
 -server=http://hub.example.com/kojihub
-+server=http://koji.localdomain/kojihub
++server=http://devops.example.com/kojihub
  
  ; The directory containing the repos/ directory
  topdir=/mnt/koji
@@ -408,8 +451,8 @@ cat > /tmp/web.conf.patch << 'EOF'
  # Key urls
 -KojiHubURL = http://hub.example.com/kojihub
 -KojiFilesURL = http://server.example.com/kojifiles
-+KojiHubURL = http://koji.localdomain/kojihub
-+KojiFilesURL = http://koji.localdomain/kojifiles
++KojiHubURL = http://devops.example.com/kojihub
++KojiFilesURL = http://devops.example.com/kojifiles
  
  # Kerberos authentication options
  # WebPrincipal = koji/web@EXAMPLE.COM
@@ -516,14 +559,13 @@ fi
 chown -R postgres:postgres /var/lib/pgsql/data
 
 echo -e "# 17. Create the database tables" >> ${LOG} 
-KOJI_VERSION=$(rpm -q  koji --queryformat '%{name}-%{version}\n')
 echo -e "insert into users (name, password, status, usertype) values ('koji', 'koji', 0, 0);
 insert into user_perms (user_id, perm_id, creator_id) values (1, 1, 1);
 insert into users (name, status, usertype) values ('kojiadmin', 0, 0);
 insert into user_perms (user_id, perm_id, creator_id) values (2, 1, 1);
 \q" >> /tmp/users.sql
 su -l postgres -c "createuser -s -d -r koji; createdb -O koji koji"
-su -l koji -c "psql koji koji < /usr/share/doc/$KOJI_VERSION/docs/schema.sql"
+su -l koji -c "psql koji koji < /usr/share/doc/koji*/docs/schema.sql"
 su -l koji -c "psql koji koji < /tmp/users.sql"
 rm /tmp/users.sql
 
@@ -548,7 +590,7 @@ cat > /tmp/httpd.conf.patch << 'EOF'
   # You will have to access it by its address anyway, and this will make
   # redirections work in a sensible way.
   #
-! ServerName koji.localdomain
+! ServerName devops.example.com
 
   #
   # UseCanonicalName: Determines how Apache constructs self-referencing
@@ -556,23 +598,39 @@ EOF
 patch -p0 < /tmp/httpd.conf.patch
 rm -f /tmp/httpd.conf.patch
 
-echo -e "# 19. Patching sudoers.conf" >> ${LOG}
-cp -p /etc/sudoers /etc/sudoers.orig
-cat > /tmp/sudoers.patch << 'EOF'
---- /etc/sudoers.orig   2012-03-01 12:18:24.000000000 -0500
-+++ /etc/sudoers    2015-03-29 09:50:20.531963467 -0400
-@@ -96,6 +96,7 @@
- ##
- ## Allow root to run any commands anywhere 
- root   ALL=(ALL)   ALL
-+koji   ALL=(ALL)   ALL
- 
- ## Allows members of the 'sys' group to run networking, software, 
- ## service management apps and more.
-EOF
-patch -p0 < /tmp/sudoers.patch
-rm -f /tmp/sudoers.patch
+echo -e "# 20. Installing theme" >> ${LOG}
+cat > /etc/httpd/conf.d/kojitheme.conf << 'EOF'
+#Override a few static items with our theme
+Alias /koji-static/images/koji.png "/usr/share/koji-themes/fedora-koji/images/fedora-koji.png"
+Alias /koji-static/images/powered-by-koji.png "/usr/share/koji-themes/fedora-koji/images/Powered-by-koji_button.png"
+Alias /koji-static/images/koji.ico "/usr/share/koji-themes/fedora-koji/images/fedora-koji.ico"
+Alias /koji-static/koji.css "/usr/share/koji-themes/fedora-koji/koji.css"
+Alias /koji-static/errors/unauthorized.html "/usr/share/koji-themes/fedora-koji/errors/unauthorized.html"
+Alias /koji-static/images/header-bg.png "/usr/share/koji-themes/fedora-koji/images/header-bg.png"
+Alias /koji-static/images/complete.png "/usr/share/koji-themes/fedora-koji/images/tick.png"
+Alias /koji-static/images/yes.png "/usr/share/koji-themes/fedora-koji/images/tick.png"
+Alias /koji-static/images/closed.png "/usr/share/koji-themes/fedora-koji/images/tick.png"
+Alias /koji-static/images/ready.png "/usr/share/koji-themes/fedora-koji/images/tick.png"
+Alias /koji-static/images/no.png "/usr/share/koji-themes/fedora-koji/images/minus.png"
+Alias /koji-static/images/failed.png "/usr/share/koji-themes/fedora-koji/images/minus.png"
+Alias /koji-static/images/building.png "/usr/share/koji-themes/fedora-koji/images/spanner.png"
+Alias /koji-static/images/deleted.png "/usr/share/koji-themes/fedora-koji/images/rubbishbin.png"
+Alias /koji-static/images/free.png "/usr/share/koji-themes/fedora-koji/images/clock.png"
+Alias /koji-static/images/waiting.png "/usr/share/koji-themes/fedora-koji/images/clock.png"
+Alias /koji-static/images/open.png "/usr/share/koji-themes/fedora-koji/images/arrowcircle.png"
 
+<Directory "/usr/share/koji-themes/fedora-koji">
+    Options None
+    AllowOverride None
+    Order allow,deny
+    Allow from all
+</Directory>
+EOF
+
+cd ~/workspace
+git clone http://fedorapeople.org/cgit/ausil/public_git/koji-theme-fedora.git
+mkdir -p /usr/share/koji-themes/fedora-koji
+cp -r ~/workspace/koji-theme-fedora/www/static/* /usr/share/koji-themes/fedora-koji
 
 # Provision SSL certs
 rm -rf /etc/pki/CA/serial*
@@ -648,17 +706,16 @@ service ip6tables stop
 chkconfig ip6tables off
 
 echo -e "\nRestarting Services..."
-service postgresql restart
 chkconfig postgresql on
-service httpd restart
+service httpd start
 chkconfig httpd on
-service jenkins restart
+service jenkins start
 chkconfig jenkins on
 service artifactory start
 chkconfig artifactory on
-service kojid restart
+service kojid start
 chkconfig kojid on
-service kojira restart
+service kojira start
 chkconfig kojira on
 
 echo -e "\nCreating base config..."
@@ -688,10 +745,37 @@ rm /tmp/kojibuilder.sql
 
 echo -e "\nService Status..."
 service postgresql restart
-service kojid restart
-service kojira restart
 
-yum -y update
+echo -e "# Initialising Jenkins plugin list..."
+curl -L http://updates.jenkins-ci.org/update-center.json | sed '1d;$d' | \
+curl -X POST -H 'Accept: application/json' -d @- http://localhost:8080/updateCenter/byId/default/postBack
+service jenkins restart
+while ! timeout 1 bash -c "echo > /dev/tcp/localhost/8080"; do echo -e "# Retrying...please be patient" && sleep 12 ; done
+if [ ! -f jenkins-cli.jar ]; then
+    echo -e "# Retrieve jenkins client"
+    wget http://localhost:8080/jnlpJars/jenkins-cli.jar
+else
+    echo -e "# Jenkins Client Already installed"
+fi
+
+PLUGINS="git \
+openshift-deployer \
+delivery-pipeline-plugin \
+promoted-builds \
+authorize-project \
+build-pipeline-plugin \
+conditional-buildstep \
+copyartifact \
+github-api \
+github \
+ssh-agent \
+matrix-project \
+koji \
+artifactory \
+role-strategy"
+
+echo -e "# Installing Jenkins client"
+java -jar jenkins-cli.jar -s http://localhost:8080 install-plugin ${PLUGINS}
 
 touch /tmp/install
 

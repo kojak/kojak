@@ -11,7 +11,7 @@ import optparse
 
 def main():
     
-    KOJI_HUB = 'http://koji.localdomain/kojihub'
+    KOJI_HUB = 'http://devops.example.com/kojihub'
 
     # This relies on 'insert into users (name, password, status, usertype) values ('jenkins', 'jenkins', 0, 0);' in the koji db.
     # See: http://fedoraproject.org/wiki/Koji/ServerHowTo
