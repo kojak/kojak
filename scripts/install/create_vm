@@ -289,12 +289,12 @@ do
                         exit
                         ;;
                     "Saved")
-                        CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
+                        CFG=$(find "$TMPDIR" -type f  -name "${KSCFG}")
                         if [ ! -z "${CFG}" ]; then
                         welcome_header
                         menu_msg_02
                         prompt="Please select a file:"
-                        options=( $(find "$TMPDIR" -type f  -name "kojak.cfg") )
+                        options=( $(find "$TMPDIR" -type f  -name "${KSCFG}") )
                         PS3="$prompt "
                         select opt in "${options[@]}" "Quit" ; do
                             if (( REPLY == 1 + ${#options[@]} )) ; then
