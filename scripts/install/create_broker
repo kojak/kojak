@@ -59,8 +59,6 @@ fi
 echo "# Copying Kickstart file"
 if [ ! -d ${CFGDIR} ]; then
     mkdir -p ${CFGDIR}
-    cp -f broker.cfg "${KSCFG}"
-else
     cp -f broker-ks.cfg "${KSCFG}"
 fi
 
