@@ -21,17 +21,18 @@
 # Uncomment to debug script
 #set -x
 
-# Distro information
-APPNAME=${APPNAME:="kojak"}
-VMNAME=${VMNAME:="${APPNAME}-CentOS-6.6-x86_64"}
-VMHOME=${VMHOME:="/var/lib/libvirt/images"}
-TMPDIR=${TMPDIR:="./tmp"}
-DISTDIR=${DISTDIR:="CentOS/6.6/x86_64"}
 
+## Declare default configuration options
+
+# Distro information
+VMNAME=${VMNAME:="kojak-CentOS-6.6-x86_64"}
+VMHOME=${VMHOME:="/var/lib/libvirt/images"}
+TMPDIR=${TMPDIR:="${HOME}/kojak"}
+DISTDIR=${DISTDIR:="CentOS/6.6/x86_64"}
 # Sources and configuration
 CFGDIR=${CFGDIR:="${TMPDIR}/cfg/${DISTDIR}"}
-KSCFG=${KSCFG:="${CFGDIR}/${APPNAME}-ks.cfg"}
-KJKCFG=${KJKCFG:="${CFGDIR}/${APPNAME}.cfg"}
+KSCFG=${KSCFG:="${CFGDIR}/kojak-ks.cfg"}
+KJKCFG=${KJKCFG:="${CFGDIR}/kojak.cfg"}
 SRCLOC=${SRCLOC:="http://mirror.centos.org/centos/6/os/x86_64/"}
 
 # Virtual machine specifications
@@ -55,11 +56,6 @@ config() {
     do
     # Execute menu configuration options
     welcome_header
-
-    # Virtual machine name
-    echo -e "\n00. Please specify an appliance name."
-    read -e -i "${APPNAME}" -p "APPNAME = " APPNAME
-    APPNAME="${APPNAME:=$APPNAME}"
 
     # Virtual machine name
     echo -e "\n01. Please specify a name for the virtual machine."
@@ -145,7 +141,6 @@ config() {
 save() {
     mkdir -p ${CFGDIR}
     echo -e "# Kojak SAVED configuration options.\n
-APPNAME=${APPNAME}
 VMNAME=${VMNAME}
 VMHOME=${VMHOME}
 TMPDIR=${TMPDIR}
@@ -158,7 +153,7 @@ OS_VARIANT=${OS_VARIANT}
 ARCH=${ARCH}
 VCPU=${VCPU}
 VMMEM=${VMMEM}
-VMDISK=${VMDISK}" > ${CFGDIR}/${APPNAME}.cfg
+VMDISK=${VMDISK}" > ${CFGDIR}/kojak.cfg
 }
 
 ## Main function
@@ -175,9 +170,9 @@ fi
 echo "# Copying Kickstart file"
 if [ ! -d ${CFGDIR} ]; then
     mkdir -p ${CFGDIR}
-    cp -f ${APPNAME}.cfg "${KSCFG}"
+    cp -f kojak-ks.cfg "${KSCFG}"
 else
-    cp -f ${APPNAME}.cfg "${KSCFG}"
+    cp -f kojak-ks.cfg "${KSCFG}"
 fi
 
 if [ ! -z "${KJKCFG}" ]; then
@@ -190,7 +185,7 @@ fi
 
 VMDOMAIN=$(virsh list --all | grep ${VMNAME} | awk '{print $(NF-2)}')
 if [ ! "${VMDOMAIN}" ]; then
-    echo -e "# No pre-existing ${APPNAME} vm"
+    echo -e "# No pre-existing Kojak vm"
 else 
     while true; do
     read -p "# Found an existing VM with the same name...Do you want to destroy it?`echo $'\n>> '` [Y/n] " yn
@@ -289,12 +284,12 @@ do
                         exit
                         ;;
                     "Saved")
-                        CFG=$(find "$TMPDIR" -type f  -name "${KSCFG}")
+                        CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
                         if [ ! -z "${CFG}" ]; then
                         welcome_header
                         menu_msg_02
                         prompt="Please select a file:"
-                        options=( $(find "$TMPDIR" -type f  -name "${KSCFG}") )
+                        options=( $(find "$TMPDIR" -type f  -name "kojak.cfg") )
                         PS3="$prompt "
                         select opt in "${options[@]}" "Quit" ; do
                             if (( REPLY == 1 + ${#options[@]} )) ; then
@@ -341,7 +336,7 @@ do
                         menu
                         ;;
                     "Clear")
-                        CFG=$(find "$TMPDIR" -type f  -name "${KSCFG}")
+                        CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
                         if [ -f "${KSCFG}" ]; then
                             rm -f "${KSCFG}"
                         fi
