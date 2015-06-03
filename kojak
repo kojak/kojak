@@ -75,6 +75,11 @@ case $opt in
             $SCRIPTS/install/uninstall
             exit
             ;;
+         "Create Broker")
+            echo -e "\n>> Create Openshift Applicance"
+            $SCRIPTS/install/create_broker
+            exit
+            ;;
         "Quit")
             exit
             ;;
