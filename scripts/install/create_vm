@@ -341,7 +341,7 @@ do
                         menu
                         ;;
                     "Clear")
-                        CFG=$(find "$TMPDIR" -type f  -name "kojak.cfg")
+                        CFG=$(find "$TMPDIR" -type f  -name "${KSCFG}")
                         if [ -f "${KSCFG}" ]; then
                             rm -f "${KSCFG}"
                         fi
