@@ -25,7 +25,7 @@
 APPNAME=${APPNAME:="kojak"}
 VMNAME=${VMNAME:="${APPNAME}-CentOS-6.6-x86_64"}
 VMHOME=${VMHOME:="/var/lib/libvirt/images"}
-TMPDIR=${TMPDIR:="${HOME}/${APPNAME}"}
+TMPDIR=${TMPDIR:="./tmp"}
 DISTDIR=${DISTDIR:="CentOS/6.6/x86_64"}
 
 # Sources and configuration
