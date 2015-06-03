@@ -28,6 +28,7 @@ VMNAME=${VMNAME:="broker-CentOS-6.6-x86_64"}
 VMHOME=${VMHOME:="/var/lib/libvirt/images"}
 TMPDIR=${TMPDIR:="${HOME}/broker"}
 DISTDIR=${DISTDIR:="CentOS/6.6/x86_64"}
+
 # Sources and configuration
 CFGDIR=${CFGDIR:="${TMPDIR}/cfg/${DISTDIR}"}
 KSCFG=${KSCFG:="${CFGDIR}/broker-ks.cfg"}
