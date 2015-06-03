@@ -50,6 +50,27 @@ fi
 
 APPNAME="broker"
 
+if [ -z "${KSCFG}" ]; then
+    echo "# Missing path to Kickstart file"
+    exit 1
+fi
+
+echo "# Copying Kickstart file"
+if [ ! -d ${CFGDIR} ]; then
+    mkdir -p ${CFGDIR}
+    cp -f broker.cfg "${KSCFG}"
+else
+    cp -f broker-ks.cfg "${KSCFG}"
+fi
+
+if [ ! -z "${KJKCFG}" ]; then
+    echo -e "# Saved options in ${KJKCFG}"
+    source ${KJKCFG} > /dev/null 2>&1
+else
+    echo -e "# Default options in ${KJKCFG}"
+    source ${KJKCFG} > /dev/null 2>&1
+fi
+
 VMDOMAIN=$(virsh list --all | grep ${APPNAME} | awk '{print $(NF-2)}')
 if [ ! "${VMDOMAIN}" ]; then
     echo -e "# No pre-existing broker"
