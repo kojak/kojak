@@ -17,7 +17,7 @@
       </strategy>
     </org.jenkinsci.plugins.authorizeproject.AuthorizeProjectProperty>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.11.3">
-      <projectUrl>https://github.vps.no/vsxxblu/helloworld/</projectUrl>
+      <projectUrl>https://github.com/sbadakhc/HelloWorld/</projectUrl>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
     <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.9.1">
       <taskName>PRODUCTION</taskName>
@@ -33,12 +33,12 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <org.jenkinsci.plugins.openshift.DeployApplication plugin="openshift-deployer@1.2.0">
-      <serverName>OSE VPS DEMO</serverName>
+      <serverName>OSE DEMO</serverName>
       <cartridges>jbossews-2.0</cartridges>
       <domain>prodemo</domain>
-      <gearProfile>prod-medium</gearProfile>
+      <gearProfile>small</gearProfile>
       <appName>helloworld</appName>
-      <deploymentPackage>/var/lib/jenkins/jobs/DEV-BUILD/workspace/target/HelloWorld.war</deploymentPackage>
+      <deploymentPackage>/var/lib/jenkins/jobs/DEV/workspace/target/HelloWorld.war</deploymentPackage>
       <environmentVariables></environmentVariables>
       <autoScale>false</autoScale>
       <deploymentType>GIT</deploymentType>

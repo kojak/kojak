@@ -38,12 +38,12 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <org.jenkinsci.plugins.openshift.DeployApplication plugin="openshift-deployer@1.2.0">
-      <serverName>OSE VPS DEMO</serverName>
+      <serverName>OSE DEMO</serverName>
       <cartridges>jbossews-2.0</cartridges>
       <domain>uatdemo</domain>
-      <gearProfile>uat-medium</gearProfile>
+      <gearProfile>small</gearProfile>
       <appName>helloworld</appName>
-      <deploymentPackage>/var/lib/jenkins/jobs/DEV-BUILD/workspace/target/HelloWorld.war</deploymentPackage>
+      <deploymentPackage>/var/lib/jenkins/jobs/DEV/workspace/target/HelloWorld.war</deploymentPackage>
       <environmentVariables></environmentVariables>
       <autoScale>false</autoScale>
       <deploymentType>GIT</deploymentType>
