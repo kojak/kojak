@@ -772,6 +772,7 @@ ssh-agent \
 matrix-project \
 koji \
 artifactory \
+repository-connector \
 role-strategy"
 
 echo -e "# Installing Jenkins client"
