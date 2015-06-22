@@ -102,5 +102,5 @@ done
 REDIRECT_URL="${REDIRECT_URL}?${PARAMS}"
  
 echo "Fetching Artifact from $REDIRECT_URL..." >&2
-curl -sS -L ${REDIRECT_URL}
+wget ${REDIRECT_URL} --content-disposition
 
