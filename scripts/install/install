@@ -22,7 +22,7 @@
 #set -x
 
 # Check user priviledges
-if [ "${USER}" != "root" ]; then
+if [ $(id -u) != 0 ]; then
     echo -e "\n# This script requires root priviledges to run"
     exit
 fi
