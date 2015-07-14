@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Deploy helloworld war to Openshift prodemo environment.</description>
+  <description>Deploy helloworld war to Openshift opsemo environment.</description>
   <logRotator class="hudson.tasks.LogRotator">
     <daysToKeep>-1</daysToKeep>
     <numToKeep>-1</numToKeep>
@@ -17,9 +17,9 @@
       </strategy>
     </org.jenkinsci.plugins.authorizeproject.AuthorizeProjectProperty>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.11.3">
-      <projectUrl>https://github.com/sbadakhc/HelloWorld/</projectUrl>
+      <projectUrl>https://github.com/sbadakhc/HelloWorld.git/</projectUrl>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
-    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.9.1">
+    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.9.4">
       <taskName>PRODUCTION</taskName>
       <stageName>OPS</stageName>
     </se.diabol.jenkins.pipeline.PipelineProperty>
@@ -32,26 +32,31 @@
   <triggers/>
   <concurrentBuild>false</concurrentBuild>
   <builders>
+    <hudson.tasks.Shell>
+      <command>cd /tmp
+/home/koji/workspace/kojak/scripts/utils/nexus-client -i com.example:HelloWorld:LATEST -p war
+mv *.war ${WORKSPACE}/HelloWorld.war</command>
+    </hudson.tasks.Shell>
     <org.jenkinsci.plugins.openshift.DeployApplication plugin="openshift-deployer@1.2.0">
       <serverName>OSE DEMO</serverName>
       <cartridges>jbossews-2.0</cartridges>
-      <domain>prodemo</domain>
+      <domain>opsdemo</domain>
       <gearProfile>small</gearProfile>
-      <appName>helloworld</appName>
-      <deploymentPackage>/var/lib/jenkins/jobs/DEV/workspace/target/HelloWorld.war</deploymentPackage>
+      <appName>HelloWorld</appName>
+      <deploymentPackage>HelloWorld.war</deploymentPackage>
       <environmentVariables></environmentVariables>
       <autoScale>false</autoScale>
       <deploymentType>GIT</deploymentType>
       <openshiftDirectory>src/main/resources/openshift</openshiftDirectory>
     </org.jenkinsci.plugins.openshift.DeployApplication>
     <hudson.tasks.Shell>
-      <command>echo &quot;${BUILD_URL}&quot; &gt; mail.txt ; mail -s &quot;PROD DEPLOY - APPLICATION LIVE!!!&quot; root@localhost &lt; mail.txt ; rm -f mail.txt
+      <command>echo &quot;${BUILD_URL}&quot; &gt; mail.txt ; mail -s &quot;BUILD DEPLOY - APPLICATION LIVE!!!&quot; root@localhost &lt; mail.txt ; rm -f mail.txt
 </command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>
-    <hudson.tasks.Mailer plugin="mailer@1.11">
-      <recipients>blu@vps.no</recipients>
+    <hudson.tasks.Mailer plugin="mailer@1.15">
+      <recipients>root@localhost</recipients>
       <dontNotifyEveryUnstableBuild>false</dontNotifyEveryUnstableBuild>
       <sendToIndividuals>true</sendToIndividuals>
     </hudson.tasks.Mailer>

@@ -21,7 +21,7 @@
       <configs>
         <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
           <configs class="empty-list"/>
-          <projects>TEST</projects>
+          <projects>OPS</projects>
           <condition>ALWAYS</condition>
           <triggerWithNoParameters>false</triggerWithNoParameters>
           <buildAllNodesWithLabel>false</buildAllNodesWithLabel>

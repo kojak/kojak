@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<hudson.scm.SubversionSCM_-DescriptorImpl plugin="subversion@1.54">
+<hudson.scm.SubversionSCM_-DescriptorImpl plugin="subversion@2.5">
   <generation>1</generation>
-  <credentials class="hashtable"/>
+  <mayHaveLegacyPerJobCredentials>false</mayHaveLegacyPerJobCredentials>
   <workspaceFormat>8</workspaceFormat>
   <validateRemoteUpToVar>false</validateRemoteUpToVar>
   <storeAuthToDisk>false</storeAuthToDisk>

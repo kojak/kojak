@@ -4,10 +4,10 @@
   <servers>
     <org.jenkinsci.plugins.openshift.Server>
       <name>OSE DEMO</name>
-      <brokerAddress>openshift.example.com</brokerAddress>
-      <username>admin</username>
-      <password></password>
-      <secret></secret>
+      <brokerAddress>broker.example.com</brokerAddress>
+      <username>demo</username>
+      <password>Lc9/jSxnwb+rNirzLfALkZwgGyHxNLo3ciayKG3R8Dv2ZNA0PWcxQHGoEticV17A</password>
+      <secret>Lc9/jSxnwb+rNirzLfALkZwgGyHxNLo3ciayKG3R8Dv2ZNA0PWcxQHGoEticV17A</secret>
     </org.jenkinsci.plugins.openshift.Server>
   </servers>
   <publicKeyPath>/var/lib/jenkins/.ssh/id_rsa.pub</publicKeyPath>
