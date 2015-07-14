@@ -13,6 +13,8 @@ fi
 JENKINS_HOME="/var/lib/jenkins/"
 DATE=$(date "+%Y%m%d-%M%S")
 
+[ -d /tmp/backup ] || mkdir -p /tmp/backup
+
 tar zcfvp /tmp/backup/jenkins.${DATE}.tar.gz /var/lib/jenkins
 mkdir /tmp/overlay.${DATE}
 cd /tmp/overlay.*
