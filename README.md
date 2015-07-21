@@ -117,8 +117,20 @@ Jenkins configured with the Koji plugin can be configured via the Jenkins GUI vi
 
 Artifcatory configured with a standard set of repos is available via http://devops.example.com:8090
 
-Known Issues
-------------
+Known Issues and How to Report Them
+-----------------------------------
+
+Please follow this template while reporting an issue:
+
+Component: Host, Guest (OS version), Koji, Apache HTTP etc.
+
+Description: description of the situation 
+
+Steps to reproduce: clear description of how to reproduce the issue, as ordered list
+
+Expected result: the result that was expected
+
+Actual result: the actual result including error messages, exceptions etc.
 
 See http://github.com/sbadakhc/kojak/issues?state=open
 
