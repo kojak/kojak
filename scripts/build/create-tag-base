@@ -11,7 +11,7 @@
 #set -x
 
 # Declare variables
-    WORKPSACE="$HOME/workspace"
+    WORKSPACE="$HOME/workspace"
     PROG="koji"
     PROD="${2}"
     ARCH="x86_64"
