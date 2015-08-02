@@ -13,7 +13,7 @@ Kojak ships with an, industry reconised, opensource toolchain designed to allow 
 Installation Prerequisites
 ---------------------------
 
-Kojak is a virtual appliance and it not recommended that you insall directly on your worksation.  The Installation options will build a virtual machine for you which will be accessible from your local host.  If you already have a virtual machine you can install Kojak directly on that machine and skip the virtual machine provisioning stage.  Kojak has been successfully installed and tested on CentOS and RHEL 6+.
+Kojak is a virtual appliance and it not recommended that you install directly on your worksation.  The Installation options will build a virtual machine for you which will be accessible from your local host.  If you already have a virtual machine you can install Kojak directly on that machine and skip the virtual machine provisioning stage.  Kojak has been successfully installed and tested on CentOS and RHEL 6+.
 
 For more information about virtualization see below:
 
