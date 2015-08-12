@@ -1,8 +1,8 @@
-Started on Jul 14, 2015 12:10:00 AM
+Started on Aug 12, 2015 7:37:00 PM
 Using strategy: Default
-[poll] Last Built Revision: Revision 91d48f912ea475e880b0754100eeecb03eb21d54 (refs/remotes/origin/master)
+[poll] Last Built Revision: Revision c029f39996806d4fb8a3c0c3c59897aa3920bd7e (refs/remotes/origin/master)
  > git --version # timeout=10
  > git ls-remote -h https://github.com/sbadakhc/HelloWorld.git # timeout=10
-[poll] Latest remote head revision on origin/master is: 91d48f912ea475e880b0754100eeecb03eb21d54 - already built by 167
-Done. Took 0.89 sec
+[poll] Latest remote head revision on origin/master is: c029f39996806d4fb8a3c0c3c59897aa3920bd7e - already built by 192
+Done. Took 12 sec
 No changes
