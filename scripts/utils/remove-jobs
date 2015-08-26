@@ -10,7 +10,8 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-JENKINS_HOME="/var/lib/jenkins/jobs/"
-cd ${JENKINS_HOME}
+JENKINS_HOME="/var/lib/jenkins"
+cd ${JENKINS_HOME}/jobs
 find . -name "builds" -type d -exec rm -rf {} +
 find . -name "workspace" -type d -exec rm -rf {} +
+rm -rf ${JENKINS_HOME}/fingerprints/*
