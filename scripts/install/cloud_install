@@ -18,7 +18,7 @@ sh <(curl -s https://install.openshift.com/origin-m4) < /tmp/response.txt
 
 echo -e "# Installing rhc tools"
 gem install rhc
-echo -e "\n\ny\ndemo\nopenshift\ny\ny\nn" > /tmp/response.txt
+echo -e "\n\ny\ndemo\nopenshift\ny\ny\n" > /tmp/response.txt
 rhc setup < /tmp/response.txt
 rm -f /tmp/response.txt
 
