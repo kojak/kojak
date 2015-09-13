@@ -6,7 +6,6 @@ echo -e "# Installing packages"
 rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm
 yum install -y puppet ruby
 gem install --no-rdoc rhc
-gem update rhc
 
 if [ ! -f "~/.openshift/oo-install-cfg.yml" ]; then
   mkdir ~/.openshift
@@ -22,6 +21,7 @@ echo -e "\n\ny\ndemo\nopenshift\ny\ny\nn" > /tmp/response.txt
 rhc setup < /tmp/response.txt
 
 echo -e "# Configuring domains for development, testing and production"
+gem install rhc
 rhc domain create -n development
 rhc domain create -n testing
 rhc domain create -n production
