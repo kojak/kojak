@@ -11,9 +11,13 @@
   <concurrentBuild>false</concurrentBuild>
   <conditions>
     <hudson.plugins.promoted__builds.conditions.ManualCondition>
-      <users>test</users>
+      <users>qa</users>
       <parameterDefinitions/>
     </hudson.plugins.promoted__builds.conditions.ManualCondition>
+    <hudson.plugins.promoted__builds.conditions.DownstreamPassCondition>
+      <jobs></jobs>
+      <evenIfUnstable>false</evenIfUnstable>
+    </hudson.plugins.promoted__builds.conditions.DownstreamPassCondition>
   </conditions>
   <icon>star-gold</icon>
   <buildSteps>
@@ -21,7 +25,7 @@
       <configs>
         <hudson.plugins.parameterizedtrigger.BlockableBuildTriggerConfig>
           <configs class="empty-list"/>
-          <projects>TEST</projects>
+          <projects>OPS</projects>
           <condition>ALWAYS</condition>
           <triggerWithNoParameters>false</triggerWithNoParameters>
           <buildAllNodesWithLabel>false</buildAllNodesWithLabel>

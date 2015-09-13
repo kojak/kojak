@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<maven2-moduleset plugin="maven-plugin@2.7.1">
+<maven2-moduleset plugin="maven-plugin@2.10">
   <actions/>
   <description>Execute maven build and deploy helloworld war to Openshift devdemo environment.</description>
   <logRotator class="hudson.tasks.LogRotator">
     <daysToKeep>-1</daysToKeep>
-    <numToKeep>-1</numToKeep>
+    <numToKeep>8</numToKeep>
     <artifactDaysToKeep>-1</artifactDaysToKeep>
-    <artifactNumToKeep>-1</artifactNumToKeep>
+    <artifactNumToKeep>8</artifactNumToKeep>
   </logRotator>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -17,15 +17,15 @@
       </strategy>
     </org.jenkinsci.plugins.authorizeproject.AuthorizeProjectProperty>
     <com.coravy.hudson.plugins.github.GithubProjectProperty plugin="github@1.11.3">
-      <projectUrl>https://github.com/sbadakhc/HelloWorld/</projectUrl>
+      <projectUrl>https://github.com/sbadakhc/HelloWorld.git/</projectUrl>
     </com.coravy.hudson.plugins.github.GithubProjectProperty>
-    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.9.1">
+    <se.diabol.jenkins.pipeline.PipelineProperty plugin="delivery-pipeline-plugin@0.9.4">
       <taskName>DEVELOPMENT</taskName>
       <stageName>DEV</stageName>
     </se.diabol.jenkins.pipeline.PipelineProperty>
     <hudson.plugins.promoted__builds.JobPropertyImpl plugin="promoted-builds@2.21">
       <activeProcessNames>
-        <string>BUILD</string>
+        <string>PROMOTE</string>
       </activeProcessNames>
     </hudson.plugins.promoted__builds.JobPropertyImpl>
   </properties>
@@ -43,7 +43,15 @@
     </branches>
     <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
     <submoduleCfg class="list"/>
-    <extensions/>
+    <extensions>
+      <hudson.plugins.git.extensions.impl.LocalBranch>
+        <localBranch>master</localBranch>
+      </hudson.plugins.git.extensions.impl.LocalBranch>
+      <hudson.plugins.git.extensions.impl.UserIdentity>
+        <name>Salim Badakhchani</name>
+        <email>sal@redhat.com</email>
+      </hudson.plugins.git.extensions.impl.UserIdentity>
+    </extensions>
   </scm>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
@@ -53,13 +61,16 @@
     <com.cloudbees.jenkins.GitHubPushTrigger plugin="github@1.11.3">
       <spec></spec>
     </com.cloudbees.jenkins.GitHubPushTrigger>
+    <hudson.triggers.SCMTrigger>
+      <spec>* * * * *</spec>
+      <ignorePostCommitHooks>false</ignorePostCommitHooks>
+    </hudson.triggers.SCMTrigger>
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <rootModule>
     <groupId>com.example</groupId>
     <artifactId>HelloWorld</artifactId>
   </rootModule>
-  <goals>clean install</goals>
   <aggregatorStyleBuild>true</aggregatorStyleBuild>
   <incrementalBuild>false</incrementalBuild>
   <ignoreUpstremChanges>true</ignoreUpstremChanges>
@@ -85,7 +96,7 @@
   <publishers>
     <au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger plugin="build-pipeline-plugin@1.4.7">
       <configs/>
-      <downstreamProjectNames>UAT-DEPLOY</downstreamProjectNames>
+      <downstreamProjectNames>TEST</downstreamProjectNames>
     </au.com.centrumsystems.hudson.plugin.buildpipeline.trigger.BuildPipelineTrigger>
   </publishers>
   <buildWrappers/>
@@ -96,8 +107,8 @@
       <cartridges>jbossews-2.0</cartridges>
       <domain>devdemo</domain>
       <gearProfile>small</gearProfile>
-      <appName>helloworld</appName>
-      <deploymentPackage>/var/lib/jenkins/jobs/DEV/workspace/target/HelloWorld.war</deploymentPackage>
+      <appName>HelloWorld</appName>
+      <deploymentPackage>target/HelloWorld.war</deploymentPackage>
       <environmentVariables></environmentVariables>
       <autoScale>false</autoScale>
       <deploymentType>GIT</deploymentType>

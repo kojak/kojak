@@ -1,0 +1,81 @@
+--- 
+Deployment: 
+  Global: 
+    user_default_gear_sizes: small
+    valid_gear_sizes: small
+    default_gear_size: small
+    broker_hostname: 
+  DNS: 
+    deploy_dns: Y
+    component_domain: example.com
+    register_components: Y
+    app_domain: example.com
+  Districts: 
+  - node_hosts: cloud.example.com
+    name: Default
+    gear_size: small
+  Hosts: 
+  - broker_auth_priv_key: |
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIEowIBAAKCAQEAyD3lMNaEvhw4LeYPzeKO43vuCyR7OMavEpAq1Nl0GKq94L6F
+      kUO8wAajslWp5G+oJyh29BIBdJbShbcxIMqNiMiesoGkodQ7PpHVo10hH7c5ztK6
+      6AKnLdoM2MNLdMtYlO+Wc/lSGYORYL/gWC5GUHtGRmKQ3TqJOXuekgKEL8PIIk/B
+      bWo071J5CDVloNWGDe+uDXsQv37c507l2fteCAnFGg3+smL4ImK8VEaaKqjM/MmG
+      143jzb0miZlmRSisZkNlyhht9k+KkWlzBdSzvn5HI9L8b5t0nj8VsA+xd+dGmEzD
+      x45UdKGvLexsTqDHjBQ6sJrAaiNbdLWSCBYZSwIDAQABAoIBAHe881EJ5eSckUd4
+      +9hccp87GzQUg46G2GecR9Bxm8eoSdSbeNlNjQ+yqK5aJTZRQlbwDnmSTsZ97bNB
+      wSHfnVS+yo7pkR2oAClBIWQHq2gAs5OmVVepRnjXm7j+xx82/WhKAEinPN2+2+7j
+      re5s9WTo4jPyerefajEyZ7bdxFeehj1ISt5InqqKdQtlqdW/uvx8YcvXRDetkhYG
+      LgzWfXGsc9W4vn67ic6fe56ywv2C1Zm7EWcdZYInRzDS/RSTd5JdVqUK+p4BV1Hb
+      Du5FGTPfR6j2Pw5SgaE+FUpGVl700tc5Ha4hOh5GFUzadVr5d3pZkmhq0rN4EhJ1
+      Zu1VPOkCgYEA9xo5ryPncu5WT0xWIzZo5l+5vRYBopXEuVbPDoC7kjnt7rMSBva3
+      SaIg37CYb+hwoNQdeY+KLhUF8u7JngEvRzA7hO120bXvxIujgCEzF/ibPb7kNNL2
+      PxnjSCmHapy38rJPTimpOX8ar0BSgzDGL+XlNseuutR1HBtxIKdb6ZcCgYEAz3O2
+      GIPtX8tElZyTutNZ7fvH9Y0PderY4Cimv3qdCChFLZOd3c19rTg3L69nUPLU7kyp
+      Vw0Pe9jWSYiSZ3AcQGOF97JgF5c1zpXWWmkdmQXlKAD0SwIhNvtgBp3jZMXa7F80
+      15a6vaPMcUDfMurX2jJFiMD0d62wWpk+NwZ1/G0CgYEAsGFr43RBdWxi91+J7MCd
+      yDN0JWBb8m3tak5opfWF7i6jg8sWhxn8YvbzeDhZ1yeXnXVLRMYM4C/peyqvh7VY
+      xfvLwGqwcajoaOcz4fXQvr+aMEzeIEaltw0Hiy75lkQfmYFl0mkyffQYXBgRzcs2
+      7GGxZ5TJSFr27QU5jxFnLikCgYAXOLSheeMQXgiHVseSmiXu5cg0TF32rRspvGMt
+      ++OoDhnwSB3bvizbPveudsvx27zKD/rEq8mX62XRRWBeA8alzn4og+cNvPdg8JTV
+      +f4+KtLD75do7gwZw3m0Q+g4V41x+BZKK60rnTI9Wy2g3XjcC9SMwkybOO4Mtiqo
+      rih24QKBgFPvuFAW/tzEGMYPlhKiLJlkSK4kis4+G9T1ie5DvYSre+P/UfcVJV7V
+      JJATrY3K66tnEPxscM6kG2ACpm1SFhR6r+YFaE+QIw5u2hrEs2l/CeHD69pt90wa
+      Vw5207bLMp85hoT07luwD2kusFmccspgQ2t49p2MILl90gKoMtI5
+      -----END RSA PRIVATE KEY-----
+
+    mongodb_admin_password: 6uFRVzmeZH57YE1RkEJxNw
+    ip_addr: 192.168.122.3
+    roles: 
+    - msgserver
+    - dbserver
+    - nameserver
+    - broker
+    - node
+    state: new
+    ssh_host: localhost
+    user: root
+    openshift_user: demo
+    mongodb_admin_user: admin
+    ip_interface: eth0
+    console_session_secret: hkqcilCQDVCW1sDKslQU2g
+    mcollective_password: 72zLwauwTn5zFWBz397QXQ
+    host: cloud.example.com
+    broker_auth_salt: vQCTeAIW7Ec6RO2XBaEw
+    openshift_password: openshift
+    mongodb_broker_user: openshift
+    load_balancer: N
+    broker_session_secret: dnye9hvDtwNIwDxtTe5Yew
+    mongodb_broker_password: S2u5xeEodjvoe845xJGbsQ
+    mcollective_user: mcollective
+    named_ip_addr: 192.168.122.3
+Version: 0.0.1
+Vendor: OpenShift Origin Community
+Subscription: 
+  type: yum
+  repos_base: https://mirror.openshift.com/pub/origin-server/release/4/rhel-6
+  puppet_repo_rpm: http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm
+  jenkins_repo_base: http://pkg.jenkins-ci.org/redhat
+  os_optional_repo: http://download.fedoraproject.org/pub/epel/6/$basearch
+Name: OpenShift Installer Configuration
+Description: This is the configuration file for the OpenShift Installer.

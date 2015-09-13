@@ -13,7 +13,7 @@ Kojak ships with an, industry reconised, opensource toolchain designed to allow 
 Installation Prerequisites
 ---------------------------
 
-Kojak is a virtual appliance and it not recommended that you insall directly on your worksation.  The Installation options will build a virtual machine for you which will be accessible from your local host.  If you already have a virtual machine you can install Kojak directly on that machine and skip the virtual machine provisioning stage.  Kojak has been successfully installed and tested on CentOS and RHEL 6+.
+Kojak is a virtual appliance and it not recommended that you install directly on your workstation.  The Installation options will build a virtual machine for you which will be accessible from your local host.  If you already have a virtual machine you can install Kojak directly on that machine and skip the virtual machine provisioning stage.  Kojak has been successfully installed and tested on CentOS and RHEL 6+.
 
 For more information about virtualization see below:
 
@@ -117,8 +117,20 @@ Jenkins configured with the Koji plugin can be configured via the Jenkins GUI vi
 
 Artifcatory configured with a standard set of repos is available via http://devops.example.com:8090
 
-Known Issues
-------------
+Known Issues and How to Report Them
+-----------------------------------
+
+Please follow this template while reporting an issue:
+
+Component: Host, Guest (OS version), Koji, Apache HTTP etc.
+
+Description: description of the situation 
+
+Steps to reproduce: clear description of how to reproduce the issue, as ordered list
+
+Expected result: the result that was expected
+
+Actual result: the actual result including error messages, exceptions etc.
 
 See http://github.com/sbadakhc/kojak/issues?state=open
 

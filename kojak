@@ -22,7 +22,7 @@
 #set -x
 
 # Check user priviledges
-if [ "$USER" != "root" ]; then
+if [ $(id -u) != 0 ]; then
     echo -e "\n# This script requires root priviledges to run"
 exit
 fi
@@ -51,7 +51,7 @@ menu_msg_01() {
 main_menu() {
 PS3='Please Select installation type: '
 echo
-options=("Create VM" "Install" "Configure" "Uninstall" "Create Broker" "Quit")
+options=("Create VM" "Install" "Configure" "Uninstall" "Create Cloud" "Quit")
 select opt in "${options[@]}"
 do
 case $opt in
@@ -75,9 +75,9 @@ case $opt in
             $SCRIPTS/install/uninstall
             exit
             ;;
-         "Create Broker")
+         "Create Cloud")
             echo -e "\n>> Create Openshift Applicance"
-            $SCRIPTS/install/create_broker
+            $SCRIPTS/install/create_cloud
             exit
             ;;
         "Quit")

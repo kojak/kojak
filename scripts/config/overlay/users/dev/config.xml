@@ -6,7 +6,7 @@
       <collapsed/>
     </hudson.model.PaneStatusProperties>
     <jenkins.security.ApiTokenProperty>
-      <apiToken>kx9al8wWlpcj/ghneMiaLgBHXjIvqvX7MV9pddy2xmsEzyjTyvMWOCOigWg7N9GH</apiToken>
+      <apiToken>M4qmQKgkuCntNfXQ2x9nvlr7HaiIT3XuyxManxgsAmOOtDXzKTS3sYaiQGbU3cNmuvCiZRN7aoDrqS1fGmJTZWy3AEzirgMxbZX51MCm4UQ=</apiToken>
     </jenkins.security.ApiTokenProperty>
     <com.cloudbees.plugins.credentials.UserCredentialsProvider_-UserCredentialsProperty plugin="credentials@1.22">
       <domainCredentialsMap class="hudson.util.CopyOnWriteMap$Hash"/>
@@ -28,8 +28,14 @@
     <hudson.security.HudsonPrivateSecurityRealm_-Details>
       <passwordHash>#jbcrypt:$2a$10$pS4dSF5IGiRdcQL/JtFu4OEh2DaF3N8TL2GY/p72RfXmN0xpSX2tq</passwordHash>
     </hudson.security.HudsonPrivateSecurityRealm_-Details>
-    <hudson.tasks.Mailer_-UserProperty plugin="mailer@1.11">
+    <hudson.tasks.Mailer_-UserProperty plugin="mailer@1.15">
       <emailAddress>root@localhost</emailAddress>
     </hudson.tasks.Mailer_-UserProperty>
+    <jenkins.security.LastGrantedAuthoritiesProperty>
+      <roles>
+        <string>authenticated</string>
+      </roles>
+      <timestamp>1434612796760</timestamp>
+    </jenkins.security.LastGrantedAuthoritiesProperty>
   </properties>
 </user>

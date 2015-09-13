@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.jvnet.hudson.plugins.repositoryconnector.RepositoryConfiguration plugin="repository-connector@1.1.1">
+  <repos>
+    <entry>
+      <string>releases</string>
+      <org.jvnet.hudson.plugins.repositoryconnector.Repository>
+        <url>http://192.168.122.2:8081/nexus/content/repositories/releases/</url>
+        <type>default</type>
+        <id>releases</id>
+        <user>deployment</user>
+        <password>deployment123</password>
+        <isRepositoryManager>true</isRepositoryManager>
+      </org.jvnet.hudson.plugins.repositoryconnector.Repository>
+    </entry>
+    <entry>
+      <string>snapshots</string>
+      <org.jvnet.hudson.plugins.repositoryconnector.Repository>
+        <url>http://192.168.122.2:8081/nexus/content/repositories/snapshots/</url>
+        <type>default</type>
+        <id>snapshots</id>
+        <user>deployment</user>
+        <password>deployment123</password>
+        <isRepositoryManager>true</isRepositoryManager>
+      </org.jvnet.hudson.plugins.repositoryconnector.Repository>
+    </entry>
+  </repos>
+  <localRepository></localRepository>
+</org.jvnet.hudson.plugins.repositoryconnector.RepositoryConfiguration>

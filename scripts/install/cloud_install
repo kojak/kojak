@@ -1,0 +1,28 @@
+#!/bin/bash
+#
+# Simple script to install openshift
+
+echo -e "# Installing packages"
+rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm
+yum install -y puppet ruby
+gem install --no-rdoc rhc
+gem update rhc
+
+if [ ! -f "~/.openshift/oo-install-cfg.yml" ]; then
+  mkdir ~/.openshift
+  cp ~/workspace/kojak/scripts/config/oo-install-cfg.yml ~/.openshift
+fi
+
+echo -e "# Installing Openshift"
+echo -e "1\n3\nn\nn" > /tmp/response.txt
+sh <(curl -s https://install.openshift.com/origin-m4) < /tmp/response.txt
+
+echo -e "# Installing rhc tools"
+echo -e "\n\ny\ndemo\nopenshift\ny\ny\nn" > /tmp/response.txt
+rhc setup < /tmp/response.txt
+
+echo -e "# Configuring domains for development, testing and production"
+rhc domain create -n development
+rhc domain create -n testing
+rhc domain create -n production
+

@@ -24,15 +24,15 @@
 # Declare default configuration options
 
 # Distro information
-VMNAME=${VMNAME:="broker-CentOS-6.6-x86_64"}
+VMNAME=${VMNAME:="cloud-CentOS-6.6-x86_64"}
 VMHOME=${VMHOME:="/var/lib/libvirt/images"}
-TMPDIR=${TMPDIR:="${HOME}/broker"}
+TMPDIR=${TMPDIR:="${HOME}/cloud"}
 DISTDIR=${DISTDIR:="CentOS/6.6/x86_64"}
 
 # Sources and configuration
 CFGDIR=${CFGDIR:="${TMPDIR}/cfg/${DISTDIR}"}
-KSCFG=${KSCFG:="${CFGDIR}/broker-ks.cfg"}
-KJKCFG=${KJKCFG:="${CFGDIR}/broker.cfg"}
+KSCFG=${KSCFG:="${CFGDIR}/cloud-ks.cfg"}
+KJKCFG=${KJKCFG:="${CFGDIR}/cloud.cfg"}
 SRCLOC=${SRCLOC:="http://mirror.centos.org/centos/6/os/x86_64/"}
 
 # Virtual machine specifications
@@ -44,12 +44,12 @@ VMMEM=${VMMEM:="4096"}
 VMDISK=${VMDISK:="8192M"}
 
 # Check user priviledges
-if [ "$USER" != "root" ]; then
+if [ $(id -u) != 0 ]; then
     echo -e "\n# This script requires root priviledges to run"
 exit
 fi
 
-APPNAME="broker"
+APPNAME="cloud"
 
 if [ -z "${KSCFG}" ]; then
     echo "# Missing path to Kickstart file"
@@ -59,7 +59,7 @@ fi
 echo "# Copying Kickstart file"
 if [ ! -d ${CFGDIR} ]; then
     mkdir -p ${CFGDIR}
-    cp -f broker-ks.cfg "${KSCFG}"
+    cp -f cloud-ks.cfg "${KSCFG}"
 fi
 
 if [ ! -z "${KJKCFG}" ]; then
@@ -72,7 +72,7 @@ fi
 
 VMDOMAIN=$(virsh list --all | grep ${APPNAME} | awk '{print $(NF-2)}')
 if [ ! "${VMDOMAIN}" ]; then
-    echo -e "# No pre-existing broker"
+    echo -e "# No pre-existing cloud"
 else 
     while true; do
     read -p "# Found an existing VM with the same name...Do you want to destroy it?`echo $'\n>> '` [Y/n] " yn

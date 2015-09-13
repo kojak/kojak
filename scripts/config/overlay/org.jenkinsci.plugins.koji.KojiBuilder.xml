@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<org.jenkinsci.plugins.koji.KojiBuilder_-DescriptorImpl plugin="koji@0.3">
+  <kojiInstanceURL>http://devops.example/com/koji</kojiInstanceURL>
+  <authentication>plain</authentication>
+  <kojiUsername></kojiUsername>
+  <kojiPassword></kojiPassword>
+  <sslCertificatePath></sslCertificatePath>
+</org.jenkinsci.plugins.koji.KojiBuilder_-DescriptorImpl>

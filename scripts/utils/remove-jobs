@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# Simple script to remove jobs builds from jenkins.
+
+# Uncomment for debugging
+#set -x
+
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
+
+JENKINS_HOME="/var/lib/jenkins"
+cd ${JENKINS_HOME}/jobs
+find . -name "builds" -type d -exec rm -rf {} +
+find . -name "workspace" -type d -exec rm -rf {} +
+rm -rf ${JENKINS_HOME}/fingerprints/*
