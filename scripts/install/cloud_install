@@ -5,7 +5,6 @@
 echo -e "# Installing packages"
 rpm -ivh http://yum.puppetlabs.com/puppetlabs-release-el-6.noarch.rpm
 yum install -y puppet ruby
-gem install --no-rdoc rhc
 
 if [ ! -f "~/.openshift/oo-install-cfg.yml" ]; then
   mkdir ~/.openshift
@@ -17,7 +16,7 @@ echo -e "1\n3\nn\nn" > /tmp/response.txt
 sh <(curl -s https://install.openshift.com/origin-m4) < /tmp/response.txt
 
 echo -e "# Installing rhc tools"
-gem install rhc
+gem install --no-rdoc rhc
 echo -e "\n\ny\ndemo\nopenshift\ny\ny\n" > /tmp/response.txt
 rhc setup < /tmp/response.txt
 rm -f /tmp/response.txt
