@@ -26,3 +26,14 @@ rhc domain create -n development
 rhc domain create -n testing
 rhc domain create -n production
 
+echo -e "# Install packages required for demo and activate cartridges"
+yum -y install https://s3-us-west-2.amazonaws.com/getup-mirror/getup-openshift-origin-release-4/dependencies/tomcat6-6.0.39-1.noarch.rpm \
+https://s3-us-west-2.amazonaws.com/getup-mirror/getup-openshift-origin-release-4/dependencies/tomcat7-7.0.50-1.noarch.rpm \
+https://s3-us-west-2.amazonaws.com/getup-mirror/getup-openshift-origin-release-4/dependencies/maven3-3.0.3-4.noarch.rpm \
+https://s3-us-west-2.amazonaws.com/getup-mirror/getup-openshift-origin-release-4/dependencies/jboss-as7-modules-7.1.1.Final-1.noarch.rpm \
+https://s3-us-west-2.amazonaws.com/getup-mirror/getup-openshift-origin-release-4/dependencies/jboss-as7-7.1.1.Final-1.noarch.rpm \
+openshift-origin-cartridge-jbossas \
+openshift-origin-cartridge-jbossews
+
+service ruby193-mcollective restart
+oo-admin-ctl-cartridge -c import-node --activate
