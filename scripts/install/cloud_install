@@ -20,6 +20,7 @@ echo -e "# Installing rhc tools"
 gem install rhc
 echo -e "\n\ny\ndemo\nopenshift\ny\ny\nn" > /tmp/response.txt
 rhc setup < /tmp/response.txt
+rm -f /tmp/response.txt
 
 echo -e "# Configuring domains for development, testing and production"
 rhc domain create -n development
