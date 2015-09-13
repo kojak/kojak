@@ -17,11 +17,11 @@ echo -e "1\n3\nn\nn" > /tmp/response.txt
 sh <(curl -s https://install.openshift.com/origin-m4) < /tmp/response.txt
 
 echo -e "# Installing rhc tools"
+gem install rhc
 echo -e "\n\ny\ndemo\nopenshift\ny\ny\nn" > /tmp/response.txt
 rhc setup < /tmp/response.txt
 
 echo -e "# Configuring domains for development, testing and production"
-gem install rhc
 rhc domain create -n development
 rhc domain create -n testing
 rhc domain create -n production
