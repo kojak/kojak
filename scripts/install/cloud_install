@@ -35,5 +35,8 @@ https://s3-us-west-2.amazonaws.com/getup-mirror/getup-openshift-origin-release-4
 openshift-origin-cartridge-jbossas \
 openshift-origin-cartridge-jbossews
 
+echo -e "# Restarting cloud services" 
 service ruby193-mcollective restart
+
+echo -e "# Activating catridges"
 oo-admin-ctl-cartridge -c import-node --activate
