@@ -1,5 +1,5 @@
-Kojak - "Koji in a box"
-========================
+Kojak - Who loves you baby. 
+===========================
 
 Kojak is fully integrated DevOps pipeline that uses Openshift to deploy applications in the cloud.
 
